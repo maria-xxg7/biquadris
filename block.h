@@ -17,7 +17,8 @@ class Block : public Observer {
     int getCol() const;
 
     // made virtual in block class since each subclass will set which type of block
-    virtual BlockType bType() override;
+    // is this right?
+    virtual BlockType bType() override = 0;
 
     void notifyObservers(); 
     void attatch(Observer *o);

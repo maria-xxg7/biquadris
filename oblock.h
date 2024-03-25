@@ -4,7 +4,9 @@
 
 class OBlock : public Block {
   public:
-  
+    BlockType bType() override;
+    void rotateBlock(bool clockwise) override;
+    void shiftBlock(string dir) override;
 };
 
 #endif
