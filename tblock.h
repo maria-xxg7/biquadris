@@ -4,7 +4,9 @@
 
 class TBlock : public Block {
   public:
-  
+    TBlock(); // constructor
+    void rotateBlockCW() override;
+    void rotateBlockCCW() override;
 };
 
 #endif
