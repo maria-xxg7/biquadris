@@ -4,7 +4,9 @@
 
 class LBlock : public Block {
   public:
-  
+    LBlock(); // ctor
+    void rotateBlockCW() override;    
+    void rotateBlockCCW() override; 
 };
 
 #endif

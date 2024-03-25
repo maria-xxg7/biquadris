@@ -7,7 +7,7 @@ JBlock::JBlock() : Block() {
               {'J', 'J', 'J', ' '}};
 }
 
-void IBlock::rotateBlockCW() {
+void JBlock::rotateBlockCW() {
     if(curRotation == RotateCW::Degree0) {
         config = {{' ', ' ', ' ', ' '},
                   {'J', 'J', ' ', ' '},
@@ -20,18 +20,22 @@ void IBlock::rotateBlockCW() {
                   {'J', 'J', 'J', ' '}, 
                   {' ', ' ', 'J', ' '}};
         curRotation = RotateCW::Degree180;
-    } else if (curRotation == RotateCW::Degree180)
-}    
-void IBlock::rotateBlockCCW() {
-    if(curRotation == RotateCW::Degree90 || curRotation == RotateCW::Degree270) {
-        config = {{'I', ' ', ' ', ' '},
-                  {'I', ' ', ' ', ' '},
-                  {'I', ' ', ' ', ' '}, 
-                  {'I', ' ', ' ', ' '}};
+    } else if (curRotation == RotateCW::Degree180) {
+        config = {{' ', ' ', ' ', ' '},
+                  {' ', 'J', ' ', ' '},
+                  {' ', 'J', ' ', ' '}, 
+                  {'J', 'J', ' ', ' '}};
+        curRotation = RotateCW::Degree270;
     } else {
         config = {{' ', ' ', ' ', ' '},
                   {' ', ' ', ' ', ' '},
-                  {' ', ' ', ' ', ' '}, 
-                  {'I', 'I', 'I', 'I'}};
+                  {'J', ' ', ' ', ' '}, 
+                  {'J', 'J', 'J', ' '}};
+        curRotation = RotateCW::Degree0;
+    }
+}    
+void JBlock::rotateBlockCCW() {
+    for (int i = 0; i < 3; ++i) {
+        rotateBlockCW();
     }
 }
