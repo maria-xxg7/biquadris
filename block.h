@@ -7,6 +7,7 @@ using namespace std;
 enum class RotateCW { Degree0 = 0, Degree90 = 1, Deegree180 = 2, Degree270 = 3};
 
 class Block {
+  protected:
     RotateCW curRotation;
     vector<vector<char>> config;
 

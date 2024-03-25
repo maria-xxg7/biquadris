@@ -3,7 +3,10 @@
 #include "block.h"
 
 class IBlock : public Block {
-  public:
+    public:
+    IBlock(); // ctor
+    void rotateBlockCW() override;    
+    void rotateBlockCCW() override; 
   
 };
 
