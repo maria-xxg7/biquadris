@@ -14,7 +14,7 @@ class TextDisplay : public Observer {
     const int reserved = 3;
     const int level;
   public:
-    TextDisplay(int w, int h, int lvl);
+    TextDisplay();
     void notify(Block &b) override;
     ~TextDisplay();
     friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
