@@ -2,31 +2,22 @@
 #define __BLOCK_H__
 #include <iostream>
 #include <vector>
-#include "observer.h"
-using namespace std; 
+using namespace std;
 
-class Block : public Observer {
+enum class RotateCW { Degree0 = 0, Degree90 = 1, Deegree180 = 2, Degree270 = 3};
+
+class Block {
     int level;
+    RotateCW curRotation;
     vector<vector<char>> config;
-    
 
   public:
-    Block(); // default constructor
+    Block(); // constructor
+    ~Block(); // dtor
 
-    void setCoords(int row, int col);
-    int getRow() const;
-    int getCol() const;
-
-    // made virtual in block class since each subclass will set which type of block
-    // is this right?
-    virtual BlockType bType() override = 0;
-
-    void notify(Block &b) override; 
-    void attatch(Observer *o);
-
-    virtual void rotateBlock(bool clockwise) = 0;
-    virtual void shiftBlock(string dir) = 0;
-    
+    vector<vector<char>> getConfig(); 
+    virtual void rotateBlockCW() = 0;    
+    virtual void rotateBlockCCW() = 0; 
 };
 
 #endif
