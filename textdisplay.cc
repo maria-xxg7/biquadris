@@ -15,12 +15,12 @@ void TextDisplay::notify(Block &b) {
 TextDisplay::~TextDisplay() {}
 
 ostream &operator<<(ostream &out, const TextDisplay &td) {
-  // print level and score
+  // print level and score (move to board class)
   // string level = "Level:";
   // string score = "Score:";
   // cout << level;
   // for (int i = level.size(); i < td.boardWidth - 1; ++i) {
-  //   cout << ' ' << td.level << endl;
+  //   cout << ' ' << td.level << 3endl;
   // }
   // cout << score;
   // for (int i = score.size(); i < td.boardWidth - 1; ++i) {
