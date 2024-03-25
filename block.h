@@ -6,8 +6,9 @@
 using namespace std; 
 
 class Block : public Observer {
-    int row, col, level;
-    vector<Observer*> observers;
+    int level;
+    vector<vector<char>> config;
+    
 
   public:
     Block(); // default constructor
