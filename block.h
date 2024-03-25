@@ -9,6 +9,8 @@ class Block : public Observer {
     int col;
   public:
     // add methods
+    // add public method/accessor for getting the block type, 
+    // similar to getState in the example
 };
 
 #endif
