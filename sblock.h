@@ -4,7 +4,9 @@
 
 class SBlock : public Block {
   public:
-  
+    SBlock(); // constructor
+    void rotateBlockCW() override;
+    void rotateBlockCCW() override;
 };
 
 #endif

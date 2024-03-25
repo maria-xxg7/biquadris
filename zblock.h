@@ -4,7 +4,9 @@
 
 class ZBlock : public Block {
   public:
-  
+    ZBlock(); // constructor
+    void rotateBlockCW() override;
+    void rotateBlockCCW() override;
 };
 
 #endif
