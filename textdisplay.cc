@@ -13,6 +13,7 @@ void TextDisplay::notify(Block &b) {
 
 TextDisplay::~TextDisplay() {}
 
+/*
 ostream &operator<<(ostream &out, const TextDisplay &td) {
   // print out the game board
   for (int i = 0; i < td.boardHeight; ++i) {
@@ -28,3 +29,4 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
   cout << endl;
   return out;
 }
+*/
