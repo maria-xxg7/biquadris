@@ -5,7 +5,7 @@ using namespace std;
 
 class Board {
   public:
-  friend ostream &operator<<(ostream &out, const Board &b);
+  //friend ostream &operator<<(ostream &out, const Board &b);
 };
 
 #endif

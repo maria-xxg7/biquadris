@@ -2,7 +2,7 @@
 
 
 
-ostream &operator<<(ostream &out, const Board &b) {
+//ostream &operator<<(ostream &out, const Board &b) {
   // print level and score (move to board class)
   // string level = "Level:";
   // string score = "Score:";
@@ -14,4 +14,4 @@ ostream &operator<<(ostream &out, const Board &b) {
   // for (int i = score.size(); i < td.boardWidth - 1; ++i) {
 
   // }
-}
+//}
