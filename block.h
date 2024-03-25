@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-enum class RotateCW { Degree0 = 0, Degree90 = 1, Deegree180 = 2, Degree270 = 3};
+enum class RotateCW { Degree0, Degree90, Degree180, Degree270 };
 
 class Block {
   protected:

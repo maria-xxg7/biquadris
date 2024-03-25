@@ -3,8 +3,10 @@
 #include "block.h"
 
 class JBlock : public Block {
-  public:
-  
+    public:
+    JBlock(); // ctor
+    void rotateBlockCW() override;    
+    void rotateBlockCCW() override; 
 };
 
 #endif
