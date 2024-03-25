@@ -6,7 +6,7 @@
 using namespace std; 
 
 class Block : public Observer {
-    int row, col;
+    int row, col, level;
     vector<Observer*> observers;
 
   public:
@@ -20,7 +20,7 @@ class Block : public Observer {
     // is this right?
     virtual BlockType bType() override = 0;
 
-    void notifyObservers(); 
+    void notify(Block &b) override; 
     void attatch(Observer *o);
 
     virtual void rotateBlock(bool clockwise) = 0;
