@@ -17,10 +17,6 @@ BlockType TextDisplay::bType() {
   return BlockType::empty;
 }
 
-Row TextDisplay::rowType() {
-  return Row::All;
-}
-
 TextDisplay::~TextDisplay() {}
 
 

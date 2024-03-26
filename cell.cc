@@ -10,7 +10,6 @@ int Cell::getCol() const { return col; }
 
 void Cell::setFilled() { 
   isFilled = true;
-  notifyRowObservers();
   notifyAllObservers();
 }
 
@@ -25,10 +24,6 @@ BlockType Cell::bType() {
   return type;
 }
 
-Row Cell::rowType() {
-  return Row::inRow;
-}
-
 void Cell::notify(Cell &c) {
   isFilled = false;
   notifyAllObservers();
@@ -36,16 +31,6 @@ void Cell::notify(Cell &c) {
 
 void Cell::notifyAllObservers() {
   for (auto o: observers) {
-    if (o->rowType() == Row::All) {
-      o->notify(*this);
-    }
-  }
-}
-
-void Cell::notifyRowObservers() {
-  for (auto o: observers) {
-    if (o->rowType() == Row::inRow) {
-      o->notify(*this);
-    }
+    o->notify(*this);
   }
 }

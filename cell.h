@@ -21,12 +21,10 @@ class Cell : public Observer {
     void attach(Observer *o);
 
     BlockType bType() override;
-    Row rowType() override;
     // Cells of the same row will call this and let the current cell (in the row)
     // to clear
     void notify(Cell &c) override; 
     void notifyAllObservers();
-    void notifyRowObservers();
 };
 
 #endif

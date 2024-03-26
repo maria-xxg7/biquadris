@@ -17,7 +17,6 @@ class TextDisplay : public Observer {
     TextDisplay();
     void notify(Cell &c) override;
     BlockType bType() override;
-    Row rowType() override;
     ~TextDisplay();
     friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
 };
