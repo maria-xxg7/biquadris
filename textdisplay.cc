@@ -7,13 +7,21 @@ TextDisplay::TextDisplay() {
   }
 }
 
-void TextDisplay::notify(Block &b) {
+void TextDisplay::notify(Cell &c) {
   
+}
+
+BlockType TextDisplay::bType() {
+  return BlockType::empty;
+}
+
+Row TextDisplay::rowType() {
+  return Row::All;
 }
 
 TextDisplay::~TextDisplay() {}
 
-/*
+
 ostream &operator<<(ostream &out, const TextDisplay &td) {
   // print out the game board
   for (int i = 0; i < td.boardHeight; ++i) {
@@ -29,4 +37,3 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
   cout << endl;
   return out;
 }
-*/

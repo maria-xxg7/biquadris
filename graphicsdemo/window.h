@@ -12,7 +12,7 @@ class Xwindow {
   unsigned long colours[5];
 
  public:
-  Xwindow(int width=500, int height=500);  // Constructor; displays the window.
+  Xwindow(int width=501, int height=751);  // Constructor; displays the window.
   ~Xwindow();                              // Destructor; destroys the window.
 
   enum {White=0, Black, Red, Green, Blue}; // Available colours.

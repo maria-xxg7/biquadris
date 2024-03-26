@@ -5,19 +5,20 @@
 #include "observer.h"
 using namespace std;
 
-class Block;
+class Cell;
 
 class TextDisplay : public Observer {
     vector<vector<char>> theDisplay;
-    const int boardWidth;
-    const int boardHeight;
+    const int boardWidth = 11;
+    const int boardHeight = 15;
     const int reserved = 3;
-    const int level;
   public:
     TextDisplay();
-    void notify(Block &b) override;
+    void notify(Cell &c) override;
+    BlockType bType() override;
+    Row rowType() override;
     ~TextDisplay();
-    //friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
+    friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
 };
 
 #endif
