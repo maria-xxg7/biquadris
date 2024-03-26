@@ -18,7 +18,7 @@ class Block {
     virtual void rotateBlockCW() = 0;    
     virtual void rotateBlockCCW() = 0; 
 
-    friend ostream &operator<<(ostream &out, const Block &b);
+    //friend ostream &operator<<(ostream &out, const Block &b);
 };
 
 #endif

@@ -6,6 +6,7 @@ vector<vector<char>> Block::getConfig() {
     return config;
 }
 
+/*
 ostream &operator<<(ostream &out, const Block &b) {
   for (int i = 0; i < 4; ++i) {
       for (int j = 0; j < 4; ++j) {
@@ -15,4 +16,5 @@ ostream &operator<<(ostream &out, const Block &b) {
     }
   return out;
 }
+*/
 
