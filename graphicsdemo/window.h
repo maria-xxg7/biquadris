@@ -15,16 +15,19 @@ class Xwindow {
   Xwindow(int width=501, int height=751);  // Constructor; displays the window.
   ~Xwindow();                              // Destructor; destroys the window.
 
-  enum {White=0, Black, Red, Green, Blue}; // Available colours.
+  enum Colour {White=0, Black, Grey, DarkGrey, Coral}; // Available colours.
 
   int getWidth() const;
   int getHeight() const;
+
+  // Draw rectangle outline
+  void drawRectangle(int x, int y, int width, int height, int colour=Black);
 
   // Draws a rectangle
   void fillRectangle(int x, int y, int width, int height, int colour=Black);
 
   // Draws a string
-  void drawString(int x, int y, std::string msg);
+  void drawString(int x, int y, std::string msg, int colour=Black);
 
 };
 
