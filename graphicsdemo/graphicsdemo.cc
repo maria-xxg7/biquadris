@@ -6,7 +6,7 @@ using namespace std;
 int main() {
   Xwindow w;
 
-  w.fillRectangle(100, 200, 50, 250, Xwindow::Blue);
+  w.fillRectangle(58, 113, 385, 525, Xwindow::Blue);
 
   w.drawString(50, 50, "Hello!");
 
