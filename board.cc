@@ -1,7 +1,7 @@
 #include "board.h"
 
 Board::Board() : theBoard {}, level {0}, curScore {0}, highScore {0}, 
-  nextBlock{}, curBlock{}, td{new TextDisplay{0}} //, gd{nullptr}
+  nextBlock{}, curBlock{}, td{new TextDisplay{}} //, gd{nullptr}
   {}
 
 Board::~Board() {
@@ -34,12 +34,16 @@ void Board::init() {
 
       theBoard[row][col].attach(td);
       //theBoard[row][col].attach(gd);
-
       
+      for (int ob = 0; ob < height; ++ob) {
+        if (ob != col) {
+          theBoard[row][col].attach(&theBoard[row][ob]);
+        }
+      }
     }
   }
-
 }
+
 
 ostream &operator<<(ostream &out, const Board &b) {
   //print level and score (move to board class)
