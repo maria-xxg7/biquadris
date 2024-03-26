@@ -50,10 +50,7 @@ void Board::placeBlock() {
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
       if (tempJ[i][j]== 'J') {
-        if (i < 3) { theBoard[i][j + 1].setFilled(); }
-        else {
         theBoard[i][j].setFilled();
-        }
         theBoard[i][j].setType(BlockType::JBlock);
       }
     }

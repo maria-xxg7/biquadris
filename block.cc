@@ -1,9 +1,8 @@
 #include "block.h"
-#include ""
 
 Block::Block() : curRotation {RotateCW::Degree0}, config {} {}
 
-vector<vector<char>> Block::getConfig() {
+vector<vector<char>> Block::getConfig() const {
     return config;
 }
 

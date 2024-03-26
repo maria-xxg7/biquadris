@@ -27,8 +27,9 @@ TextDisplay::~TextDisplay() {}
 ostream &operator<<(ostream &out, const TextDisplay &td) {
   // print out the game board
   for (int i = 0; i < td.boardHeight; ++i) {
-    
+
     if (i >= td.reserved) { cout << '|'; }
+    else { cout << ' '; }
     for (int j = 0; j < td.boardWidth; ++j) {
       cout << td.theDisplay[i][j];
     }
