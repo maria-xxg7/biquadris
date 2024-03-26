@@ -7,5 +7,6 @@ using namespace std;
 int main() {
   Board b;
   b.init();
+  b.placeBlock();
   cout << b;
 }

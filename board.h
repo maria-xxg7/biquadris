@@ -3,6 +3,7 @@
 #include <iostream>
 #include "cell.h"
 #include "block.h"
+#include "jblock.h"
 #include "textdisplay.h"
 using namespace std;
 

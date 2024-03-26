@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "observer.h"
+#include "cell.h"
 using namespace std;
 
 class Cell;
@@ -10,7 +11,7 @@ class Cell;
 class TextDisplay : public Observer {
     vector<vector<char>> theDisplay;
     const int boardWidth = 11;
-    const int boardHeight = 15;
+    const int boardHeight = 18;
     const int reserved = 3;
   public:
     TextDisplay();
