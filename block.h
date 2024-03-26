@@ -14,7 +14,7 @@ class Block {
   public:
     Block(); // constructor
 
-    vector<vector<char>> getConfig(); 
+    vector<vector<char>> getConfig() const; 
     virtual void rotateBlockCW() = 0;    
     virtual void rotateBlockCCW() = 0; 
 
