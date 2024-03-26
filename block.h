@@ -13,7 +13,6 @@ class Block {
 
   public:
     Block(); // constructor
-    ~Block(); // dtor
 
     vector<vector<char>> getConfig(); 
     virtual void rotateBlockCW() = 0;    

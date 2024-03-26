@@ -6,7 +6,8 @@ using namespace std;
 #include "sblock.h"
 
 int main() {
-  // SBlock b;
+  SBlock b;
+  
   cout << "Hello World" << endl;
-  // cout << b;
+  cout << b;
 }
