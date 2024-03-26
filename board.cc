@@ -22,20 +22,20 @@ void Board::init() {
   td = new TextDisplay();
   // gd = new GraphicsDisplay(graphics, gridSize); 
 
-  vector<Cell> new_row (width, Cell());
-  for (int grid_r = 0; grid_r < height; ++grid_r) {
+  vector<Cell> new_row (boardWidth, Cell());
+  for (int grid_r = 0; grid_r < boardHeight; ++grid_r) {
     theBoard.emplace_back(new_row);
   }
 
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
+  for (int row = 0; row < boardHeight; ++row) {
+    for (int col = 0; col < boardWidth; ++col) {
 
       theBoard[row][col].setCoords(row, col);
 
       theBoard[row][col].attach(td);
       //theBoard[row][col].attach(gd);
       
-      for (int ob = 0; ob < width; ++ob) {
+      for (int ob = 0; ob < boardWidth; ++ob) {
         if (ob != col) {
           theBoard[row][col].attach(&theBoard[row][ob]);
         }

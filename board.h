@@ -8,7 +8,7 @@ using namespace std;
 
 class Board {
   vector<vector<Cell>> theBoard;
-  int width = 11, height = 15;
+  const int boardWidth = 11, boardHeight = 15;
   int level, curScore, highScore;
   bool lose;
   BlockType nextBlock, curBlock;
