@@ -45,6 +45,7 @@ void Board::init() {
 }
 
 
+
 ostream &operator<<(ostream &out, const Board &b) {
   //print level and score (move to board class)
   string level = "Level:";
