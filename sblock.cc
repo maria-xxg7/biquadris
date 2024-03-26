@@ -1,10 +1,11 @@
 #include "sblock.h"
 
-SBlock::SBlock() : Block() {
+SBlock::SBlock(): Block() {
   config = {{' ', ' ', ' ', ' '},
             {' ', ' ', ' ', ' '},
             {' ', 'S', 'S', ' '},
             {'S', 'S', ' ', ' '}};
+  curRotation = RotateCW::Degree0;
 }
 
 void SBlock::rotateBlockCW() {
