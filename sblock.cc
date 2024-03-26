@@ -5,7 +5,6 @@ SBlock::SBlock(): Block() {
             {' ', ' ', ' ', ' '},
             {' ', 'S', 'S', ' '},
             {'S', 'S', ' ', ' '}};
-  curRotation = RotateCW::Degree0;
 }
 
 void SBlock::rotateBlockCW() {
