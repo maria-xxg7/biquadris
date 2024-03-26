@@ -12,8 +12,8 @@ Board::~Board() {
 void Board::clearBoard() {
   theBoard.clear();
   curScore = 0;
-  nextBlock; // how to reset them to nothing?
-  curBlock;
+  nextBlock = BlockType::empty; // how to reset them to nothing?
+  curBlock = BlockType::empty;
 }
 
 void Board::init() {
@@ -23,19 +23,19 @@ void Board::init() {
   // gd = new GraphicsDisplay(graphics, gridSize); 
 
   vector<Cell> new_row (width, Cell());
-  for (int grid_r = 0; grid_r < width; ++grid_r) {
+  for (int grid_r = 0; grid_r < height; ++grid_r) {
     theBoard.emplace_back(new_row);
   }
 
-  for (int row = 0; row < width; ++row) {
-    for (int col = 0; col < height; ++col) {
+  for (int row = 0; row < height; ++row) {
+    for (int col = 0; col < width; ++col) {
 
       theBoard[row][col].setCoords(row, col);
 
       theBoard[row][col].attach(td);
       //theBoard[row][col].attach(gd);
       
-      for (int ob = 0; ob < height; ++ob) {
+      for (int ob = 0; ob < width; ++ob) {
         if (ob != col) {
           theBoard[row][col].attach(&theBoard[row][ob]);
         }
@@ -50,12 +50,8 @@ ostream &operator<<(ostream &out, const Board &b) {
   //print level and score (move to board class)
   string level = "Level:";
   string score = "Score:";
-  cout << level;
-  for (int i = level.size(); i < td.boardWidth - 1; ++i) {
-    cout << ' ' << td.level << endl;
-  }
-  cout << score;
-  for (int i = score.size(); i < td.boardWidth - 1; ++i) {
-
-  }
+  out << level << endl;
+  out << score << endl;
+  out << *b.td;
+  return out;
 }

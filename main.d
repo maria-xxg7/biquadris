@@ -1,1 +1,1 @@
-main.o: main.cc cell.h observer.h textdisplay.h
+main.o: main.cc board.h cell.h observer.h block.h textdisplay.h
