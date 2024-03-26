@@ -23,11 +23,11 @@ void Board::init() {
   // gd = new GraphicsDisplay(graphics, gridSize); 
 
   vector<Cell> new_row (boardWidth, Cell());
-  for (int grid_r = 0; grid_r < boardHeight; ++grid_r) {
+  for (int grid_r = 0; grid_r < boardHeight + reserved; ++grid_r) {
     theBoard.emplace_back(new_row);
   }
 
-  for (int row = 0; row < boardHeight; ++row) {
+  for (int row = 0; row < boardHeight + reserved; ++row) {
     for (int col = 0; col < boardWidth; ++col) {
 
       theBoard[row][col].setCoords(row, col);
