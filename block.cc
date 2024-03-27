@@ -6,6 +6,10 @@ vector<vector<char>> Block::getConfig() const {
     return config;
 }
 
+RotateCW Block::getRotation() const {
+    return curRotation;
+}
+
 vector<int> Block::getLeftCorner() {
     return vector<int> {3, 0};
 }

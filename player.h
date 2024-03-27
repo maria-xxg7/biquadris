@@ -9,12 +9,12 @@ class Player {
     int level;
     BlockType nextBlock;
     Board *playerBoard;
+  protected:
     Player(bool playerNum, int level, Board &b);
     ~Player();
 
   public:
-    bool validMove(Board &b, bool playerTurn, string move);
-    virtual bool newMove(Board &b, bool playerTurn) = 0;
+    virtual void newMove(Board &b, bool playerTurn) = 0;
     // level up and level down be decalred here i think
 };
 
