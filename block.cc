@@ -6,6 +6,10 @@ vector<vector<char>> Block::getConfig() const {
     return config;
 }
 
+vector<int> Block::getLeftCorner() {
+    return vector<int> {0, 0};
+}
+
 // shared_ptr<Cell> Block::getBlock() const {
 //   return theBlock;
 // }

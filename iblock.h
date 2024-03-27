@@ -7,7 +7,6 @@ class IBlock : public Block {
     IBlock(); // ctor
     void rotateBlockCW() override;    
     void rotateBlockCCW() override; 
-  
 };
 
 #endif

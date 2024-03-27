@@ -29,3 +29,4 @@ void OBlock::rotateBlockCCW() {
         curRotation = RotateCW::Degree180;
     }
 }
+

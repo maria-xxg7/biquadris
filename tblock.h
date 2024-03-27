@@ -7,6 +7,7 @@ class TBlock : public Block {
     TBlock(); // constructor
     void rotateBlockCW() override;
     void rotateBlockCCW() override;
+    vector<int> getLeftCorner() override;
 };
 
 #endif
