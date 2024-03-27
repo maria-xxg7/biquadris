@@ -10,6 +10,8 @@ TextDisplay::TextDisplay() {
 void TextDisplay::notify(Cell &c) {
   if (c.getState()) {
     theDisplay[c.getRow()][c.getCol()] = 'J';
+  } else {
+    theDisplay[c.getRow()][c.getCol()] = ' ';
   }
 }
 

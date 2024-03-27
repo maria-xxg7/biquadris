@@ -23,6 +23,9 @@ class Board {
   BlockType nextBlock, curBlock;
   TextDisplay *td;
   //GraphicsDisplay *gd;
+  vector<vector<char>> lastConfig;
+  int prevX = 3, prevY = 0;
+  bool clear = true;
 
   void clearBoard();
   
@@ -43,9 +46,9 @@ class Board {
     void getNext(); 
     // places block at the top left hand corner, checks loose cond if
     // cannot fit
-    void placeBlock();
+    void moveBlock(string move);
     // for each move in command, will update the block before moving 
-    void moveBlock(string move); 
+    // void moveBlock(string move); 
     // must be called to make each move, checks lose cond if exceeds height
     // before actually putting it down 
     void dropBlock();

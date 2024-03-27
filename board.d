@@ -1,2 +1,2 @@
-board.o: board.cc board.h cell.h observer.h block.h jblock.h \
- textdisplay.h
+board.o: board.cc board.h cell.h observer.h block.h iblock.h jblock.h \
+ lblock.h oblock.h sblock.h zblock.h tblock.h textdisplay.h

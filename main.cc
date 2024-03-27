@@ -8,10 +8,15 @@ int main() {
   Board b;
   b.init();
   b.moveBlock("");
-  b.moveBlock("counterclockwise");
+  cout << b;
+
+  // b.moveBlock("counterclockwise");
   b.moveBlock("right");
-  b.moveBlock("clockwise");
-  b.moveBlock("left");
-  b.moveBlock("down");
+  // cout << b;
+
+  // b.moveBlock("right");
+  // b.moveBlock("clockwise");
+  // b.moveBlock("left");
+  // b.moveBlock("down");
   cout << b;
 }
