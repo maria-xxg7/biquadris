@@ -1,9 +1,13 @@
 #include "block.h"
 
-Block::Block() : curRotation {RotateCW::Degree0}, config {} {}
+Block::Block() : curRotation {RotateCW::Degree0}, config {}, theBlock {} {}
 
 vector<vector<char>> Block::getConfig() const {
     return config;
+}
+
+vector<shared_ptr<Cell>> Block::getBlock() const {
+  return theBlock;
 }
 
 /*
