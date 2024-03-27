@@ -1,7 +1,7 @@
 #include "board.h"
 
 Board::Board() : theBoard {}, level {0}, curScore {0}, highScore {0}, 
-  nextBlock{BlockType::JBlock}, curBlock{}, td{new TextDisplay{}} //, gd{nullptr}
+  nextBlock{BlockType::empty}, curBlock{}, td{new TextDisplay{}} //, gd{nullptr}
   {}
 
 Board::~Board() {
@@ -20,6 +20,8 @@ void Board::init() {
   delete td;
   //delete gd;
   td = new TextDisplay();
+    nextBlock = BlockType::IBlock;
+
   // gd = new GraphicsDisplay(graphics, gridSize); 
 
   vector<Cell> new_row (boardWidth, Cell());
@@ -65,11 +67,16 @@ unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
   }
 }
 
-void Board::moveBlock(string move) {
+void Board::moveBlock(BlockType tempType, string move) {
   unique_ptr<BlockFactory> makeBlock;
-  
-  unique_ptr<Block> newBlock = makeBlock->buildBlock(BlockType::JBlock);
+  // BlockType tempBlock = tempType;
+  nextBlock = tempType;
+  unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
   int shift = 0; int down = 0;
+
+  while (lastRotation != newBlock->getRotation()) {
+    newBlock->rotateBlockCW();
+  }
 
   if (move == "left") {
     shift = -1;
@@ -88,36 +95,32 @@ void Board::moveBlock(string move) {
   } else {
     newBlock->rotateBlockCCW();
   }
+
   cout << clear << endl;
   int blockDim = 4;
 
-  // for (i)
-  cout << prevX << " & " << prevY << endl;
   if (!clear) {
-    cout << "not clear" << endl;
-    for (int i = prevX; i >= prevX - blockDim + 1; --i) {
-      for (int j = prevY; j < prevY + blockDim; ++j) {
+    for (int i = 0; i < blockDim; ++i) {
+      for (int j = 0; j < blockDim; ++j) {
         if (lastConfig[i][j] != ' ') {
-          // cout << "(" << i << "," << j << ")" << endl;
-
-          theBoard[i][j].setUnfilled();
-          theBoard[i][j].setType(BlockType::empty);
+          theBoard[i + totalDown][j + totalShift].setUnfilled();
+          theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
         }
       }
     }
   }
-  // cout << "new block" << endl;
+
   vector<vector<char>> blockBlock = newBlock->getConfig();
 
-  for (int i = blockDim - 1; i >= 0; --i) {
+  for (int i = 0; i < blockDim; ++i) {
     for (int j = 0; j < blockDim; ++j) {
-
       if (blockBlock[i][j] != ' ') {
-          cout << "(" << prevX + j + down << "," << prevY + shift + j << ")" << endl;
+      //     // cout << "(" << i + totalDown + down << "," << j + totalShift + shift << ")" << endl;
+      //     // cout << i << " & " << j << endl;
 
         if (move != "") {
-          theBoard[prevX + down][prevY + shift].setFilled();
-          theBoard[prevX + down][prevY + shift].setType(BlockType::JBlock);
+          theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
+          theBoard[i + totalDown + down][j + totalShift + shift].setType(BlockType::JBlock);
         } else {
           theBoard[i][j].setFilled();
           theBoard[i][j].setType(BlockType::JBlock);
@@ -128,16 +131,13 @@ void Board::moveBlock(string move) {
   }
 
   if (move == "") {
-    cout << "place block" << endl;
     clear = false; 
-    prevX = newBlock->getLeftCorner()[0];
-    prevY = newBlock->getLeftCorner()[1];
-    cout << prevX << " & " << prevY << endl;
     lastConfig = blockBlock;
   } else {
-    prevX += shift;
-    prevY += down;
+    totalShift += shift;
+    totalDown += down;
     lastConfig = blockBlock;
+    lastRotation = newBlock->getRotation();
   }
 }
 
