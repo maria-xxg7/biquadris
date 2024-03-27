@@ -24,6 +24,11 @@ BlockType Cell::bType() {
   return type;
 }
 
+RowType Cell::rType() {
+  return RowType::inRow;
+}
+
+
 void Cell::notify(Cell &c) {
   isFilled = false;
   notifyAllObservers();
@@ -31,6 +36,8 @@ void Cell::notify(Cell &c) {
 
 void Cell::notifyAllObservers() {
   for (auto o: observers) {
-    o->notify(*this);
+    if (o->rType() == RowType::All) {
+      o->notify(*this);
+    }
   }
 }

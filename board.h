@@ -1,14 +1,22 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 #include <iostream>
+#include <memory>
 #include "cell.h"
 #include "block.h"
+#include "iblock.h"
 #include "jblock.h"
+#include "lblock.h"
+#include "oblock.h"
+#include "sblock.h"
+#include "zblock.h"
+#include "tblock.h"
 #include "textdisplay.h"
 using namespace std;
 
 class Board {
   vector<vector<Cell>> theBoard;
+  vector<shared_ptr<Cell>> allBlocks;
   const int boardWidth = 11, boardHeight = 15, reserved = 3;
   int level, curScore, highScore;
   bool lose;
@@ -17,6 +25,11 @@ class Board {
   //GraphicsDisplay *gd;
 
   void clearBoard();
+  
+  class BlockFactory {
+    public:
+      unique_ptr<Block> buildBlock(BlockType bType);
+  };
 
   public:
     Board();

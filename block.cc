@@ -1,14 +1,14 @@
 #include "block.h"
 
-Block::Block() : curRotation {RotateCW::Degree0}, config {}, theBlock {} {}
+Block::Block() : curRotation {RotateCW::Degree0}, config {} {}
 
 vector<vector<char>> Block::getConfig() const {
     return config;
 }
 
-vector<shared_ptr<Cell>> Block::getBlock() const {
-  return theBlock;
-}
+// shared_ptr<Cell> Block::getBlock() const {
+//   return theBlock;
+// }
 
 /*
 ostream &operator<<(ostream &out, const Block &b) {

@@ -1,1 +1,1 @@
-jblock.o: jblock.cc jblock.h block.h
+jblock.o: jblock.cc jblock.h block.h cell.h observer.h

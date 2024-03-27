@@ -12,13 +12,13 @@ class Block {
   protected:
     RotateCW curRotation;
     vector<vector<char>> config;
-    shared_ptr<Cell> theBlock;
+    //shared_ptr<Cell> theBlock;
 
   public:
     Block(); // constructor
 
     vector<vector<char>> getConfig() const; 
-    vector<shared_ptr<Cell>> getBlock() const;
+    //shared_ptr<Cell> getBlock() const;
     virtual void rotateBlockCW() = 0;    
     virtual void rotateBlockCCW() = 0; 
 

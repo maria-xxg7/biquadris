@@ -12,7 +12,7 @@ Board::~Board() {
 void Board::clearBoard() {
   theBoard.clear();
   curScore = 0;
-  nextBlock = BlockType::empty; // how to reset them to nothing?
+  nextBlock = BlockType::empty;
   curBlock = BlockType::empty;
 }
 
@@ -44,18 +44,42 @@ void Board::init() {
   }
 }
 
+unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
+  switch(bType) {
+    case BlockType::IBlock: 
+      return make_unique<IBlock>();
+    case BlockType::JBlock:
+      return make_unique<JBlock>();
+    case BlockType::LBlock:
+      return make_unique<LBlock>();
+    case BlockType::OBlock:
+      return make_unique<OBlock>();
+    case BlockType::SBlock:
+      return make_unique<SBlock>();
+    case BlockType::ZBlock:
+      return make_unique<ZBlock>();
+    case BlockType::TBlock:
+      return make_unique<TBlock>();
+  }
+}
+
 void Board::placeBlock() {
-  
-  vector<vector<char>> tempJ = j.getConfig();
-  for (int i = 0; i < 4; ++i) {
-    for (int j = 0; j < 4; ++j) {
-      if (tempJ[i][j] != ' ') {
+  unique_ptr<BlockFactory> makeBlock;
+  unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
+  vector<vector<char>> blockBlock = newBlock->getConfig();
+
+  int blockDim = 4;
+  for (int i = 0; i < blockDim; ++i) {
+    for (int j = 0; j < blockDim; ++j) {
+      if (blockBlock[i][j] != ' ') {
         theBoard[i][j].setFilled();
         theBoard[i][j].setType(nextBlock);
       }
     }
   }
 }
+
+
 
 ostream &operator<<(ostream &out, const Board &b) {
   //print level and score (move to board class)
