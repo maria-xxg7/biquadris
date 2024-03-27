@@ -14,4 +14,7 @@ bool Player::validMove(Board &b, bool playerTurn, string move) {
      && (move != "right") && (move != "down")) {
     cout << "Invalid moce" << endl;
   }
+  return true;
 }
+
+
