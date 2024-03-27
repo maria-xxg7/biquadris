@@ -7,7 +7,7 @@ vector<vector<char>> Block::getConfig() const {
 }
 
 vector<int> Block::getLeftCorner() {
-    return vector<int> {0, 0};
+    return vector<int> {3, 0};
 }
 
 // shared_ptr<Cell> Block::getBlock() const {
