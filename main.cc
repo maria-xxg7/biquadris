@@ -12,11 +12,11 @@ int main() {
 
   // b.moveBlock("counterclockwise");
   b.moveBlock("right");
-  // cout << b;
+  cout << b;
 
   // b.moveBlock("right");
   // b.moveBlock("clockwise");
   // b.moveBlock("left");
   // b.moveBlock("down");
-  cout << b;
+  // cout << b;
 }

@@ -92,14 +92,13 @@ void Board::moveBlock(string move) {
   int blockDim = 4;
 
   // for (i)
-  // cout << prevX << " & " << prevY << endl;
+  cout << prevX << " & " << prevY << endl;
   if (!clear) {
     cout << "not clear" << endl;
-    for (int i = prevY + blockDim - 1; i >= prevY; --i) {
-      for (int j = prevX; j < prevX + blockDim; ++j) {
-
+    for (int i = prevX; i >= prevX - blockDim + 1; --i) {
+      for (int j = prevY; j < prevY + blockDim; ++j) {
         if (lastConfig[i][j] != ' ') {
-          cout << "(" << i << "," << j << ")" << endl;
+          // cout << "(" << i << "," << j << ")" << endl;
 
           theBoard[i][j].setUnfilled();
           theBoard[i][j].setType(BlockType::empty);
@@ -110,12 +109,15 @@ void Board::moveBlock(string move) {
   // cout << "new block" << endl;
   vector<vector<char>> blockBlock = newBlock->getConfig();
 
-  for (int i = 0; i < blockDim; ++i) {
+  for (int i = blockDim - 1; i >= 0; --i) {
     for (int j = 0; j < blockDim; ++j) {
+
       if (blockBlock[i][j] != ' ') {
+          cout << "(" << prevX + j + down << "," << prevY + shift + j << ")" << endl;
+
         if (move != "") {
-          theBoard[i + prevY + down][j + prevX + shift].setFilled();
-          theBoard[i + prevY + down][j + prevX + shift].setType(BlockType::JBlock);
+          theBoard[prevX + down][prevY + shift].setFilled();
+          theBoard[prevX + down][prevY + shift].setType(BlockType::JBlock);
         } else {
           theBoard[i][j].setFilled();
           theBoard[i][j].setType(BlockType::JBlock);
