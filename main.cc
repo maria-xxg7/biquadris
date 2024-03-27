@@ -7,6 +7,11 @@ using namespace std;
 int main() {
   Board b;
   b.init();
-  b.placeBlock();
+  b.moveBlock("");
+  b.moveBlock("counterclockwise");
+  b.moveBlock("right");
+  b.moveBlock("clockwise");
+  b.moveBlock("left");
+  b.moveBlock("down");
   cout << b;
 }
