@@ -13,6 +13,11 @@ void Cell::setFilled() {
   notifyAllObservers();
 }
 
+void Cell::setUnfilled() {
+  isFilled = false;
+  notifyAllObservers();
+}
+
 void Cell::setCoords(int r, int c) { row = r; col = c; }
 
 void Cell::setType(BlockType b) { type = b; }

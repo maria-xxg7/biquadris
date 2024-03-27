@@ -15,6 +15,7 @@ class Cell : public Observer {
     int getRow() const; // returns the value or row 
     int getCol() const; // returns the value of col
     void setFilled(); // Explicitly sets to filled
+    void setUnfilled();
     void setCoords(int r, int c); // Sets the row and col location
     void setType(BlockType b); // Sets teh type of block the cell is part of
     
