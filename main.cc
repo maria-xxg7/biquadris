@@ -8,7 +8,7 @@ int main() {
   Board b;
   b.init();
   b.moveBlock("");
-  b.moveBlock("counterclockwise");
+  b.moveBlock("clockwise");
   b.moveBlock("right");
   b.moveBlock("save");
   b.dropBlock();

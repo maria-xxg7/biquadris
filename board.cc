@@ -21,9 +21,9 @@ void Board::init() {
   delete td;
   //delete gd;
   td = new TextDisplay();
-  nextBlock = BlockType::SBlock;
+  nextBlock = BlockType::JBlock;
   
-  vector<int> colRow (boardWidth, boardHeight);
+  vector<int> colRow (boardWidth, boardHeight + reserved);
   colHeights = colRow;
 
   // gd = new GraphicsDisplay(graphics, gridSize); 
@@ -123,6 +123,7 @@ void Board::moveBlock(string move) {
           if (save) {
             vector<int> point {i + totalDown + down, j + totalShift + shift};
             coords.emplace_back(point);
+            lastRotation = RotateCW::Degree0;
           }
         } else {
           theBoard[i][j].setFilled();
@@ -130,6 +131,7 @@ void Board::moveBlock(string move) {
           if (save) {
             vector<int> point {i, j};
             coords.emplace_back(point);
+            lastRotation = RotateCW::Degree0;
           }
         }
       }
@@ -154,19 +156,21 @@ void Board::dropBlock() {
 
   // running max of the most amount dropped, since in tetris there could be muliple
   // we want lowest possible that it can go
-  int maxDist = colHeights[coords[0][1]] - coords[0][0]; 
-  
+  int maxDist =  0;
   // iterate throught each block, calculate the different for that one column,
   // and check if dropping all blocks by that distance will work
   for (int i = 0; i < 4; ++i) {
     // cout << colHeights[coords[i][1]] << " and " << coords[i][0] << endl;
     bool validFit = true; // indicator that this dist did not work
-    int tempDist = colHeights[coords[i][1]] - coords[i][0];
-    // cout << tempDist << endl;
+    int tempDist = colHeights[coords[i][1]] - coords[i][0] - 1;
 
     //checking all other blocks with this tempDist
+    cout << "Checking dist wrt this point" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
     for (int j = 0; j < 4; ++j) {
+      cout << "NEW POINT: " << "(" << coords[j][0] << "," << coords[j][1] << ")" << endl;
       if (coords[j][0] + tempDist >= 18) { // out of bounds
+
+        cout << "Out of Bounds: " << coords[j][0] << "and " << tempDist << endl;
         validFit = false; 
         break;
       } else if (theBoard[coords[j][0] + tempDist][coords[j][1]].getState() == true) { // alr filled by another block
@@ -178,22 +182,22 @@ void Board::dropBlock() {
 
     // if all the blocks fit and it's distance is the current max, we update variable
     if (validFit && (tempDist > maxDist)) {
+      cout << "Point with max dist" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
       maxDist = tempDist;
     }
   } // after this for is exited, we've checked that blocks col height distance 
     // and checked if each block fits based on this difference
 
   // once we know which distance is the most suitable, we set the board
+  cout << maxDist << endl;
   for (int i = 0; i < 4; ++i) {
+    cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0]][coords[i][1]].setUnfilled();
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(BlockType::JBlock);
+    colHeights[coords[i][1]] = maxDist - coords[i][0];
+    cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
-    //theBoard[boardHeight + reserved - 1 - colHeights[coords[i][1]]][coords[i][1]].setFilled();
-    //theBoard[boardHeight + reserved - 1 - colHeights[coords[i][1]]][coords[i][1]].setType(BlockType::JBlock);
-  // for (int i = 0; i < 11; ++i) {
-  //   cout << "Height at " << i << " " << colHeights[i] << endl;
-  // }
 }
 
 ostream &operator<<(ostream &out, const Board &b) {
