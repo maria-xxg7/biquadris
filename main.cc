@@ -10,10 +10,7 @@ int main() {
   b.moveBlock("");
   b.moveBlock("counterclockwise");
   b.moveBlock("right");
-  b.moveBlock("clockwise");
-  b.moveBlock("left");
-  b.moveBlock("down");
   b.moveBlock("save");
+  b.dropBlock();
   cout << b;
-
 }

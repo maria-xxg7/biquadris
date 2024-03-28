@@ -17,7 +17,7 @@ using namespace std;
 class Board {
   vector<vector<Cell>> theBoard;
   vector<shared_ptr<Cell>> allBlocks;
-  const int boardWidth = 11, boardHeight = 15, reserved = 3;
+  const int boardWidth = 11, boardHeight = 15, reserved = 3, blockDim = 4;
   int level, curScore, highScore;
   bool lose;
   BlockType nextBlock, curBlock;
