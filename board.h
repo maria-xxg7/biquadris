@@ -32,7 +32,7 @@ class Board {
   
   class BlockFactory {
     public:
-      unique_ptr<Block> buildBlock(BlockType bType);
+      static unique_ptr<Block> buildBlock(BlockType b);
   };
 
   public:
@@ -47,7 +47,7 @@ class Board {
     void getNext(); 
     // places block at the top left hand corner, checks loose cond if
     // cannot fit
-    void moveBlock(BlockType b, string move);
+    void moveBlock(string move);
     // for each move in command, will update the block before moving 
     // void moveBlock(string move); 
     // must be called to make each move, checks lose cond if exceeds height

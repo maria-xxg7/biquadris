@@ -1,4 +1,5 @@
 #include "board.h"
+#include <memory>
 
 Board::Board() : theBoard {}, level {0}, curScore {0}, highScore {0}, 
   nextBlock{BlockType::empty}, curBlock{}, td{new TextDisplay{}} //, gd{nullptr}
@@ -20,7 +21,7 @@ void Board::init() {
   delete td;
   //delete gd;
   td = new TextDisplay();
-    nextBlock = BlockType::IBlock;
+  nextBlock = BlockType::IBlock;
 
   // gd = new GraphicsDisplay(graphics, gridSize); 
 
@@ -67,10 +68,8 @@ unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
   }
 }
 
-void Board::moveBlock(BlockType tempType, string move) {
+void Board::moveBlock(string move) {
   unique_ptr<BlockFactory> makeBlock;
-  // BlockType tempBlock = tempType;
-  nextBlock = tempType;
   unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
   int shift = 0; int down = 0;
 

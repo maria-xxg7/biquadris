@@ -7,7 +7,7 @@ using namespace std;
 int main() {
   Board b;
   b.init();
-  b.moveBlock(BlockType::LBlock, "");
+  b.moveBlock("");
   // b.moveBlock("counterclockwise");
   // b.moveBlock("right");
   // // b.moveBlock("right");
