@@ -19,8 +19,8 @@ BlockType TextDisplay::bType() {
   return BlockType::empty;
 }
 
-RowType TextDisplay::rType() {
-  return RowType::All;
+CellType TextDisplay::cType() {
+  return CellType::All;
 }
 
 TextDisplay::~TextDisplay() {}

@@ -29,8 +29,8 @@ BlockType Cell::bType() {
   return type;
 }
 
-RowType Cell::rType() {
-  return RowType::inRow;
+CellType Cell::cType() {
+  return CellType::InBlock;
 }
 
 
