@@ -37,7 +37,7 @@ void Board::init() {
     for (int col = 0; col < boardWidth; ++col) {
 
       theBoard[row][col].setCoords(row, col);
-
+      // theBoard[row][col].setType(BlockType::empty);
       theBoard[row][col].attach(td);
       //theBoard[row][col].attach(gd);
       
@@ -71,14 +71,20 @@ unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
   }
 }
 
+void Board::setBlockType(BlockType b) {
+  nextBlock = b;
+}
+
 void Board::moveBlock(string move) {
   unique_ptr<BlockFactory> makeBlock;
   unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
   int shift = 0; int down = 0;
   bool save = false;
-
-  while (lastRotation != newBlock->getRotation()) {
-    newBlock->rotateBlockCW();
+  
+  if (move != "") {
+    while (lastRotation != newBlock->getRotation()) {
+      newBlock->rotateBlockCW();
+    }
   }
 
   if (move == "left") {
@@ -105,8 +111,9 @@ void Board::moveBlock(string move) {
     for (int i = 0; i < blockDim; ++i) {
       for (int j = 0; j < blockDim; ++j) {
         if (lastConfig[i][j] != ' ') {
-          theBoard[i + totalDown][j + totalShift].setUnfilled();
           theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
+          theBoard[i + totalDown][j + totalShift].setUnfilled();
+
         }
       }
     }
@@ -118,16 +125,16 @@ void Board::moveBlock(string move) {
     for (int j = 0; j < blockDim; ++j) {
       if (blockBlock[i][j] != ' ') {
         if (move != "") {
+          theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
           theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
-          theBoard[i + totalDown + down][j + totalShift + shift].setType(BlockType::JBlock);
           if (save) {
             vector<int> point {i + totalDown + down, j + totalShift + shift};
             coords.emplace_back(point);
             lastRotation = RotateCW::Degree0;
           }
         } else {
+          theBoard[i][j].setType(nextBlock);
           theBoard[i][j].setFilled();
-          theBoard[i][j].setType(BlockType::JBlock);
           if (save) {
             vector<int> point {i, j};
             coords.emplace_back(point);
@@ -150,9 +157,9 @@ void Board::moveBlock(string move) {
 }
 
 void Board::dropBlock() {
-  // for (int i = 0; i < 4; ++i) {
-  //   cout << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
-  // }
+  for (int i = 0; i < 4; ++i) {
+    cout << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
+  }
 
   // running max of the most amount dropped, since in tetris there could be muliple
   // we want lowest possible that it can go
@@ -160,7 +167,7 @@ void Board::dropBlock() {
   // iterate throught each block, calculate the different for that one column,
   // and check if dropping all blocks by that distance will work
   for (int i = 0; i < 4; ++i) {
-    // cout << colHeights[coords[i][1]] << " and " << coords[i][0] << endl;
+    cout << colHeights[coords[i][1]] << " and " << coords[i][0] << endl;
     bool validFit = true; // indicator that this dist did not work
     int tempDist = colHeights[coords[i][1]] - coords[i][0] - 1;
 
@@ -192,9 +199,10 @@ void Board::dropBlock() {
   cout << maxDist << endl;
   for (int i = 0; i < 4; ++i) {
     cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
+    theBoard[coords[i][0]][coords[i][1]].setType(BlockType::empty);
     theBoard[coords[i][0]][coords[i][1]].setUnfilled();
+    theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
-    theBoard[coords[i][0] + maxDist][coords[i][1]].setType(BlockType::JBlock);
     if (colHeights[coords[i][1]] > maxDist + coords[i][0]) {
       colHeights[coords[i][1]] = maxDist + coords[i][0];
     };

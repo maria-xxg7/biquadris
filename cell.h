@@ -7,7 +7,7 @@ using namespace std;
 class Cell : public Observer {
     bool isFilled = false;
     vector<Observer*> observers; // 
-    BlockType type = BlockType::empty;
+    BlockType type;
     int row, col;
   public:
     Cell(); // default constructor

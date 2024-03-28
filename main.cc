@@ -7,10 +7,14 @@ using namespace std;
 int main() {
   Board b;
   b.init();
+  b.setBlockType(BlockType::SBlock); // use this to set the block type for the next block :)
   b.moveBlock("");
   b.moveBlock("clockwise");
-  b.moveBlock("right");
+  // b.moveBlock("right");
   b.moveBlock("save");
   b.dropBlock();
+  b.setBlockType(BlockType::JBlock);
+  // cout << "new block" << endl;
+  b.moveBlock("");
   cout << b;
 }

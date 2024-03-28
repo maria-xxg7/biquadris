@@ -18,7 +18,7 @@ Xwindow::Xwindow(int width, int height) : width{width}, height{height} {
   }
   s = DefaultScreen(d);
   w = XCreateSimpleWindow(d, RootWindow(d, s), 10, 10, width, height, 1,
-                          BlackPixel(d, s), WhitePixel(d, s));
+                          WhitePixel(d, s), BlackPixel(d, s));
   XSelectInput(d, w, ExposureMask | KeyPressMask);
 
   Pixmap pix = XCreatePixmap(d,w,width,
@@ -35,7 +35,9 @@ Xwindow::Xwindow(int width, int height) : width{width}, height{height} {
   // Set up colours.
   XColor xcolour;
   Colormap cmap;
-  char color_vals[11][15]={"white", "black", "gray", "dim gray", "rgb:ff/82/8b"};
+  char color_vals[12][15]={"white", "black", "gray", "dim gray", "rgb:ff/82/8b",
+    "rgb:70/a8/94", "rgb:9f/e7/93", "rgb:81/c4/de", "rgb:a8/8a/c2", 
+    "rgb:ff/df/87", "midnight blue"};
 
   cmap=DefaultColormap(d,DefaultScreen(d));
   for(int i=0; i < 5; ++i) {

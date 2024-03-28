@@ -1,4 +1,5 @@
 #include "cell.h"
+#include <iostream>
 
 Cell::Cell(): row{0}, col{0} {}
 
@@ -21,18 +22,12 @@ void Cell::setUnfilled() {
 void Cell::setCoords(int r, int c) { row = r; col = c; }
 
 void Cell::setType(BlockType b) { type = b; }
-void Cell::attach(Observer *o) {
-  observers.emplace_back(o);
-}
 
-BlockType Cell::bType() {
-  return type;
-}
+void Cell::attach(Observer *o) { observers.emplace_back(o); }
 
-CellType Cell::cType() {
-  return CellType::InBlock;
-}
+BlockType Cell::bType() { return type; }
 
+CellType Cell::cType() { return CellType::InBlock; }
 
 void Cell::notify(Cell &c) {
   isFilled = false;

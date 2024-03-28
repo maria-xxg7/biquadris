@@ -47,6 +47,13 @@ class Board {
     // display in the next block region (maybe update text display, and 
     // update the block level based on cur level)
     void getNext(); 
+    
+
+    // TEMP FUNCTION FOR TESTING ONLY!!!!
+    void setBlockType(BlockType b);
+
+
+
     // places block at the top left hand corner, checks loose cond if
     // cannot fit
     void moveBlock(string move);
