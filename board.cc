@@ -195,7 +195,9 @@ void Board::dropBlock() {
     theBoard[coords[i][0]][coords[i][1]].setUnfilled();
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(BlockType::JBlock);
-    colHeights[coords[i][1]] = maxDist - coords[i][0];
+    if (colHeights[coords[i][1]] > maxDist + coords[i][0]) {
+      colHeights[coords[i][1]] = maxDist + coords[i][0];
+    };
     cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
 }
