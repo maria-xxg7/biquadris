@@ -42,5 +42,5 @@ void TBlock::rotateBlockCCW() {
 }
 
 vector<int> TBlock::getLeftCorner() {
-    return vector<int> {2, 0};
+    return vector<int> {3, 1};
 }

@@ -24,8 +24,10 @@ class Board {
   TextDisplay *td;
   //GraphicsDisplay *gd;
   vector<vector<char>> lastConfig;
+  vector<vector<int>> coords;
   int totalShift = 0; int totalDown = 0;
   bool clear = true;
+  vector<int> colHeights;
   RotateCW lastRotation;
 
   void clearBoard();

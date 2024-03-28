@@ -22,6 +22,9 @@ void Board::init() {
   //delete gd;
   td = new TextDisplay();
   nextBlock = BlockType::IBlock;
+  
+  vector<int> colRow (boardWidth, 0);
+  colHeights = colRow;
 
   // gd = new GraphicsDisplay(graphics, gridSize); 
 
@@ -72,6 +75,7 @@ void Board::moveBlock(string move) {
   unique_ptr<BlockFactory> makeBlock;
   unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
   int shift = 0; int down = 0;
+  bool save = false;
 
   while (lastRotation != newBlock->getRotation()) {
     newBlock->rotateBlockCW();
@@ -91,11 +95,12 @@ void Board::moveBlock(string move) {
   } else if (move == "") {
     shift = 0;
     down = 0;
-  } else {
+  } else if (move == "counterclockwise") {
     newBlock->rotateBlockCCW();
+  } else {
+    save = true;
   }
 
-  cout << clear << endl;
   int blockDim = 4;
 
   if (!clear) {
@@ -116,15 +121,19 @@ void Board::moveBlock(string move) {
       if (blockBlock[i][j] != ' ') {
       //     // cout << "(" << i + totalDown + down << "," << j + totalShift + shift << ")" << endl;
       //     // cout << i << " & " << j << endl;
-
         if (move != "") {
           theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
           theBoard[i + totalDown + down][j + totalShift + shift].setType(BlockType::JBlock);
+          if (save) {
+            coords.emplace_back(i + totalDown + down, j + totalShift + shift);
+          }
         } else {
           theBoard[i][j].setFilled();
           theBoard[i][j].setType(BlockType::JBlock);
+          if (save) {
+            coords.emplace_back(i, j);
+          }
         }
-
       }
     }
   }
@@ -138,6 +147,10 @@ void Board::moveBlock(string move) {
     lastConfig = blockBlock;
     lastRotation = newBlock->getRotation();
   }
+}
+
+void Board::dropBlock() {
+
 }
 
 ostream &operator<<(ostream &out, const Board &b) {

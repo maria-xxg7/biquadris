@@ -41,7 +41,7 @@ void Cell::notify(Cell &c) {
 
 void Cell::notifyAllObservers() {
   for (auto o: observers) {
-    if (o->rType() == RowType::All) {
+    if (o->cType() == CellType::All) {
       o->notify(*this);
     }
   }
