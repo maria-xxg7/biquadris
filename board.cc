@@ -129,7 +129,7 @@ void Board::moveBlock(string move) {
           theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
           if (save) {
             vector<int> point {i + totalDown + down, j + totalShift + shift};
-            cout << "(" << point[0] << "," << point[1] << ")" << endl;
+            // cout << "(" << point[0] << "," << point[1] << ")" << endl;
             coords.emplace_back(point);
             lastRotation = RotateCW::Degree0;
           }
@@ -138,7 +138,7 @@ void Board::moveBlock(string move) {
           theBoard[i][j].setFilled();
           if (save) {
             vector<int> point {i, j};
-            cout << "(" << point[0] << "," << point[1] << ")" << endl;
+            // cout << "(" << point[0] << "," << point[1] << ")" << endl;
             coords.emplace_back(point);
             lastRotation = RotateCW::Degree0;
           }

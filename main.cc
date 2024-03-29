@@ -21,24 +21,5 @@ int main() {
   b.moveBlock("save");
   b.dropBlock();
 
-  b.setBlockType(BlockType::IBlock);
-  b.moveBlock("");
-  b.moveBlock("clockwise");
-  b.moveBlock("save");
-  b.dropBlock();
-
-  b.setBlockType(BlockType::TBlock);
-  b.moveBlock("");
-  b.moveBlock("counterclockwise");
-  b.moveBlock("right");
-  b.moveBlock("right");
-  b.moveBlock("right");
-  b.moveBlock("right");
-  b.moveBlock("right");
-  b.moveBlock("right");
-  b.moveBlock("right");
-  b.moveBlock("save");
-  b.dropBlock();
-
   cout << b;
 }
