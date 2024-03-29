@@ -20,6 +20,9 @@ int main() {
   b.moveBlock("clockwise");
   b.moveBlock("clockwise");
   b.moveBlock("right");
+  b.moveBlock("right");
+  b.moveBlock("right");
+  b.moveBlock("right");
   b.moveBlock("save");
   b.dropBlock();
 
