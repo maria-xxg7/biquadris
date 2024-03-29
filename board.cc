@@ -225,7 +225,10 @@ bool Board::checkLineClear(int row) {
 
 void Board::lineClear(int row) { // add lose condition, and check block type disappear
   // update score
-  curScore += level * level;
+  curScore += (level + 1) * (level + 1);
+  if (curScore > highScore) {
+    highScore = curScore;
+  }
   // update colHeights since moving everything down
   for (int i = 0; i < boardWidth; ++i) {
     --colHeights[i];
@@ -262,10 +265,12 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
 
 ostream &operator<<(ostream &out, const Board &b) {
   //print level and score (move to board class)
-  string level = "Level:";
-  string score = "Score:";
-  out << level << endl;
-  out << score << endl;
+  string level = "Level: ";
+  string score = "Score: ";
+  string hiScore = "Hi Score: ";
+  out << level << b.level << endl;
+  out << score << b.curScore << endl;
+  out << hiScore << b.highScore << endl;
   out << *b.td;
   return out;
 }
