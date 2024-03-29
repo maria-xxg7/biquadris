@@ -22,6 +22,7 @@ void Board::init() {
   //delete gd;
   td = new TextDisplay();
   nextBlock = BlockType::JBlock;
+  lastRotation = RotateCW::Degree0;
   
   vector<int> colRow (boardWidth, boardHeight + reserved);
   colHeights = colRow;
@@ -36,8 +37,8 @@ void Board::init() {
   for (int row = 0; row < boardHeight + reserved; ++row) {
     for (int col = 0; col < boardWidth; ++col) {
 
+      theBoard[row][col].setType(BlockType::empty);
       theBoard[row][col].setCoords(row, col);
-      // theBoard[row][col].setType(BlockType::empty);
       theBoard[row][col].attach(td);
       //theBoard[row][col].attach(gd);
       
@@ -77,20 +78,17 @@ void Board::setBlockType(BlockType b) {
 
 void Board::moveBlock(string move) {
   unique_ptr<BlockFactory> makeBlock;
-  unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
+  unique_ptr<Block> newBlock = makeBlock->buildBlock(BlockType::TBlock);
   int shift = 0; int down = 0;
   bool save = false;
 
   if (move == "") {
     while (newBlock->getRotation() != RotateCW::Degree0) {
-      // newBlock->rotateBlockCW();
-      // cout << newBlock->getRotationString() << endl;
-
+      newBlock->rotateBlockCW();
     }
   } else if (move != "") {
     while (lastRotation != newBlock->getRotation()) {
-      // newBlock->rotateBlockCW();
-      //     cout << newBlock->getRotationString() << endl;
+      newBlock->rotateBlockCW();
     }
   }
 
@@ -115,15 +113,7 @@ void Board::moveBlock(string move) {
     save = true;
   }
 
-  // newBlock->rotateBlockCW();
   vector<vector<char>> blockBlock = newBlock->getConfig();
-
-  // for (int i = 0; i < blockDim; ++i) {
-  //   for (int j = 0; j < blockDim; ++j) {
-  //     cout << blockBlock[i][j];
-  //   }
-  //   cout << endl;
-  // }
 
   for (int i = 0; i < blockDim; ++i) {
     for (int j = 0; j < blockDim; ++j) {
@@ -135,23 +125,15 @@ void Board::moveBlock(string move) {
       }
       if (blockBlock[i][j] != ' ') {
         if (move != "") {
-          theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
+          theBoard[i + totalDown + down][j + totalShift + shift].setType(BlockType::TBlock);
           theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
           if (save) {
-            // cout << "saving" << endl;
             vector<int> point {i + totalDown + down, j + totalShift + shift};
-            // cout << "(" << point[0] << "," << point[1] << ")" << endl;
             coords.emplace_back(point);
           }
         } else {
-          theBoard[i][j].setType(nextBlock);
+          theBoard[i][j].setType(BlockType::TBlock);
           theBoard[i][j].setFilled();
-          // if (save) {
-          //   vector<int> point {i, j};
-            // cout << "(" << point[0] << "," << point[1] << ")" << endl;
-          //   coords.emplace_back(point);
-          //   lastRotation = RotateCW::Degree0;
-          // }
         }
       }
     }
