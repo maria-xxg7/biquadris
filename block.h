@@ -19,6 +19,7 @@ class Block {
 
     vector<vector<char>> getConfig() const; 
     RotateCW getRotation() const;
+    string getRotationString() const;
     //shared_ptr<Cell> getBlock() const;
     virtual vector<int> getLeftCorner();
     virtual void rotateBlockCW() = 0;    

@@ -14,6 +14,17 @@ vector<int> Block::getLeftCorner() {
     return vector<int> {3, 0};
 }
 
+string Block::getRotationString() const {
+  if (curRotation == RotateCW::Degree0) {
+    return "Degree0";
+  } else if (curRotation == RotateCW::Degree90) {
+    return "Degree90";
+  } else if (curRotation == RotateCW::Degree180) {
+    return "Degree180";
+  } else {
+    return "Degree270";
+  }
+}
 // shared_ptr<Cell> Block::getBlock() const {
 //   return theBlock;
 // }
