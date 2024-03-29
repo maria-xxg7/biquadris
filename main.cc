@@ -23,8 +23,8 @@ int main() {
   b.moveBlock("right");
   b.moveBlock("right");
   b.moveBlock("right");
-  // b.moveBlock("save");
-  // b.dropBlock();
+  b.moveBlock("save");
+  b.dropBlock();
 
   cout << b;
 }
