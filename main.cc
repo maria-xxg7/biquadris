@@ -9,29 +9,29 @@ int main() {
   b.init();
   b.setBlockType(BlockType::TBlock); // use this to set the block type for the next block :)
   b.moveBlock("");
-  cout << b;
+  // cout << b;
   b.moveBlock("counterclockwise");
-   cout << b;
+  //  cout << b;
   // b.moveBlock("right");
   b.moveBlock("save");
   b.dropBlock();
-  cout << b;
+  // cout << b;
 
   b.setBlockType(BlockType::TBlock); // use this to set the block type for the next block :)
   b.moveBlock("");
-  cout << b;
+  // cout << b;
   b.moveBlock("clockwise");
-  cout << b;
+  // cout << b;
   // b.moveBlock("clockwise");
   // b.moveBlock("clockwise");
   b.moveBlock("right");
-   cout << b;
+  //  cout << b;
   b.moveBlock("right");
-   cout << b;
+  //  cout << b;
   b.moveBlock("right");
-   cout << b;
+  //  cout << b;
   b.moveBlock("right");
-   cout << b;
+  //  cout << b;
   b.moveBlock("save");
   b.dropBlock();
   cout << b;
