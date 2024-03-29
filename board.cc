@@ -159,6 +159,7 @@ void Board::moveBlock(string move) {
 }
 
 void Board::dropBlock() {
+  vector<shared_ptr<Cell>> oneBlock;
   // cout << "Drop" << endl;
   // if (nextBlock == BlockType::OBlock) {cout << "oblock" << endl;}
   // for (int i = 0; i < 4; ++i) {
@@ -200,17 +201,23 @@ void Board::dropBlock() {
     // and checked if each block fits based on this difference
 
   // once we know which distance is the most suitable, we set the board
+  
   for (int i = 0; i < blockDim; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0]][coords[i][1]].setType(BlockType::empty);
     theBoard[coords[i][0]][coords[i][1]].setUnfilled();
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
+
+    oneBlock.emplace_back(make_shared<Cell>(theBoard[coords[i][0] + maxDist][coords[i][1]]));
+
     if (colHeights[coords[i][1]] > maxDist + coords[i][0]) {
       colHeights[coords[i][1]] = maxDist + coords[i][0];
-    };
+    }
     // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
+  cout << "cells in block: " << oneBlock[0].use_count();
+  allBlocks.emplace_back(oneBlock);
   coords.clear();
 }
 
