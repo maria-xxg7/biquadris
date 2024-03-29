@@ -1,0 +1,20 @@
+init
+set I
+clockwise
+clockwise
+clockwise
+clockwise
+drop
+set I
+counterclockwise
+counterclockwise
+counterclockwise
+drop 
+set I
+clockwise
+counterclockwise
+counterclockwise
+right
+right 
+right
+drop

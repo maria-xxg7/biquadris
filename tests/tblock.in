@@ -1,0 +1,23 @@
+init
+set T
+clockwise
+clockwise
+clockwise
+clockwise
+drop
+set T
+counterclockwise
+counterclockwise
+counterclockwise
+counterclockwise
+drop 
+set T
+clockwise
+counterclockwise
+counterclockwise
+right
+clockwise
+clockwise
+clockwise
+right
+drop

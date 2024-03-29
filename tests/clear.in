@@ -1,0 +1,11 @@
+init
+set I
+drop
+set O
+right
+right
+right 
+left
+drop
+set Z
+drop
