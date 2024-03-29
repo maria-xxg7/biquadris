@@ -1,0 +1,19 @@
+init
+set I
+drop
+set I
+right
+right
+right
+right
+drop
+set L
+right
+right
+right
+right
+right
+right
+right
+right
+drop

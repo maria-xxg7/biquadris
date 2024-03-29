@@ -19,8 +19,8 @@ class Board {
   vector<shared_ptr<Cell>> allBlocks;
   const int boardWidth = 11, boardHeight = 15, reserved = 3, blockDim = 4;
   int level, curScore, highScore;
-  bool lose;
-  BlockType nextBlock, curBlock;
+  bool lose = false;
+  BlockType nextBlock;
   TextDisplay *td;
   //GraphicsDisplay *gd;
   vector<vector<char>> lastConfig;
@@ -66,8 +66,6 @@ class Board {
     // clears specified row, updates high and cur score and checks if 
     // blocks are cleards 
     void lineClear(int row);
-    // called in place and drop
-    bool isLose();
     
     friend ostream &operator<<(ostream &out, const Board &b);
 };

@@ -2,7 +2,7 @@
 #include <memory>
 
 Board::Board() : theBoard {}, level {0}, curScore {0}, highScore {0}, 
-  nextBlock{BlockType::empty}, curBlock{}, td{new TextDisplay{}} //, gd{nullptr}
+  nextBlock{BlockType::empty}, td{new TextDisplay{}} // gd{nullptr}
   {}
 
 Board::~Board() {
@@ -14,7 +14,6 @@ void Board::clearBoard() {
   theBoard.clear();
   curScore = 0;
   nextBlock = BlockType::empty;
-  curBlock = BlockType::empty;
 }
 
 void Board::init() {
@@ -213,6 +212,52 @@ void Board::dropBlock() {
     // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
   coords.clear();
+}
+
+bool Board::checkLineClear(int row) {
+  for (int i = 0; i < boardWidth; ++i) {
+    if (theBoard[row][i].bType() == BlockType::empty) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void Board::lineClear(int row) { // add lose condition, and check block type disappear
+  // update score
+  curScore += level * level;
+  // update colHeights since moving everything down
+  for (int i = 0; i < boardWidth; ++i) {
+    --colHeights[i];
+  }
+  
+  // delete the row that is cleared
+  vector<vector<Cell>>::iterator it = theBoard.begin();
+  theBoard.erase(it + row);
+  // input a new empty row at the top
+  vector<Cell> newRow(boardWidth, Cell());
+  theBoard.insert(theBoard.begin(), newRow);
+
+  for (int col = 0; col < boardWidth; ++col) {
+    theBoard[0][col].setType(BlockType::empty);
+    theBoard[0][col].setCoords(0, col);
+  }
+
+  // update td
+  for (int i = row; i >= 0; --i) {
+    for (int col = 0; col < boardWidth; ++col) {
+        theBoard[i][col].attach(td);
+        theBoard[i][col].setCoords(i, col);
+
+        if (theBoard[i][col].bType() == BlockType::empty) {
+          theBoard[i][col].setUnfilled();
+          // cout << theBoard[i][col].getState() << " ";
+        } else {
+          theBoard[i][col].setFilled();
+        }
+    }
+    // cout << endl;
+  }
 }
 
 ostream &operator<<(ostream &out, const Board &b) {
