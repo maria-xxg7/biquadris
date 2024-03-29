@@ -60,7 +60,7 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
   }
   // print the bottom border
   cout << '+';
-  for (int i = 0; i < td.boardWidth; ++i) { cout << '_'; }
+  for (int i = 0; i < td.boardWidth; ++i) { cout << '-'; }
   cout << endl;
   return out;
 }
