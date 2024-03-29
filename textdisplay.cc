@@ -1,7 +1,7 @@
 #include "textdisplay.h"
 
 TextDisplay::TextDisplay() {
-  vector<char> row(boardWidth, ' ');
+  vector<char> row(boardWidth, '.');
   for (int i = 0; i < boardHeight; ++i) {
     theDisplay.emplace_back(row);
   }
@@ -31,7 +31,7 @@ void TextDisplay::notify(Cell &c) {
       theDisplay[c.getRow()][c.getCol()] = 'T';
       break;
     case BlockType::empty:
-      theDisplay[c.getRow()][c.getCol()] = ' ';
+      theDisplay[c.getRow()][c.getCol()] = '.';
       break;
   }
 }
@@ -60,7 +60,7 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
   }
   // print the bottom border
   cout << '+';
-  for (int i = 0; i < td.boardWidth; ++i) { cout << '-'; }
+  for (int i = 0; i < td.boardWidth; ++i) { cout << '_'; }
   cout << endl;
   return out;
 }

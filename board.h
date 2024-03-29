@@ -52,8 +52,6 @@ class Board {
     // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setBlockType(BlockType b);
 
-
-
     // places block at the top left hand corner, checks loose cond if
     // cannot fit
     void moveBlock(string move);

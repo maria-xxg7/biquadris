@@ -21,7 +21,7 @@ void Board::init() {
   delete td;
   //delete gd;
   td = new TextDisplay();
-  nextBlock = BlockType::JBlock;
+  nextBlock = BlockType::empty;
   lastRotation = RotateCW::Degree0;
   
   vector<int> colRow (boardWidth, boardHeight + reserved);
@@ -78,7 +78,7 @@ void Board::setBlockType(BlockType b) {
 
 void Board::moveBlock(string move) {
   unique_ptr<BlockFactory> makeBlock;
-  unique_ptr<Block> newBlock = makeBlock->buildBlock(BlockType::TBlock);
+  unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
   int shift = 0; int down = 0;
   bool save = false;
 
@@ -91,12 +91,13 @@ void Board::moveBlock(string move) {
       newBlock->rotateBlockCW();
     }
   }
-
-  if (move == "left") {
+  if (move == "") {
+    shift = 0;
+    down = 0;
+  } else if (move == "left") {
     shift = -1;
     down = 0;
   } else if (move == "right") {
-    cout << "right" << endl;
     shift = 1;
     down = 0;
   } else if (move == "down") {
@@ -104,9 +105,6 @@ void Board::moveBlock(string move) {
     shift = 0;
   } else if (move == "clockwise") {
     newBlock->rotateBlockCW();
-  } else if (move == "") {
-    shift = 0;
-    down = 0;
   } else if (move == "counterclockwise") {
     newBlock->rotateBlockCCW();
   } else if (move == "save") {
@@ -115,24 +113,29 @@ void Board::moveBlock(string move) {
 
   vector<vector<char>> blockBlock = newBlock->getConfig();
 
-  for (int i = 0; i < blockDim; ++i) {
+  if (!clear) {
+   for (int i = 0; i < blockDim; ++i) {
     for (int j = 0; j < blockDim; ++j) {
-      if (!clear) {
         if (lastConfig[i][j] != ' ') {
           theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
           theBoard[i + totalDown][j + totalShift].setUnfilled();
         }
       }
+    }
+  }
+
+  for (int i = 0; i < blockDim; ++i) {
+    for (int j = 0; j < blockDim; ++j) {
       if (blockBlock[i][j] != ' ') {
         if (move != "") {
-          theBoard[i + totalDown + down][j + totalShift + shift].setType(BlockType::TBlock);
+          theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
           theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
           if (save) {
             vector<int> point {i + totalDown + down, j + totalShift + shift};
             coords.emplace_back(point);
           }
         } else {
-          theBoard[i][j].setType(BlockType::TBlock);
+          theBoard[i][j].setType(nextBlock);
           theBoard[i][j].setFilled();
         }
       }
@@ -143,14 +146,15 @@ void Board::moveBlock(string move) {
     clear = false; 
     lastConfig = blockBlock;
   } else {
-    totalShift += shift;
-    totalDown += down;
-
-    lastConfig = blockBlock;
     if (save) {
+      totalShift = 0;
+      totalDown = 0;
       lastRotation = RotateCW::Degree0;
     } else {
       lastRotation = newBlock->getRotation();
+      totalShift += shift;
+      totalDown += down;
+      lastConfig = blockBlock;
     }
   }
 }
@@ -167,14 +171,14 @@ void Board::dropBlock() {
   int maxDist =  0;
   // iterate throught each block, calculate the different for that one column,
   // and check if dropping all blocks by that distance will work
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < blockDim; ++i) {
     // cout << colHeights[coords[i][1]] << " and " << coords[i][0] << endl;
     bool validFit = true; // indicator that this dist did not work
     int tempDist = colHeights[coords[i][1]] - coords[i][0] - 1;
 
     //checking all other blocks with this tempDist
     // cout << "Checking dist wrt this point" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
-    for (int j = 0; j < 4; ++j) {
+    for (int j = 0; j < blockDim; ++j) {
       // cout << "NEW POINT: " << "(" << coords[j][0] << "," << coords[j][1] << ")" << endl;
       if (coords[j][0] + tempDist >= 18) { // out of bounds
 
@@ -197,7 +201,7 @@ void Board::dropBlock() {
     // and checked if each block fits based on this difference
 
   // once we know which distance is the most suitable, we set the board
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < blockDim; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0]][coords[i][1]].setType(BlockType::empty);
     theBoard[coords[i][0]][coords[i][1]].setUnfilled();
