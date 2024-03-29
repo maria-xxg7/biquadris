@@ -159,7 +159,7 @@ void Board::moveBlock(string move) {
 }
 
 void Board::dropBlock() {
-  cout << "Drop" << endl;
+  // cout << "Drop" << endl;
   // if (nextBlock == BlockType::OBlock) {cout << "oblock" << endl;}
   // for (int i = 0; i < 4; ++i) {
   //   cout << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
