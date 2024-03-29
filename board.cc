@@ -107,22 +107,19 @@ void Board::moveBlock(string move) {
     save = true;
   }
 
-  if (!clear) {
-    for (int i = 0; i < blockDim; ++i) {
-      for (int j = 0; j < blockDim; ++j) {
+
+
+  vector<vector<char>> blockBlock = newBlock->getConfig();
+
+  for (int i = 0; i < blockDim; ++i) {
+    for (int j = 0; j < blockDim; ++j) {
+      if (!clear) {
         if (lastConfig[i][j] != ' ') {
           theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
           theBoard[i + totalDown][j + totalShift].setUnfilled();
 
         }
       }
-    }
-  }
-
-  vector<vector<char>> blockBlock = newBlock->getConfig();
-
-  for (int i = 0; i < blockDim; ++i) {
-    for (int j = 0; j < blockDim; ++j) {
       if (blockBlock[i][j] != ' ') {
         if (move != "") {
           theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
