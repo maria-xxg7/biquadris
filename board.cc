@@ -210,42 +210,75 @@ void Board::moveBlock(string move) {
   }
 }
 
+// checks for lowest height cell can be dropped
+int Board::findNextHeight(int row, int col) {
+  for (int i = boardHeight + reserved - 1; i > row + 1; --i) {
+    cout << "Position checking " << i << endl;
+    if (theBoard[i][col].getState()) {
+      cout << "LOWEST POSSIBLE" << i << endl;
+      return i;
+    }
+  }
+  return boardHeight + reserved - 1;
+}
+
 void Board::dropBlock() {
   vector<shared_ptr<Cell>> oneBlock;
-  // cout << "Drop" << endl;
-  // if (nextBlock == BlockType::OBlock) {cout << "oblock" << endl;}
-  // for (int i = 0; i < 4; ++i) {
-  //   cout << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
-  // }
+
+  // erase block
+  for (int i = 0; i < blockDim; ++i) {
+    // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
+    theBoard[coords[i][0]][coords[i][1]].setType(BlockType::empty);
+    theBoard[coords[i][0]][coords[i][1]].setUnfilled();
+  }
 
   // running max of the most amount dropped, since in tetris there could be muliple
-  // we want lowest possible that it can go
+  // we want lowest possible that it can go based on all blocks max distance
   int maxDist =  0;
+  bool below = false; // if block is placed below maxHeight
+
   // iterate throught each block, calculate the different for that one column,
   // and check if dropping all blocks by that distance will work
   for (int i = 0; i < blockDim; ++i) {
-    // cout << colHeights[coords[i][1]] << " and " << coords[i][0] << endl;
+    // cout << "STARTING POINT: " << colHeights[coords[i][1]] << " and " << coords[i][0] << endl;
+    int tempDist = 0;
     bool validFit = true; // indicator that this dist did not work
-    int tempDist = colHeights[coords[i][1]] - coords[i][0] - 1;
+
+    // placed below maxHeight - since move checks this is valid
+    if (coords[i][0] > colHeights[coords[i][1]]) {
+      // cout << "cond less than" << endl;
+      below = true;
+      tempDist = findNextHeight(coords[i][0], coords[i][1]) - coords[i][0] - 1;
+      // cout << tempDist << endl;
+    } else {
+      // tempDist = colHeights[coords[i][1]] - coords[i][0] - 1;
+      tempDist = colHeights[coords[i][1]] - coords[i][0] - 1;
+    }
 
     //checking all other blocks with this tempDist
     // cout << "Checking dist wrt this point" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
     for (int j = 0; j < blockDim; ++j) {
       // cout << "NEW POINT: " << "(" << coords[j][0] << "," << coords[j][1] << ")" << endl;
       if (coords[j][0] + tempDist >= 18) { // out of bounds
-
-        // cout << "Out of Bounds: " << coords[j][0] << "and " << tempDist << endl;
+        // cout << "Out of Bounds 1: " << coords[j][0] << "and " << tempDist << endl;
         validFit = false; 
         break;
-      } else if (theBoard[coords[j][0] + tempDist][coords[j][1]].getState() == true) { // alr filled by another block
+      } else if (theBoard[coords[j][0] + tempDist][coords[j][1]].getState()) { // alr filled by another block
+        // cout << "Out of Bounds 2: " << coords[j][0] << "and " << tempDist << endl;
         validFit = false;
-         break;  
-      }
+         break;   
+        // iterate through to next height
+      } else if (coords[j][0] + tempDist > colHeights[coords[j][1]] && !below) {
+        // cout << "Out of Bounds 3: " << coords[j][0] << "and " << tempDist << endl;
+        validFit = false;
+      } 
+      // cout << "Good: " << coords[j][0] << " and " << tempDist << endl;
     } // exit this for loop by either breaking since one of the blocks didnt fit or we exit
       // after all the blocks are checked and fit
 
     // if all the blocks fit and it's distance is the current max, we update variable
     if (validFit && (tempDist > maxDist)) {
+      // cout << "Valid last dist" << tempDist << endl;
       // cout << "Point with max dist" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
       maxDist = tempDist;
     }
@@ -253,11 +286,9 @@ void Board::dropBlock() {
     // and checked if each block fits based on this difference
 
   // once we know which distance is the most suitable, we set the board
-  
+  // cout << "Max distance " << maxDist << endl;
   for (int i = 0; i < blockDim; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
-    theBoard[coords[i][0]][coords[i][1]].setType(BlockType::empty);
-    theBoard[coords[i][0]][coords[i][1]].setUnfilled();
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
 
@@ -268,7 +299,7 @@ void Board::dropBlock() {
     }
     // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
-  cout << "cells in block: " << oneBlock[0].use_count();
+  // cout << "cells in block: " << oneBlock[0].use_count();
   allBlocks.emplace_back(oneBlock);
   coords.clear();
 }

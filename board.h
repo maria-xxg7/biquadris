@@ -32,6 +32,8 @@ class Board {
 
   void clearBoard();
   
+  int findNextHeight(int row, int col);
+  
   class BlockFactory {
     public:
       static unique_ptr<Block> buildBlock(BlockType b);
