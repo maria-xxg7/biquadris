@@ -236,6 +236,7 @@ void Board::dropBlock() {
   // we want lowest possible that it can go based on all blocks max distance
   int maxDist =  0;
   bool below = false; // if block is placed below maxHeight
+  int validNum = 0;
 
   // iterate throught each block, calculate the different for that one column,
   // and check if dropping all blocks by that distance will work
@@ -243,7 +244,6 @@ void Board::dropBlock() {
     // cout << "STARTING POINT: " << colHeights[coords[i][1]] << " and " << coords[i][0] << endl;
     int tempDist = 0;
     bool validFit = true; // indicator that this dist did not work
-
     // placed below maxHeight - since move checks this is valid
     if (coords[i][0] > colHeights[coords[i][1]]) {
       // cout << "cond less than" << endl;
@@ -259,7 +259,7 @@ void Board::dropBlock() {
     // cout << "Checking dist wrt this point" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
     for (int j = 0; j < blockDim; ++j) {
       // cout << "NEW POINT: " << "(" << coords[j][0] << "," << coords[j][1] << ")" << endl;
-      if (coords[j][0] + tempDist >= 18) { // out of bounds
+      if (((coords[j][0] + tempDist) >= 18) || ((coords[j][0] + tempDist) < 3)) { // out of bounds
         // cout << "Out of Bounds 1: " << coords[j][0] << "and " << tempDist << endl;
         validFit = false; 
         break;
@@ -277,16 +277,22 @@ void Board::dropBlock() {
       // after all the blocks are checked and fit
 
     // if all the blocks fit and it's distance is the current max, we update variable
-    if (validFit && (tempDist > maxDist)) {
+    if (validFit) {
+      ++validNum;
+      if (tempDist > maxDist) {
       // cout << "Valid last dist" << tempDist << endl;
       // cout << "Point with max dist" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
-      maxDist = tempDist;
+        maxDist = tempDist;
+      }
     }
   } // after this for is exited, we've checked that blocks col height distance 
     // and checked if each block fits based on this difference
-
   // once we know which distance is the most suitable, we set the board
   // cout << "Max distance " << maxDist << endl;
+  if (validNum == 0) {
+    lose = true;
+    return;
+  }
   for (int i = 0; i < blockDim; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
@@ -351,6 +357,10 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     }
     // cout << endl;
   }
+}
+
+bool Board::isLose() const {
+  return lose;
 }
 
 ostream &operator<<(ostream &out, const Board &b) {

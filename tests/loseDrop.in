@@ -1,0 +1,15 @@
+init
+set I
+counterclockwise
+drop
+set I
+clockwise
+drop
+set I
+drop
+set I
+counterclockwise
+drop
+set I
+counterclockwise
+drop

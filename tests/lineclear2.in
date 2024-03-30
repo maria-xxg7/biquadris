@@ -1,0 +1,63 @@
+init
+set I
+drop
+set I
+right
+right
+right
+right
+drop
+set I
+drop
+set I
+right
+right
+right
+right
+drop
+set J
+drop
+set O
+right
+right
+right
+right
+right
+right
+right
+right
+drop
+set T
+right
+counterclockwise
+counterclockwise
+drop
+set L
+right
+right
+right
+right
+right
+right
+right
+right
+down
+down
+down
+down
+down
+down
+down
+down
+down
+clockwise
+clockwise
+down
+down
+down
+down
+down
+clockwise
+right
+drop
+

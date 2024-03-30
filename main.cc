@@ -70,6 +70,9 @@ int main() {
         } else if (cmd == "drop") {
           b.moveBlock("save");
           b.dropBlock();
+          if (b.isLose()) {
+            cout << "LOSE! END GAME!" << endl;
+          }
           for (int i = 0; i < 18; ++i) {
             if (b.checkLineClear(i)) {
               b.lineClear(i);

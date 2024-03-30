@@ -70,6 +70,8 @@ class Board {
     // clears specified row, updates high and cur score and checks if 
     // blocks are cleards 
     void lineClear(int row);
+
+    bool isLose() const;
     
     friend ostream &operator<<(ostream &out, const Board &b);
 };
