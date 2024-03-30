@@ -52,6 +52,8 @@ class Board {
     // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setBlockType(BlockType b);
 
+    bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
+
     // places block at the top left hand corner, checks loose cond if
     // cannot fit
     void moveBlock(string move);
