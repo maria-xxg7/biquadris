@@ -164,7 +164,6 @@ void Board::moveBlock(string move) {
   }
 
   isSafe = validMove(&blockBlock, shift, down, placing);
-  cout << isSafe << endl;
   if (isSafe) {
     for (int i = 0; i < blockDim; ++i) {
       for (int j = 0; j < blockDim; ++j) {
