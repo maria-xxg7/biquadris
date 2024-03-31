@@ -48,6 +48,11 @@ void Board::init() {
       }
     }
   }
+
+  vector<shared_ptr<Cell>> sharedRow (boardWidth, make_shared<Cell>());
+  for (int shared_r = 0; shared_r < boardHeight + reserved; ++shared_r) {
+    allBlocks.emplace_back(sharedRow);
+  }
 }
 
 unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
@@ -77,29 +82,15 @@ void Board::setBlockType(BlockType b) {
 
 bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, bool placing) {
   bool isSafe = true;
-
-  if (placing) { // check if the block can be placed
-    for (int i = 0; i < blockDim; ++i) {
-      for (int j = 0; j < blockDim; ++j) {
-        if ((*blockBlock)[i][j] != ' ') {
-          if (theBoard[i][j].bType() != BlockType::empty) { 
-            isSafe = false; // no longer safe to place block
-            lose = true;
-          }
-        }
-      }
-    }
-  } else { // check if the block can be moved
-    for (int i = 0; i < blockDim; ++i) {
-      for (int j = 0; j < blockDim; ++j) {
-        if ((*blockBlock)[i][j] != ' ') {
-          if (i + totalDown + down > boardHeight + reserved - 1) { 
-            isSafe = false; 
-          } else if (j + totalShift + shift < 0 || j + totalShift + shift > 10) {
-            isSafe = false;
-          } else if (theBoard[i + totalDown + down][j + totalShift + shift].bType() != BlockType::empty) { 
-            isSafe = false; // no longer safe to place block
-          }
+  for (int i = 0; i < blockDim; ++i) {
+    for (int j = 0; j < blockDim; ++j) {
+      if ((*blockBlock)[i][j] != ' ') {
+        if (i + totalDown + down > boardHeight + reserved - 1) { 
+          isSafe = false; 
+        } else if (j + totalShift + shift < 0 || j + totalShift + shift > 10) {
+          isSafe = false;
+        } else if (theBoard[i + totalDown + down][j + totalShift + shift].bType() != BlockType::empty) { 
+          isSafe = false; // no longer safe to place block
         }
       }
     }
@@ -114,11 +105,8 @@ void Board::moveBlock(string move) {
   bool save = false;
   bool isSafe = true;
   bool placing = false;
-  if (move == "") { 
-    placing = true; 
-  } else {
-    placing = false;
-  }
+
+  move == "" ? placing = true : placing = false;
 
   if (move == "") {
     while (newBlock->getRotation() != RotateCW::Degree0) {
@@ -152,6 +140,19 @@ void Board::moveBlock(string move) {
 
   vector<vector<char>> blockBlock = newBlock->getConfig();
 
+  if (placing) { // check if the block can be placed
+    for (int i = 0; i < blockDim; ++i) {
+      for (int j = 0; j < blockDim; ++j) {
+        if ((blockBlock)[i][j] != ' ') {
+          if (theBoard[i][j].bType() != BlockType::empty) { 
+            lose = true;
+            return;
+          }
+        }
+      }
+    }
+  } 
+  
   if (!clear) {
     for (int i = 0; i < blockDim; ++i) {
       for (int j = 0; j < blockDim; ++j) {
@@ -164,6 +165,7 @@ void Board::moveBlock(string move) {
   }
 
   isSafe = validMove(&blockBlock, shift, down, placing);
+
   if (isSafe) {
     for (int i = 0; i < blockDim; ++i) {
       for (int j = 0; j < blockDim; ++j) {
@@ -223,8 +225,6 @@ int Board::findNextHeight(int row, int col) {
 }
 
 void Board::dropBlock() {
-  vector<shared_ptr<Cell>> oneBlock;
-
   // erase block
   for (int i = 0; i < blockDim; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
@@ -294,6 +294,11 @@ void Board::dropBlock() {
     return;
   }
 
+  shared_ptr<Cell> headCell = allBlocks[coords[0][0] + maxDist][coords[0][1]];
+  for (int i = 1; i < blockDim; ++i) {
+    allBlocks[coords[i][0] + maxDist][coords[i][1]] = headCell;
+  }
+
   for (int i = 0; i < blockDim; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
@@ -304,7 +309,7 @@ void Board::dropBlock() {
     }
     // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
-
+  cout << "cells in block: " << endl;
   coords.clear();
 }
 
