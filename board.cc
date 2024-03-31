@@ -188,6 +188,7 @@ void Board::moveBlock(string move) {
       }
     }
 
+
     if (move == "") {
       clear = false; 
       lastConfig = blockBlock;
