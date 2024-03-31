@@ -1,0 +1,19 @@
+init
+set I
+counterclockwise
+drop
+set I
+counterclockwise
+drop
+set I
+counterclockwise
+drop
+set O
+clockwise
+clockwise
+drop
+set I
+counterclockwise
+counterclockwise
+drop
+set Z
