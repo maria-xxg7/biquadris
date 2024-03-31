@@ -155,65 +155,68 @@ void Board::moveBlock(string move) {
       }
     }
   } 
-  
-  if (!clear && !lose) {
-    for (int i = 0; i < blockDim; ++i) {
-      for (int j = 0; j < blockDim; ++j) {
-        if (lastConfig[i][j] != ' ') {
-          theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
-          theBoard[i + totalDown][j + totalShift].setUnfilled();
-        }
-      }
-    }
-  }
-
-  isSafe = validMove(&blockBlock, shift, down, placing);
-
-  if (isSafe && !lose) {
-    for (int i = 0; i < blockDim; ++i) {
-      for (int j = 0; j < blockDim; ++j) {
-        if (blockBlock[i][j] != ' ') {
-          if (move != "") {
-            theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
-            theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
-            if (save) {
-              vector<int> point {i + totalDown + down, j + totalShift + shift};
-              coords.emplace_back(point);
+  if (lose) {
+    return;
+  } else {
+    if (!clear) {
+        for (int i = 0; i < blockDim; ++i) {
+          for (int j = 0; j < blockDim; ++j) {
+            if (lastConfig[i][j] != ' ') {
+              theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
+              theBoard[i + totalDown][j + totalShift].setUnfilled();
             }
-          } else {
-            theBoard[i][j].setType(nextBlock);
-            theBoard[i][j].setFilled();
           }
         }
       }
-    }
+
+      isSafe = validMove(&blockBlock, shift, down, placing);
+
+      if (isSafe) {
+        for (int i = 0; i < blockDim; ++i) {
+          for (int j = 0; j < blockDim; ++j) {
+            if (blockBlock[i][j] != ' ') {
+              if (move != "") {
+                theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
+                theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
+                if (save) {
+                  vector<int> point {i + totalDown + down, j + totalShift + shift};
+                  coords.emplace_back(point);
+                }
+              } else {
+                theBoard[i][j].setType(nextBlock);
+                theBoard[i][j].setFilled();
+              }
+            }
+          }
+        }
 
 
-    if (move == "") {
-      clear = false; 
-      lastConfig = blockBlock;
-    } else {
-      if (save) {
-        totalShift = 0;
-        totalDown = 0;
-        lastRotation = RotateCW::Degree0;
+        if (move == "") {
+          clear = false; 
+          lastConfig = blockBlock;
+        } else {
+          if (save) {
+            totalShift = 0;
+            totalDown = 0;
+            lastRotation = RotateCW::Degree0;
+          } else {
+            lastRotation = newBlock->getRotation();
+            totalShift += shift;
+            totalDown += down;
+            lastConfig = blockBlock;
+          }
+        }
       } else {
-        lastRotation = newBlock->getRotation();
-        totalShift += shift;
-        totalDown += down;
-        lastConfig = blockBlock;
-      }
-    }
-  } else if (!lose) {
-    for (int i = 0; i < blockDim; ++i) {
-      for (int j = 0; j < blockDim; ++j) {
-        if (lastConfig[i][j] != ' ') {
-          theBoard[i + totalDown][j + totalShift].setType(nextBlock);
-          theBoard[i + totalDown][j + totalShift].setFilled();
+        for (int i = 0; i < blockDim; ++i) {
+          for (int j = 0; j < blockDim; ++j) {
+            if (lastConfig[i][j] != ' ') {
+              theBoard[i + totalDown][j + totalShift].setType(nextBlock);
+              theBoard[i + totalDown][j + totalShift].setFilled();
+            }
+          }
         }
       }
-    }
-  }
+  } 
 }
 
 // checks for lowest height cell can be dropped
