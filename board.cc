@@ -345,17 +345,31 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
   for (int i = 0; i < boardWidth; ++i) {
     --colHeights[i];
   }
-  
+
+  for (int i = 0; i < boardWidth; ++i) {
+    cout << "Count before at col " << i << ": " << allBlocks[16][i].use_count() << endl;
+  }
+
   // delete the row that is cleared
   vector<vector<Cell>>::iterator it = theBoard.begin();
   theBoard.erase(it + row);
+  vector<vector<shared_ptr<Cell>>>::iterator sit = allBlocks.begin();
+  allBlocks.erase(sit + row);
   // input a new empty row at the top
   vector<Cell> newRow(boardWidth, Cell());
   theBoard.insert(theBoard.begin(), newRow);
+  vector<shared_ptr<Cell>> newSRow(boardWidth, make_shared<Cell>());
+  allBlocks.insert(allBlocks.begin(), newSRow);
 
   for (int col = 0; col < boardWidth; ++col) {
     theBoard[0][col].setType(BlockType::empty);
     theBoard[0][col].setCoords(0, col);
+    allBlocks[0][col].reset();
+    allBlocks[0][col] = make_shared<Cell>(theBoard[0][col]);
+  }
+
+  for (int i = 0; i < boardWidth; ++i) {
+    cout << "Count after at col " << i << ": " << allBlocks[17][i].use_count() << endl;
   }
 
   // update td
