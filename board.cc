@@ -33,9 +33,14 @@ void Board::init() {
     theBoard.emplace_back(new_row);
   }
 
+  vector<shared_ptr<Cell>> sharedRow (boardWidth, make_shared<Cell>());
+  for (int shared_r = 0; shared_r < boardHeight + reserved; ++shared_r) {
+    allBlocks.emplace_back(sharedRow);
+  }
+
   for (int row = 0; row < boardHeight + reserved; ++row) {
     for (int col = 0; col < boardWidth; ++col) {
-
+      allBlocks[row][col].reset();
       theBoard[row][col].setType(BlockType::empty);
       theBoard[row][col].setCoords(row, col);
       theBoard[row][col].attach(td);
@@ -49,10 +54,9 @@ void Board::init() {
     }
   }
 
-  vector<shared_ptr<Cell>> sharedRow (boardWidth, make_shared<Cell>());
-  for (int shared_r = 0; shared_r < boardHeight + reserved; ++shared_r) {
-    allBlocks.emplace_back(sharedRow);
-  }
+
+
+  // cout << "in use: " << allBlocks[0][0].use_count() << endl;
 }
 
 unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
@@ -146,14 +150,13 @@ void Board::moveBlock(string move) {
         if ((blockBlock)[i][j] != ' ') {
           if (theBoard[i][j].bType() != BlockType::empty) { 
             lose = true;
-            return;
           }
         }
       }
     }
   } 
   
-  if (!clear) {
+  if (!clear && !lose) {
     for (int i = 0; i < blockDim; ++i) {
       for (int j = 0; j < blockDim; ++j) {
         if (lastConfig[i][j] != ' ') {
@@ -166,7 +169,7 @@ void Board::moveBlock(string move) {
 
   isSafe = validMove(&blockBlock, shift, down, placing);
 
-  if (isSafe) {
+  if (isSafe && !lose) {
     for (int i = 0; i < blockDim; ++i) {
       for (int j = 0; j < blockDim; ++j) {
         if (blockBlock[i][j] != ' ') {
@@ -200,7 +203,7 @@ void Board::moveBlock(string move) {
         lastConfig = blockBlock;
       }
     }
-  } else {
+  } else if (!lose) {
     for (int i = 0; i < blockDim; ++i) {
       for (int j = 0; j < blockDim; ++j) {
         if (lastConfig[i][j] != ' ') {
@@ -294,9 +297,9 @@ void Board::dropBlock() {
     return;
   }
 
-  shared_ptr<Cell> headCell = allBlocks[coords[0][0] + maxDist][coords[0][1]];
+  // shared_ptr<Cell> headCell = allBlocks[coords[0][0] + maxDist][coords[0][1]];
   for (int i = 1; i < blockDim; ++i) {
-    allBlocks[coords[i][0] + maxDist][coords[i][1]] = headCell;
+    allBlocks[coords[i][0] + maxDist][coords[i][1]] = allBlocks[coords[0][0] + maxDist][coords[0][1]];
   }
 
   for (int i = 0; i < blockDim; ++i) {
@@ -309,7 +312,7 @@ void Board::dropBlock() {
     }
     // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
-  cout << "cells in block: " << endl;
+  cout << "cells in block: " << allBlocks[coords[0][0] + maxDist][coords[0][1]].use_count() << endl;
   coords.clear();
 }
 
