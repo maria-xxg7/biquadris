@@ -31,7 +31,10 @@ class Board {
   RotateCW lastRotation;
 
   void clearBoard();
-  
+
+  // checks if the move is valid
+  bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
+
   int findNextHeight(int row, int col);
   
   class BlockFactory {
@@ -53,8 +56,6 @@ class Board {
 
     // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setBlockType(BlockType b);
-
-    bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
 
     // places block at the top left hand corner, checks loose cond if
     // cannot fit

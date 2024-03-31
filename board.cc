@@ -293,20 +293,18 @@ void Board::dropBlock() {
     lose = true;
     return;
   }
+
   for (int i = 0; i < blockDim; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
-
-    oneBlock.emplace_back(make_shared<Cell>(theBoard[coords[i][0] + maxDist][coords[i][1]]));
 
     if (colHeights[coords[i][1]] > maxDist + coords[i][0]) {
       colHeights[coords[i][1]] = maxDist + coords[i][0];
     }
     // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
-  // cout << "cells in block: " << oneBlock[0].use_count();
-  allBlocks.emplace_back(oneBlock);
+
   coords.clear();
 }
 
