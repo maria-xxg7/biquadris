@@ -51,6 +51,9 @@ int main() {
               break;
           }
           b.moveBlock("");
+          if (b.isLose()) {
+            cout << "LOSE! END GAME!" << endl;
+          }
           cout << b;
         } else if (cmd == "left") {
           b.moveBlock(cmd);
