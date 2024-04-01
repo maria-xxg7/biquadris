@@ -2,6 +2,11 @@
 #include <iostream>
 using namespace std;
 
+extern const int BOARD_W = 11;
+extern const int BOARD_H = 15;
+extern const int RESERVED = 3;
+extern const int BLOCK_DIM = 4;
+
 Cell::Cell(): row{0}, col{0} {}
 
 bool Cell::getState() const { return isFilled; }
@@ -51,7 +56,6 @@ void Cell::detach(Observer *o) {
     }
   }
   if (found && it != observers.end()) {
-    cout << "found" << endl;
     observers.erase(it);
   }
 }

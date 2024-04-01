@@ -1,8 +1,8 @@
 #include "textdisplay.h"
 
 TextDisplay::TextDisplay() {
-  vector<char> row(boardWidth, '.');
-  for (int i = 0; i < boardHeight; ++i) {
+  vector<char> row(BOARD_W, '.');
+  for (int i = 0; i < BOARD_H + RESERVED; ++i) {
     theDisplay.emplace_back(row);
   }
 }
@@ -31,7 +31,6 @@ void TextDisplay::notify(Cell &c) {
         theDisplay[c.getRow()][c.getCol()] = 'T';
         break;
       case BlockType::empty:
-        // cout << "(" << c.getRow() << "," << c.getCol() << ")" << endl;
         theDisplay[c.getRow()][c.getCol()] = '.';
         break;
     }
@@ -50,18 +49,18 @@ TextDisplay::~TextDisplay() {}
 
 ostream &operator<<(ostream &out, const TextDisplay &td) {
   // print out the game board
-  for (int i = 0; i < td.boardHeight; ++i) {
+  for (int i = 0; i < BOARD_H + RESERVED; ++i) {
 
-    if (i >= td.reserved) { cout << '|'; }
+    if (i >= RESERVED) { cout << '|'; }
     else { cout << ' '; }
-    for (int j = 0; j < td.boardWidth; ++j) {
+    for (int j = 0; j < BOARD_W; ++j) {
       cout << td.theDisplay[i][j];
     }
     cout << endl;
   }
   // print the bottom border
   cout << '+';
-  for (int i = 0; i < td.boardWidth; ++i) { cout << '-'; }
+  for (int i = 0; i < BOARD_W; ++i) { cout << '-'; }
   cout << endl;
   return out;
 }

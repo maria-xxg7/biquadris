@@ -4,6 +4,11 @@
 #include "observer.h"
 using namespace std;
 
+extern const int BOARD_W;
+extern const int BOARD_H;
+extern const int RESERVED;
+extern const int BLOCK_DIM;
+
 class Cell : public Observer {
     bool isFilled = false;
     vector<Observer*> observers;

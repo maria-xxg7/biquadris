@@ -10,9 +10,6 @@ class Cell;
 
 class TextDisplay : public Observer {
     vector<vector<char>> theDisplay;
-    const int boardWidth = 11;
-    const int boardHeight = 18;
-    const int reserved = 3;
   public:
     TextDisplay();
     void notify(Cell &c) override;
@@ -20,7 +17,7 @@ class TextDisplay : public Observer {
     CellType cType() override;
 
     ~TextDisplay();
-    friend std::ostream &operator<<(std::ostream &out, const TextDisplay &td);
+    friend ostream &operator<<(ostream &out, const TextDisplay &td);
 };
 
 #endif

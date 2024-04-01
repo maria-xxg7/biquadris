@@ -12,23 +12,24 @@
 #include "zblock.h"
 #include "tblock.h"
 #include "textdisplay.h"
+#include "graphicsdisplay.h"
 using namespace std;
 
 class Board {
   vector<vector<Cell>> theBoard;
-  vector<vector<shared_ptr<Cell>>> allBlocks;
-  const int boardWidth = 11, boardHeight = 15, reserved = 3, blockDim = 4;
   int level, curScore, highScore, blockScore;
   bool lose = false;
   BlockType nextBlock;
   TextDisplay *td;
-  //GraphicsDisplay *gd;
+  GraphicsDisplay *gd;
   vector<vector<char>> lastConfig;
   vector<vector<int>> coords;
   int totalShift = 0; int totalDown = 0;
   bool clear = true;
   vector<int> colHeights;
   RotateCW lastRotation;
+  bool isHeavy = false;
+  bool obstacle = false;
 
   void clearBoard();
 
@@ -50,7 +51,7 @@ class Board {
     Board();
     ~Board();
 
-    void init(); // initializes board
+    void init(Xwindow &wd); // initializes board
 
     // based on level, will decide next block and update field as well as
     // display in the next block region (maybe update text display, and 

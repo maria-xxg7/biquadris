@@ -7,12 +7,12 @@
 class Cell;
 
 class GraphicsDisplay : public Observer {
-    Xwindow &w; // window
+    Xwindow &wd; // window
     int gridSize; // size of grid
     int windowSize; // window size
     int size; // size of square in grid
     public:
-        GraphicsDisplay(Xwindow &w);
+        GraphicsDisplay(Xwindow &wd);
         void notify(Cell &c) override;
         BlockType bType() override;
         CellType cType() override;

@@ -1,5 +1,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/Xos.h>
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -19,11 +20,14 @@ Xwindow::Xwindow(int width, int height) : width{width}, height{height} {
   w = XCreateSimpleWindow(d, RootWindow(d, s), 10, 10, width, height, 1,
                           BlackPixel(d, s), WhitePixel(d, s));
   XSelectInput(d, w, ExposureMask | KeyPressMask);
-  XMapRaised(d, w);
 
   Pixmap pix = XCreatePixmap(d,w,width,
         height,DefaultDepth(d,DefaultScreen(d)));
   gc = XCreateGC(d, pix, 0,(XGCValues *)0);
+  // XSetBackground(d ,gc, BlackPixel(d, s));
+  // XSetForeground(d, gc, WhitePixel(d, s));
+  XClearWindow(d, w);
+  XMapRaised(d, w); 
 
   XFlush(d);
   XFlush(d);
@@ -31,7 +35,9 @@ Xwindow::Xwindow(int width, int height) : width{width}, height{height} {
   // Set up colours.
   XColor xcolour;
   Colormap cmap;
-  char color_vals[5][10]={"white", "black", "red", "green", "blue"};
+  char color_vals[12][15]={"white", "black", "gray", "dim gray", "rgb:ff/82/8b",
+    "rgb:70/a8/94", "rgb:9f/e7/93", "rgb:81/c4/de", "rgb:a8/8a/c2", 
+    "rgb:ff/df/87", "midnight blue"};
 
   cmap=DefaultColormap(d,DefaultScreen(d));
   for(int i=0; i < 5; ++i) {
@@ -62,13 +68,18 @@ Xwindow::~Xwindow() {
 int Xwindow::getWidth() const { return width; }
 int Xwindow::getHeight() const { return height; }
 
+void Xwindow::drawRectangle(int x, int y, int width, int height, int colour) {
+  XSetForeground(d, gc, colours[colour]);
+  XDrawRectangle(d, w, gc, x, y, width, height);
+}
+
 void Xwindow::fillRectangle(int x, int y, int width, int height, int colour) {
   XSetForeground(d, gc, colours[colour]);
   XFillRectangle(d, w, gc, x, y, width, height);
-  XSetForeground(d, gc, colours[Black]);
 }
 
-void Xwindow::drawString(int x, int y, string msg) {
-  XDrawString(d, w, DefaultGC(d, s), x, y, msg.c_str(), msg.length());
+void Xwindow::drawString(int x, int y, string msg, int colour) {
+  XSetForeground(d, gc, colours[colour]);
+  XDrawString(d, w, gc, x, y, msg.c_str(), msg.length());
 }
-
+ 

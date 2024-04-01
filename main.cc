@@ -2,12 +2,14 @@
 #include <string>
 #include <sstream>
 #include "board.h"
+#include "window.h"
 using namespace std;
 
 int main() {
   cin.exceptions(ios::eofbit|ios::failbit);
   Board b;
   string cmd;
+  Xwindow wd;
 
   try {
     while (cin >> cmd) {
@@ -21,7 +23,7 @@ int main() {
           cout << "stop - ends the game" << endl;
           cout << "-----" << endl;
         } else if (cmd == "init") {
-          b.init();
+          b.init(wd);
           cout << "Initialized board." << endl;
           cout << b;
         } else if (cmd == "set") {
