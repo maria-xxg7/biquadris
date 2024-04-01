@@ -1,1 +1,1 @@
-levelone.o: levelone.cc levelone.h player.h
+levelone.o: levelone.cc
