@@ -1,0 +1,71 @@
+init
+set I
+right
+right
+right
+right
+right
+clockwise
+right
+right
+right
+right
+drop
+set T
+counterclockwise
+counterclockwise
+drop
+set T
+clockwise
+clockwise
+right
+right
+right
+drop
+set T
+drop
+set T
+right
+right
+right
+drop
+set T
+right
+right
+right
+counterclockwise
+right
+right
+right
+counterclockwise
+drop
+set T
+right
+right
+right
+clockwise
+right
+right
+right
+down
+down
+clockwise
+down
+down
+clockwise
+clockwise
+drop
+set I
+right
+right
+right
+right
+right
+right
+right
+clockwise
+right
+right
+right
+drop
+

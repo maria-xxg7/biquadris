@@ -1,0 +1,37 @@
+init
+set Z
+clockwise
+clockwise
+clockwise
+clockwise
+drop
+set Z
+counterclockwise
+counterclockwise
+counterclockwise
+counterclockwise
+drop 
+set Z
+clockwise
+counterclockwise
+clockwise
+right
+right 
+clockwise
+right
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+left
+drop

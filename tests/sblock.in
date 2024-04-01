@@ -1,0 +1,38 @@
+init
+set S
+clockwise
+clockwise
+clockwise
+clockwise
+drop
+set S
+counterclockwise
+counterclockwise
+counterclockwise
+counterclockwise
+drop 
+set S
+clockwise
+counterclockwise
+clockwise
+right
+right 
+clockwise
+right
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+left
+drop
