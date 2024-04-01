@@ -11,6 +11,8 @@ class GraphicsDisplay : public Observer {
     int gridSize; // size of grid
     int windowSize; // window size
     int size; // size of square in grid
+    void drawCell(Cell &c, int colour);
+
     public:
         GraphicsDisplay(Xwindow &wd);
         void notify(Cell &c) override;
