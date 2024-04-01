@@ -470,7 +470,6 @@ void Board::updateScore() {
   if (curScore > highScore) {
     highScore = curScore;
   }
-
   blockScore = 0;
 }
 
