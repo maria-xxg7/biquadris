@@ -1,6 +1,6 @@
-#include "player.h"
+#include "blockgenerator.h"
 
-class LevelOne: public Player {
+class LevelOne: public BlockGenerator {
   LevelOne(bool playerNum, int level, Board &b);
   public:
     void newMove(Board &b, bool playerTurn) override; 

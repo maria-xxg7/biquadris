@@ -1,13 +1,9 @@
-#include "levelfour.h"
+#include "levelhard.h"
 
-// since four and three are the same, could just have the same factory
-// call it upperfactory and then differentiate by the different
-// boolean fields for heavy and star function
-
-LevelFour::LevelFour(bool playerNum, int level, Board &b, string filename): Player{playerNum, level, b}, 
+LevelHard::LevelHard(bool playerNum, int level, Board &b, string filename): BlockGenerator{playerNum, level, b}, 
   filename{filename} {}
 
-void LevelFour::newMove(Board &b, bool playerTurn) {
+void LevelHard::newMove(Board &b, bool playerTurn) {
   if (random) {
     PRNG prng;
     int randOther = prng(8); 

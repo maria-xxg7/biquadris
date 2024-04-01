@@ -1,6 +1,6 @@
 #include "leveltwo.h"
 
-LevelTwo::LevelTwo(bool playerNum, int level, Board &b): Player{playerNum, level, b} {}
+LevelTwo::LevelTwo(bool playerNum, int level, Board &b): BlockGenerator{playerNum, level, b} {}
 
 void LevelTwo::newMove(Board &b, bool playerTurn) {
   PRNG prng;

@@ -1,21 +1,19 @@
-#ifndef __PLAYER_H__
-#define __PLAYER_H__
+#ifndef __blockGenerator_H__
+#define __blockGenerator_H__
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <random>
 #include "PRNG.h"
-#include "block.h"
 #include "board.h"
 
-class Player {
+class BlockGenerator {
     bool playerNum;
     int level;
     BlockType nextBlock;
-    Board *playerBoard;
   protected:
-    Player(bool playerNum, int level, Board &b);
-    ~Player();
+    BlockGenerator(bool playerNum, int level, Board &b);
+    ~BlockGenerator();
     BlockType stringToBlock(char blockChar);
 
   public:

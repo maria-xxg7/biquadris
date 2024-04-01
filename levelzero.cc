@@ -1,6 +1,6 @@
 #include "levelzero.h"
 
-LevelZero::LevelZero(bool playerNum, int level, Board &b, string filename): Player{playerNum, level, b}, 
+LevelZero::LevelZero(bool playerNum, int level, Board &b, string filename): BlockGenerator{playerNum, level, b}, 
           filename{filename} {
           level = 0;
 }

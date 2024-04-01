@@ -1,9 +1,10 @@
 #include "blockgenerator.h"
 
-class LevelZero: public BlockGenerator{
+class LevelHard: public BlockGenerator {
+  bool random = true;
   string filename;
   int counter = 0;
-  LevelZero(bool playerNum, int level, Board &b, string filename);
+  LevelHard(bool playerNum, int level, Board &b, string filename = "");
   public:
     void newMove(Board &b, bool playerTurn) override; 
 };
