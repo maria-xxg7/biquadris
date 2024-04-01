@@ -437,6 +437,7 @@ bool Board::checkHeads(int row) {
       }
     }
   }
+
   if (reassign) return true;
   return false;
 }
@@ -477,7 +478,8 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
   } // update the remaining cells in the block (if any)
 
   // CHECK IF WHOLE BLOCK IS CLEARED
-
+  // cout << checkHeads(row) << endl;
+  // reassignHead(row);
   if (checkHeads(row)) { reassignHead(row); }
 
   vector<vector<int>> blocks; 
@@ -539,13 +541,13 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     }
   }
 
-  // cout << "final" << endl;
-  // for (int row = 0; row < boardHeight + reserved; ++row) {
-  //   for (int col = 0; col < boardWidth; ++col) {
-  //     cout << theBoard[row][col].cellsLeft();
-  //   }
-  //   cout << endl;
-  // }
+  cout << "final" << endl;
+  for (int row = 0; row < boardHeight + reserved; ++row) {
+    for (int col = 0; col < boardWidth; ++col) {
+      cout << theBoard[row][col].cellsLeft();
+    }
+    cout << endl;
+  }
 }
 
 void Board::updateScore() {
