@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <random>
-#include "../RandomNumberGeneratorExamples/PRNG.h"
+#include "PRNG.h"
 #include "block.h"
 #include "board.h"
 

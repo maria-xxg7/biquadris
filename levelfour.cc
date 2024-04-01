@@ -18,7 +18,7 @@ void LevelFour::newMove(Board &b, bool playerTurn) {
     } else {
       int randIndex = prng(4);
       vector<char> otherBlocks {'I', 'J', 'L', '0', 'T'};
-      b.setBlockType(stringToBlock(otherBlocks[randOther]));
+      b.setBlockType(stringToBlock(otherBlocks[randIndex]));
     }
   } else {
     int index = 0;
