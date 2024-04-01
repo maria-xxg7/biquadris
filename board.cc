@@ -267,13 +267,14 @@ void Board::dropBlock() {
       } else if (coords[j][0] + tempDist > colHeights[coords[j][1]] && !below) {
         // cout << "Out of Bounds 3: " << coords[j][0] << "and " << tempDist << endl;
         validFit = false;
-      } 
+      }
       // cout << "Good: " << coords[j][0] << " and " << tempDist << endl;
     } // exit this for loop by either breaking since one of the blocks didnt fit or we exit
       // after all the blocks are checked and fit
 
     // if all the blocks fit and it's distance is the current max, we update variable
     if (validFit) {
+      cout << validFit << endl;
       ++validNum;
       if (tempDist > maxDist) {
       // cout << "Valid last dist" << tempDist << endl;
@@ -285,7 +286,7 @@ void Board::dropBlock() {
     // and checked if each block fits based on this difference
   // once we know which distance is the most suitable, we set the board
   // cout << "Max distance " << maxDist << endl;
-  if (validNum == 0) {
+  if (validNum == 0 && !below) {
     lose = true;
     return;
   }
