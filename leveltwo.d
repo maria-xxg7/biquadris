@@ -1,3 +1,3 @@
-leveltwo.o: leveltwo.cc leveltwo.h player.h PRNG.h block.h cell.h \
- observer.h board.h iblock.h jblock.h lblock.h oblock.h sblock.h zblock.h \
- tblock.h textdisplay.h
+leveltwo.o: leveltwo.cc leveltwo.h blockgenerator.h PRNG.h board.h cell.h \
+ observer.h block.h iblock.h jblock.h lblock.h oblock.h sblock.h zblock.h \
+ tblock.h textdisplay.h graphicsdisplay.h window.h

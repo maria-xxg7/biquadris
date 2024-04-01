@@ -13,7 +13,6 @@ class BlockGenerator {
     BlockType nextBlock;
   protected:
     BlockGenerator(bool playerNum, int level, Board &b);
-    ~BlockGenerator();
     BlockType stringToBlock(char blockChar);
 
   public:
