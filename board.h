@@ -18,7 +18,7 @@ class Board {
   vector<vector<Cell>> theBoard;
   vector<vector<shared_ptr<Cell>>> allBlocks;
   const int boardWidth = 11, boardHeight = 15, reserved = 3, blockDim = 4;
-  int level, curScore, highScore;
+  int level, curScore, highScore, blockScore;
   bool lose = false;
   BlockType nextBlock;
   TextDisplay *td;
@@ -71,6 +71,8 @@ class Board {
     // clears specified row, updates high and cur score and checks if 
     // blocks are cleards 
     void lineClear(int row);
+
+    void updateScore();
 
     bool isLose() const;
     

@@ -76,11 +76,8 @@ int main() {
           if (b.isLose()) {
             cout << "LOSE! END GAME!" << endl;
           }
-          for (int i = 0; i < 18; ++i) {
-            if (b.checkLineClear(i)) {
-              b.lineClear(i);
-            }
-          }
+          cout << "Calling update score" << endl;
+          b.updateScore();
           cout << b;
         } else if (cmd == "stop") {
           cout << "Thanks for playing :)" << endl;

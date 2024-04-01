@@ -1,7 +1,7 @@
 #include "board.h"
 #include <memory>
 
-Board::Board() : theBoard {}, level {0}, curScore {0}, highScore {0}, 
+Board::Board() : theBoard {}, level {0}, curScore {0}, highScore {0}, blockScore {0},
   nextBlock{BlockType::empty}, td{new TextDisplay{}} // gd{nullptr}
   {}
 
@@ -337,8 +337,6 @@ bool Board::checkLineClear(int row) {
 
 void Board::lineClear(int row) { // add lose condition, and check block type disappear
   cout << "LINE CLEAR -------------------------------" << endl;
-  // update score
-  curScore += (level + 1) * (level + 1);
 
   // update colHeights since moving everything down
   for (int i = 0; i < boardWidth; ++i) {
@@ -401,6 +399,8 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
   for (int i = 0; i < numBlocks; ++i) {
     if (theBoard[blocks[i][0]][blocks[i][1]].cellsLeft() == 0) {
       cout << "block cleared" << endl;
+      int sqrtBlock = theBoard[blocks[i][0]][blocks[i][1]].getLevel() + 1;
+      numBlocks += (sqrtBlock * sqrtBlock);
       // curScore += (level + 1) * (level + 1); // update score for clearing a whole block
     }
   } // count how many blocks were fully cleared
@@ -412,8 +412,6 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     }
     cout << endl;
   }
-
-  if (curScore > highScore) { highScore = curScore; } // update high score
 
   // delete the row that is cleared
   vector<vector<Cell>>::iterator it = theBoard.begin();
@@ -454,6 +452,26 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     }
     cout << endl;
   }
+}
+
+void Board::updateScore() {
+  int numCleared = 0;
+  for (int i = 0; i < 18; ++i) {
+    if (checkLineClear(i)) {
+      ++numCleared;
+      lineClear(i);
+    }
+  }
+  int sqrtScore = numCleared + level;
+  cout << "Before square" << sqrtScore << endl;
+  curScore += (sqrtScore * sqrtScore);
+  curScore += blockScore;
+
+  if (curScore > highScore) {
+    highScore = curScore;
+  }
+
+  blockScore = 0;
 }
 
 bool Board::isLose() const {
