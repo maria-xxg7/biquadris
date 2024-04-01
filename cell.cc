@@ -14,6 +14,8 @@ int Cell::getHeadRow() const { return headCell[0]; }
 
 int Cell::getHeadCol() const { return headCell[1]; }
 
+int Cell::getLevel() const { return cellLevel; }
+
 void Cell::setFilled() { 
   isFilled = true;
   notifyAllObservers();
@@ -29,6 +31,8 @@ void Cell::setCoords(int r, int c) { row = r; col = c; }
 void Cell::setHead(int r, int c) { headCell[0] = r; headCell[1] = c; }
 
 void Cell::setType(BlockType b) { type = b; }
+
+void Cell::setLevel(int lvl) { cellLevel = lvl; }
 
 int Cell::cellsLeft() { return block.size(); };
 
