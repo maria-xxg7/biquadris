@@ -33,17 +33,11 @@ void Board::init() {
     theBoard.emplace_back(new_row);
   }
 
-  vector<shared_ptr<Cell>> sharedRow (boardWidth, make_shared<Cell>());
-  for (int shared_r = 0; shared_r < boardHeight + reserved; ++shared_r) {
-    allBlocks.emplace_back(sharedRow);
-  }
   for (int row = 0; row < boardHeight + reserved; ++row) {
     for (int col = 0; col < boardWidth; ++col) {
-      allBlocks[row][col].reset();
       theBoard[row][col].setType(BlockType::empty);
       theBoard[row][col].setCoords(row, col);
       theBoard[row][col].attach(td);
-      allBlocks[row][col] = make_shared<Cell>(theBoard[row][col]);
       //theBoard[row][col].attach(gd);
       
       for (int ob = 0; ob < boardWidth; ++ob) {
@@ -53,13 +47,6 @@ void Board::init() {
       }
     }
   }
-  // cout << "in use: " << allBlocks[0][0].use_count() << endl;
-  // allBlocks[0][0] = allBlocks[1][1];
-  // cout << "in use: " << allBlocks[0][0].use_count() << endl;
-  // cout << "in use: " << allBlocks[1][1].use_count() << endl;
-
-  // cout << (*allBlocks[1][1]).getRow() << "," << (*allBlocks[1][1]).getCol() << endl;
-
 }
 
 unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
@@ -303,25 +290,38 @@ void Board::dropBlock() {
     return;
   }
   
-  // shared_ptr<Cell> headCell = allBlocks[coords[0][0] + maxDist][coords[0][1]];
-  for (int i = 1; i < blockDim; ++i) {
-    allBlocks[coords[i][0] + maxDist][coords[i][1]] = allBlocks[coords[0][0] + maxDist][coords[0][1]];
-  }
-  // allBlocks[coords[1][0] + maxDist][coords[1][1]] = allBlocks[coords[0][0] + maxDist][coords[0][1]];
   for (int i = 0; i < blockDim; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
+    if (i != 0) {
+      theBoard[coords[0][0] + maxDist][coords[0][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
+    }
+    if (i != 1) {
+      theBoard[coords[1][0] + maxDist][coords[1][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
+    }
+    if (i != 2) {
+      theBoard[coords[2][0] + maxDist][coords[2][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
+    }
+    if (i != 3) {
+      theBoard[coords[3][0] + maxDist][coords[3][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
+    }
+    // theBoard[0][0].setHead(0, 0);
+    theBoard[coords[i][0] + maxDist][coords[i][1]].setHead(coords[0][0] + maxDist, coords[0][1]);
 
     if (colHeights[coords[i][1]] > maxDist + coords[i][0]) {
       colHeights[coords[i][1]] = maxDist + coords[i][0];
     }
     // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
-  cout << "cells in block: " << allBlocks[coords[1][0] + maxDist][coords[1][1]].use_count() << endl;
-  for (int i = 0; i < blockDim; ++i) {
-    cout << "(" << (*allBlocks[coords[i][0] + maxDist][coords[i][1]]).getRow() << "," << 
-                   (*allBlocks[coords[i][0] + maxDist][coords[i][1]]).getCol() << ")" << endl; 
+  cout << "drop" << endl;
+
+  // print for testing
+  for (int row = 0; row < boardHeight + reserved; ++row) {
+    for (int col = 0; col < boardWidth; ++col) {
+      cout << theBoard[row][col].cellsLeft();
+    }
+    cout << endl;
   }
   coords.clear();
 }
@@ -336,46 +336,105 @@ bool Board::checkLineClear(int row) {
 }
 
 void Board::lineClear(int row) { // add lose condition, and check block type disappear
+  cout << "LINE CLEAR -------------------------------" << endl;
   // update score
   curScore += (level + 1) * (level + 1);
-  if (curScore > highScore) {
-    highScore = curScore;
-  }
+
   // update colHeights since moving everything down
   for (int i = 0; i < boardWidth; ++i) {
     --colHeights[i];
   }
 
-  for (int i = 0; i < boardWidth; ++i) {
-    cout << "Count before at col " << i << ": " << allBlocks[16][i].use_count() << endl;
+  // UPDATE BLOCK OBSERVERS
+
+  for (int i = 0; i < boardWidth; ++i) { 
+    for (int fwd = i; fwd < boardWidth; ++fwd) {
+      theBoard[row][i].detachBlock(&theBoard[row][fwd]); // detach block observers in front
+    }
+    for (int bwd = i; bwd >= 0; --bwd) {
+      theBoard[row][i].detachBlock(&theBoard[row][bwd]); // detach block observers behind
+    }
+  } // update block observers in row being removed
+
+  for (int i = 0; i < boardHeight + reserved - 1; ++i) {
+    for (int j = 0; j < boardWidth; ++j) {
+      for (int col = 0; col < boardWidth; ++col) {
+        theBoard[i][j].detachBlock(&theBoard[row][col]); // detach block observers
+      }
+    }
+  } // update the remaining cells in the block (if any)
+
+  cout << "before" << endl;
+  // print for testing
+  for (int row = 0; row < boardHeight + reserved; ++row) {
+    for (int col = 0; col < boardWidth; ++col) {
+      cout << theBoard[row][col].cellsLeft();
+    }
+    cout << endl;
   }
+
+  // CHECK IF WHOLE BLOCK IS CLEARED
+
+  vector<vector<int>> blocks; // all distinct blocks in the row (being cleared)
+
+  // get head cell
+  int curBlockRow = theBoard[row][0].getHeadRow(); 
+  int curBlockCol = theBoard[row][0].getHeadCol(); 
+  vector<int> temp {theBoard[row][0].getRow(), theBoard[row][0].getCol()};
+  blocks.emplace_back(temp); // add to blocks
+
+
+  for (int i = 0; i < boardWidth; ++i) { 
+    // check if different from the current block
+    if (theBoard[row][i].getHeadRow() != curBlockRow || theBoard[row][i].getHeadCol() != curBlockCol) {
+      // set current block to the next block
+      curBlockRow = theBoard[row][i].getHeadRow();
+      curBlockCol = theBoard[row][i].getHeadCol();
+      cout << "(" << curBlockRow << "," << curBlockCol << ")" << endl;
+      vector<int> temp {theBoard[row][i].getRow(), theBoard[row][i].getCol()};
+      blocks.emplace_back(temp); // add to blocks
+    }
+  } // add any distinct blocks in the row
+
+  int numBlocks = blocks.size(); // number of blocks in the row
+  cout << numBlocks << endl;
+  for (int i = 0; i < numBlocks; ++i) {
+    if (theBoard[blocks[i][0]][blocks[i][1]].cellsLeft() == 0) {
+      cout << "block cleared" << endl;
+      // curScore += (level + 1) * (level + 1); // update score for clearing a whole block
+    }
+  } // count how many blocks were fully cleared
+  cout << "after" << endl;
+  // print for testing
+  for (int row = 0; row < boardHeight + reserved; ++row) {
+    for (int col = 0; col < boardWidth; ++col) {
+      cout << theBoard[row][col].cellsLeft();
+    }
+    cout << endl;
+  }
+
+  if (curScore > highScore) { highScore = curScore; } // update high score
 
   // delete the row that is cleared
   vector<vector<Cell>>::iterator it = theBoard.begin();
   theBoard.erase(it + row);
-  vector<vector<shared_ptr<Cell>>>::iterator sit = allBlocks.begin();
-  allBlocks.erase(sit + row);
+
   // input a new empty row at the top
   vector<Cell> newRow(boardWidth, Cell());
   theBoard.insert(theBoard.begin(), newRow);
-  vector<shared_ptr<Cell>> newSRow(boardWidth, make_shared<Cell>());
-  allBlocks.insert(allBlocks.begin(), newSRow);
 
+  // init new row
   for (int col = 0; col < boardWidth; ++col) {
     theBoard[0][col].setType(BlockType::empty);
     theBoard[0][col].setCoords(0, col);
-    allBlocks[0][col].reset();
-    allBlocks[0][col] = make_shared<Cell>(theBoard[0][col]);
-  }
-
-  for (int i = 0; i < boardWidth; ++i) {
-    cout << "Count after at col " << i << ": " << allBlocks[17][i].use_count() << endl;
   }
 
   // update td
   for (int i = row; i >= 0; --i) {
     for (int col = 0; col < boardWidth; ++col) {
-        theBoard[i][col].attach(td);
+    // theBoard[row][i].detach(td); // detach the text display from the cells being removed
+
+        theBoard[i][col].attach(td); // reattach the cells to the text display
         theBoard[i][col].setCoords(i, col);
 
         if (theBoard[i][col].bType() == BlockType::empty) {
@@ -386,6 +445,14 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
         }
     }
     // cout << endl;
+  }
+  cout << "final" << endl;
+
+  for (int row = 0; row < boardHeight + reserved; ++row) {
+    for (int col = 0; col < boardWidth; ++col) {
+      cout << theBoard[row][col].cellsLeft();
+    }
+    cout << endl;
   }
 }
 
