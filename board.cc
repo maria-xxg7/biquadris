@@ -314,15 +314,9 @@ void Board::dropBlock() {
     }
     // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
+
   cout << "drop" << endl;
 
-  // print for testing
-  for (int row = 0; row < boardHeight + reserved; ++row) {
-    for (int col = 0; col < boardWidth; ++col) {
-      cout << theBoard[row][col].cellsLeft();
-    }
-    cout << endl;
-  }
   coords.clear();
 }
 
@@ -335,8 +329,128 @@ bool Board::checkLineClear(int row) {
   return true;
 }
 
+void Board::reassignHead(int row) {
+  vector<vector<int>> heads; 
+  vector<vector<int>> newHeads; 
+
+  int headRow = theBoard[row][0].getHeadRow(); 
+  int headCol = theBoard[row][0].getHeadCol();
+  vector<int> headTemp = {headRow, headCol};
+  heads.emplace_back(headTemp);
+
+  for (int i = 0; i < boardWidth; ++i) {  
+      if (theBoard[row][i].getHeadRow() != headRow || theBoard[row][i].getHeadCol() != headCol) {
+        headRow = theBoard[row][i].getHeadRow();
+        headCol = theBoard[row][i].getHeadCol();
+        vector<int> headTemp = {headRow, headCol};
+        heads.emplace_back(headTemp);
+      }
+  } 
+
+  // GET CELLS WITH HEADS BEING REMOVED
+
+  int headLen = heads.size();
+  vector<vector<int>>::iterator hit = heads.begin();
+  for (int i = 0; i < headLen; ++i) {
+      if (heads[i][0] != row) {
+        heads.erase(hit);
+        break;
+      }
+      ++hit;
+  }
+
+  headLen = heads.size();
+
+  vector<bool> hasHead (headLen, false); 
+
+  // REASSIGN HEAD
+
+  for (int i = 0; i < boardHeight + reserved; ++i) {
+    for (int j = 0; j < boardWidth; ++j) {
+      for (int h = 0; h < headLen; ++h) {
+        if (theBoard[i][j].getHeadRow() == heads[h][0] && theBoard[i][j].getHeadCol() == heads[h][1]
+            && i != heads[h][0] && !hasHead[h]) {
+            vector<int> temp = {i, j};
+            newHeads.emplace_back(temp);
+            hasHead[h] = true;
+        }
+      }
+    }
+  }
+
+  vector<vector<int>>::iterator hit2 = heads.begin();
+  for (int i = 0; i < headLen; ++i) {
+      if (!hasHead[i]) {
+        heads.erase(hit2);
+      }
+      ++hit2;
+  }
+
+  headLen = heads.size();
+
+  for (int i = 0; i < boardHeight + reserved; ++i) {
+    for (int j = 0; j < boardWidth; ++j) {
+      for (int h = 0; h < headLen; ++h) {
+        if (theBoard[i][j].getHeadRow() == heads[h][0] && theBoard[i][j].getHeadCol() == heads[h][1]) {
+          theBoard[i][j].setHead(newHeads[h][0], newHeads[h][1]);
+        }
+      }
+    }
+  }
+}
+
+bool Board::checkHeads(int row) {
+  vector<vector<int>> heads; 
+
+  int headRow = theBoard[row][0].getHeadRow(); 
+  int headCol = theBoard[row][0].getHeadCol();
+  vector<int> headTemp = {headRow, headCol};
+  heads.emplace_back(headTemp);
+
+  for (int i = 0; i < boardWidth; ++i) {  
+      if (theBoard[row][i].getHeadRow() != headRow || theBoard[row][i].getHeadCol() != headCol) {
+        headRow = theBoard[row][i].getHeadRow();
+        headCol = theBoard[row][i].getHeadCol();
+        vector<int> headTemp = {headRow, headCol};
+        heads.emplace_back(headTemp);
+      }
+  } 
+
+  int headLen = heads.size();
+  vector<vector<int>>::iterator hit = heads.begin();
+  for (int i = 0; i < headLen; ++i) {
+      if (heads[i][0] != row) {
+        heads.erase(hit);
+        break;
+      }
+      ++hit;
+  }
+
+  headLen = heads.size();
+
+  bool reassign = false;
+  for (int i = 0; i < boardWidth; ++i) {
+    for (int h = 0; h < headLen; ++h) {
+      if (theBoard[row][i].cellsLeft() != 0 && theBoard[row][i].getHeadRow() == heads[h][0] &&
+          theBoard[row][i].getHeadCol() == heads[h][1]) {
+        reassign = true;
+      }
+    }
+  }
+  if (reassign) return true;
+  return false;
+}
+
 void Board::lineClear(int row) { // add lose condition, and check block type disappear
-  cout << "LINE CLEAR -------------------------------" << endl;
+  // cout << "LINE CLEAR -------------------------------" << endl;
+  // cout << "before" << endl;
+  // // print for testing
+  // for (int row = 0; row < boardHeight + reserved; ++row) {
+  //   for (int col = 0; col < boardWidth; ++col) {
+  //     cout << theBoard[row][col].cellsLeft();
+  //   }
+  //   cout << endl;
+  // }
 
   // update colHeights since moving everything down
   for (int i = 0; i < boardWidth; ++i) {
@@ -362,18 +476,11 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     }
   } // update the remaining cells in the block (if any)
 
-  cout << "before" << endl;
-  // print for testing
-  for (int row = 0; row < boardHeight + reserved; ++row) {
-    for (int col = 0; col < boardWidth; ++col) {
-      cout << theBoard[row][col].cellsLeft();
-    }
-    cout << endl;
-  }
-
   // CHECK IF WHOLE BLOCK IS CLEARED
 
-  vector<vector<int>> blocks; // all distinct blocks in the row (being cleared)
+  if (checkHeads(row)) { reassignHead(row); }
+
+  vector<vector<int>> blocks; 
 
   // get head cell
   int curBlockRow = theBoard[row][0].getHeadRow(); 
@@ -388,14 +495,12 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
       // set current block to the next block
       curBlockRow = theBoard[row][i].getHeadRow();
       curBlockCol = theBoard[row][i].getHeadCol();
-      cout << "(" << curBlockRow << "," << curBlockCol << ")" << endl;
       vector<int> temp {theBoard[row][i].getRow(), theBoard[row][i].getCol()};
       blocks.emplace_back(temp); // add to blocks
     }
   } // add any distinct blocks in the row
 
   int numBlocks = blocks.size(); // number of blocks in the row
-  cout << numBlocks << endl;
   for (int i = 0; i < numBlocks; ++i) {
     if (theBoard[blocks[i][0]][blocks[i][1]].cellsLeft() == 0) {
       cout << "block cleared" << endl;
@@ -403,14 +508,6 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
       blockScore += (sqrtBlock * sqrtBlock);
     }
   } // count how many blocks were fully cleared
-  cout << "after" << endl;
-  // print for testing
-  for (int row = 0; row < boardHeight + reserved; ++row) {
-    for (int col = 0; col < boardWidth; ++col) {
-      cout << theBoard[row][col].cellsLeft();
-    }
-    cout << endl;
-  }
 
   // delete the row that is cleared
   vector<vector<Cell>>::iterator it = theBoard.begin();
@@ -436,21 +533,19 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
 
         if (theBoard[i][col].bType() == BlockType::empty) {
           theBoard[i][col].setUnfilled();
-          // cout << theBoard[i][col].getState() << " ";
         } else {
           theBoard[i][col].setFilled();
         }
     }
-    // cout << endl;
   }
-  cout << "final" << endl;
 
-  for (int row = 0; row < boardHeight + reserved; ++row) {
-    for (int col = 0; col < boardWidth; ++col) {
-      cout << theBoard[row][col].cellsLeft();
-    }
-    cout << endl;
-  }
+  // cout << "final" << endl;
+  // for (int row = 0; row < boardHeight + reserved; ++row) {
+  //   for (int col = 0; col < boardWidth; ++col) {
+  //     cout << theBoard[row][col].cellsLeft();
+  //   }
+  //   cout << endl;
+  // }
 }
 
 void Board::updateScore() {

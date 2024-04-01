@@ -36,6 +36,10 @@ class Board {
   bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
 
   int findNextHeight(int row, int col);
+
+  bool checkHeads(int row);
+
+  void reassignHead(int row);
   
   class BlockFactory {
     public:
