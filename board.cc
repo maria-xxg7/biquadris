@@ -354,7 +354,7 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     }
   } // update block observers in row being removed
 
-  for (int i = 0; i < boardHeight + reserved - 1; ++i) {
+  for (int i = 0; i < boardHeight + reserved; ++i) {
     for (int j = 0; j < boardWidth; ++j) {
       for (int col = 0; col < boardWidth; ++col) {
         theBoard[i][j].detachBlock(&theBoard[row][col]); // detach block observers
@@ -400,8 +400,7 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     if (theBoard[blocks[i][0]][blocks[i][1]].cellsLeft() == 0) {
       cout << "block cleared" << endl;
       int sqrtBlock = theBoard[blocks[i][0]][blocks[i][1]].getLevel() + 1;
-      numBlocks += (sqrtBlock * sqrtBlock);
-      // curScore += (level + 1) * (level + 1); // update score for clearing a whole block
+      blockScore += (sqrtBlock * sqrtBlock);
     }
   } // count how many blocks were fully cleared
   cout << "after" << endl;
