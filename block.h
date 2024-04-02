@@ -17,7 +17,7 @@ class Block {
   public:
     Block(); // constructor
 
-    vector<vector<char>> getConfig() const; 
+    vector<vector<char>> getConfig(); 
     RotateCW getRotation() const;
     string getRotationString() const;
     //shared_ptr<Cell> getBlock() const;
@@ -25,7 +25,7 @@ class Block {
     virtual void rotateBlockCW() = 0;    
     virtual void rotateBlockCCW() = 0; 
 
-    //friend ostream &operator<<(ostream &out, const Block &b);
+    friend ostream &operator<<(ostream &out, Block &b);
 };
 
 #endif

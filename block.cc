@@ -2,7 +2,7 @@
 
 Block::Block() : curRotation {RotateCW::Degree0}, config {} {}
 
-vector<vector<char>> Block::getConfig() const {
+vector<vector<char>> Block::getConfig() {
     return config;
 }
 
@@ -29,15 +29,15 @@ string Block::getRotationString() const {
 //   return theBlock;
 // }
 
-/*
-ostream &operator<<(ostream &out, const Block &b) {
-  for (int i = 0; i < 4; ++i) {
+ostream &operator<<(ostream &out, Block &b) {
+  vector<vector<char>> blockConfig = b.getConfig();
+  for (int i = 2; i < 4; ++i) {
       for (int j = 0; j < 4; ++j) {
-        out << b.config[i][j];
+        out << blockConfig[i][j];
       }
       cout << endl;
     }
   return out;
 }
-*/
+
 

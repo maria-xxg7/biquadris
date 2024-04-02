@@ -614,33 +614,33 @@ ostream &operator<<(ostream &out, const Board &b) {
   out << score << b.curScore << endl;
   out << hiScore << b.highScore << endl;
   out << *b.td;
-  // out << "Next: " << endl;
-  // shared_ptr<Block> newBlock;
-  // switch(b.nextBlock) {
-  //     case BlockType::IBlock:
-  //       newBlock = shared_ptr<IBlock>();
-  //       break;
-  //     case BlockType::JBlock:
-  //       newBlock = shared_ptr<JBlock>();
-  //       break;
-  //     case BlockType::LBlock:
-  //       newBlock = shared_ptr<LBlock>();
-  //       break;
-  //     case BlockType::OBlock:
-  //       newBlock = shared_ptr<OBlock>();
-  //       break;
-  //     case BlockType::SBlock:
-  //       newBlock = shared_ptr<SBlock>();
-  //       break;
-  //     case BlockType::ZBlock:
-  //       newBlock = shared_ptr<ZBlock>();
-  //       break;
-  //     case BlockType::TBlock:
-  //       newBlock = shared_ptr<TBlock>();
-  //       break;
-  //     case BlockType::empty:
-  //       break;
-  //   }
-  // out << newBlock;
+  out << "Next: " << endl;
+  shared_ptr<Block> newBlock = make_shared<IBlock>();
+  switch(b.nextBlock) {
+      case BlockType::IBlock:
+        *newBlock = IBlock();
+        break;
+      case BlockType::JBlock:
+        *newBlock = JBlock();
+        break;
+      case BlockType::LBlock:
+        *newBlock = LBlock();
+        break;
+      case BlockType::OBlock:
+        *newBlock = OBlock();
+        break;
+      case BlockType::SBlock:
+        *newBlock = SBlock();
+        break;
+      case BlockType::ZBlock:
+        *newBlock = ZBlock();
+        break;
+      case BlockType::TBlock:
+        *newBlock = TBlock();
+        break;
+      case BlockType::empty:
+        break;
+    }
+  out << *newBlock;
   return out;
 }
