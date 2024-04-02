@@ -2,51 +2,51 @@
 #include "cell.h"
 
 GraphicsDisplay::GraphicsDisplay(Xwindow &wd): wd{wd} {
-    // draw background
-  // size = wd.getWidth() / BOARD_W;
-  size = 35;
-  cout << "draw" << endl;
-  wd.drawString(50, 50, "Level", Xwindow::Black);
+  wd.fillRectangle(0, 0, wd.getWidth(), wd.getHeight(), Xwindow::DarkBlue);
+  wd.fillRectangle(spacing - 1, spacing - 1, gridWidth + 3, gridHeight + 3, Xwindow::LightBlue);
+  wd.fillRectangle(spacing, spacing, gridWidth, gridHeight, Xwindow::DarkestBlue);
+  wd.fillRectangle(nextSpaceW - 1, nextSpaceH - 1, nextWidth + 3, nextWidth + 3, Xwindow::LightBlue);
+  wd.fillRectangle(nextSpaceW, nextSpaceH, nextWidth, nextWidth, Xwindow::DarkestBlue);
 
-  // draw board
-  wd.fillRectangle(0, 0, 501, 751, Xwindow::DarkBlue);
-  wd.fillRectangle(58, 60, 385, 630, Xwindow::Blue);
-  wd.fillRectangle(0, 0, 10, 10, Xwindow::Coral);
-  wd.fillRectangle(10, 10, 10, 10, Xwindow::DarkGreen);
-  wd.fillRectangle(20, 20, 10, 10, Xwindow::LightGreen);
-  wd.fillRectangle(30, 30, 10, 10, Xwindow::SkyBlue);
-  wd.fillRectangle(40, 40, 10, 10, Xwindow::Purple);
-  wd.fillRectangle(50, 50, 10, 10, Xwindow::Orange);
-  wd.fillRectangle(60, 60, 10, 10, Xwindow::Yellow);
-  wd.fillRectangle(70, 70, 10, 10, Xwindow::Brown);
+  wd.drawString(spacing, nextSpaceH + spacing/2, "Level: ", Xwindow::White);
+  wd.drawString(spacing, nextSpaceH + spacing + 10, "Score: ", Xwindow::White);
+  wd.drawString(nextSpaceW, nextSpaceH - spacing/2 + 5, "Next Block: ", Xwindow::White);
 
   // fill in board grid pattern
-  for (int i = 58; i < 443; i+=35) {
-    for (int j = 60; j < 690; j+=35) {
-      wd.fillRectangle(i+1, j+1, 33, 33, Xwindow::DarkestBlue);
-      wd.drawRectangle(i, j, 35, 35, Xwindow::LightBlue);
+  for (int i = spacing; i < gridWidth + spacing ; i += cellSize) {
+    for (int j = spacing; j < gridHeight + spacing; j += cellSize) {
+      wd.fillRectangle(i + 1, j + 1, cellSize - 2, cellSize - 2, Xwindow::DarkestBlue);
+      wd.drawRectangle(i, j, cellSize, cellSize, Xwindow::LightBlue);
+    }
+  }
+
+  for (int i = nextSpaceW; i < nextWidth + nextSpaceW ; i += cellSize) {
+    for (int j = nextSpaceH; j < nextWidth + nextSpaceH; j += cellSize) {
+      wd.fillRectangle(i + 1, j + 1, cellSize - 2, cellSize - 2, Xwindow::DarkestBlue);
+      wd.drawRectangle(i, j, cellSize, cellSize, Xwindow::LightBlue);
     }
   }
 }
 
 void GraphicsDisplay::drawCell(Cell &c, int colour) {
-  int outlineSize = 25;
-  wd.fillRectangle(58 + 1 + c.getCol() * size, 60 + 1 + c.getRow() * size, size - 1, size - 1, colour);
+  // if (colour == Xwindow::Coral) {
+  //   wd.fillRectangle(spacing + c.getCol() * cellSize, 60 + c.getRow() * cellSize, cellSize, cellSize, Xwindow::DCoral);
+  //   wd.fillRectangle(58 + 5 + c.getCol() * cellSize, 60 + 5 + c.getRow() * cellSize, cellSize - 5, cellSize - 5, Xwindow::Coral);
+  wd.fillRectangle(spacing + 1 + c.getCol() * cellSize, spacing + 1 + c.getRow() * cellSize, cellSize, cellSize, colour);
 
-  if (colour != Xwindow::DarkestBlue) {
-    wd.fillRectangle(58 + 1 + 30 + c.getCol() * size, 60 + 1 + 6 + c.getRow() * size, 2, outlineSize, Xwindow::LightBlue);
-    wd.fillRectangle(58 + 1 + 5 + c.getCol() * size, 60 + 1 + 30 + c.getRow() * size, outlineSize, 2, Xwindow::LightBlue);
-  }
+  // if (colour != Xwindow::DarkestBlue) {
+  //   wd.fillRectangle(58 + 1 + 30 + c.getCol() * cellSize, 60 + 1 + 10 + c.getRow() * cellSize, 2, outlineSize, Xwindow::LightBlue);
+  //   wd.fillRectangle(58 + 1 + 7 + c.getCol() * cellSize, 60 + 1 + 30 + c.getRow() * cellSize, outlineSize, 2, Xwindow::LightBlue);
+  // }
+  
   if (colour == Xwindow::DarkestBlue) {
-    wd.drawRectangle(58 + c.getCol() * size, 60 + c.getRow() * size, size, size, Xwindow::LightBlue);
+    wd.drawRectangle(spacing + c.getCol() * cellSize, spacing + c.getRow() * cellSize, cellSize, cellSize, Xwindow::LightBlue);
   } else {
-    wd.drawRectangle(58 + c.getCol() * size, 60 + c.getRow() * size, size, size, Xwindow::Blue);
-
+    wd.drawRectangle(spacing + c.getCol() * cellSize, spacing + c.getRow() * cellSize, cellSize, cellSize, Xwindow::Blue);
   }
 }
 
 void GraphicsDisplay::notify(Cell &c) {
-
   // fill in board grid pattern
   switch(c.bType()) {
     case BlockType::IBlock:
