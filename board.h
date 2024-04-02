@@ -29,9 +29,7 @@ class Board {
   vector<int> colHeights;
   RotateCW lastRotation;
   bool isHeavy = false;
-  bool obstacle = false;
-
-  void clearBoard();
+  bool isObstacle = false;
 
   // checks if the move is valid
   bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
@@ -53,14 +51,22 @@ class Board {
 
     void init(Xwindow &wd); // initializes board
 
-    // based on level, will decide next block and update field as well as
-    // display in the next block region (maybe update text display, and 
-    // update the block level based on cur level)
-    void getNext(); 
+    void clearBoard();
     
-
     // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setBlockType(BlockType b);
+
+    int getLevel();
+
+    void setLevel(int newLevel);
+
+    bool getHeavy();
+
+    void setHeavy(bool heavy);
+
+    bool getObstacle();
+
+    void setObstacle(bool obstacle);
 
     // places block at the top left hand corner, checks loose cond if
     // cannot fit

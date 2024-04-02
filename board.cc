@@ -13,7 +13,12 @@ Board::~Board() {
 void Board::clearBoard() {
   theBoard.clear();
   curScore = 0;
+  blockScore = 0;
+  lose = true;
   nextBlock = BlockType::empty;
+  clear = true;
+  vector<int> colRow (BOARD_W, BOARD_H + RESERVED);
+  colHeights = colRow;
 }
 
 void Board::init(Xwindow &wd) {
@@ -72,6 +77,30 @@ unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
 
 void Board::setBlockType(BlockType b) {
   nextBlock = b;
+}
+
+int Board::getLevel() {
+  return level;
+}
+
+void Board::setLevel(int newLevel) {
+  level = newLevel;
+}
+
+bool Board::getHeavy() {
+  return isHeavy;
+}
+
+void Board::setHeavy(bool heavy) {
+  isHeavy = heavy;
+}
+
+bool Board::getObstacle() {
+  return isObstacle;
+}
+
+void Board::setObstacle(bool obstacle) {
+  isObstacle = obstacle;
 }
 
 bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, bool placing) {
@@ -555,7 +584,7 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
 
 void Board::updateScore() {
   int numCleared = 0;
-  for (int i = 0; i < 18; ++i) {
+  for (int i = 17; i <= 0; --i) {
     if (checkLineClear(i)) {
       ++numCleared;
       lineClear(i);
@@ -585,5 +614,33 @@ ostream &operator<<(ostream &out, const Board &b) {
   out << score << b.curScore << endl;
   out << hiScore << b.highScore << endl;
   out << *b.td;
+  // out << "Next: " << endl;
+  // shared_ptr<Block> newBlock;
+  // switch(b.nextBlock) {
+  //     case BlockType::IBlock:
+  //       newBlock = shared_ptr<IBlock>();
+  //       break;
+  //     case BlockType::JBlock:
+  //       newBlock = shared_ptr<JBlock>();
+  //       break;
+  //     case BlockType::LBlock:
+  //       newBlock = shared_ptr<LBlock>();
+  //       break;
+  //     case BlockType::OBlock:
+  //       newBlock = shared_ptr<OBlock>();
+  //       break;
+  //     case BlockType::SBlock:
+  //       newBlock = shared_ptr<SBlock>();
+  //       break;
+  //     case BlockType::ZBlock:
+  //       newBlock = shared_ptr<ZBlock>();
+  //       break;
+  //     case BlockType::TBlock:
+  //       newBlock = shared_ptr<TBlock>();
+  //       break;
+  //     case BlockType::empty:
+  //       break;
+  //   }
+  // out << newBlock;
   return out;
 }
