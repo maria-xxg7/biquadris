@@ -32,13 +32,18 @@ Xwindow::Xwindow(int width, int height) : width{width}, height{height} {
   XColor xcolour;
   Colormap cmap;
 
-  char color_vals[20][15]={"white", "black", "rgb:ff/82/8b", "rgb:be/5f/66",
-    "rgb:70/a8/94", "rgb:9f/e7/93", "rgb:81/c4/de", "rgb:a8/8a/c2", 
-    "rgb:ff/9f/73", "rgb:ff/df/87", "rgb:00/20/2e", "rgb:00/3f/5c",
-    "rgb:2c/48/75", "rgb:d1/db/e4", "rgb:66/53/4c"};
+  char color_vals[21][15]={"white", "black", 
+    "rgb:ff/82/8b", "rgb:de/70/78",
+    "rgb:70/a8/94", "rgb:60/92/80",
+    "rgb:9f/e7/93", "rgb:8a/c9/7f",
+    "rgb:81/c4/de", "rgb:6f/aa/c1",
+    "rgb:a8/8a/c2", "rgb:92/77/a8",
+    "rgb:ff/9f/73", "rgb:de/8a/63",
+    "rgb:ff/df/87", "rgb:de/c2/75",
+    "rgb:00/20/2e", "rgb:00/3f/5c", "rgb:2c/48/75", "rgb:d1/db/e4", "rgb:66/53/4c" };
 
   cmap=DefaultColormap(d,DefaultScreen(d));
-  for(int i=0; i < 20; ++i) {
+  for(int i=0; i < 21; ++i) {
       XParseColor(d,cmap,color_vals[i],&xcolour);
       XAllocColor(d,cmap,&xcolour);
       colours[i]=xcolour.pixel;

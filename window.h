@@ -9,14 +9,15 @@ class Xwindow {
   Window w;
   int s, width, height;
   GC gc;
-  unsigned long colours[20];
+  unsigned long colours[21];
 
  public:
   Xwindow(int width=388, int height=736);  // Constructor; displays the window.
   ~Xwindow();                              // Destructor; destroys the window.
 
-  enum {White=0, Black, Coral, DCoral, DarkGreen, LightGreen, SkyBlue, Purple, Orange, 
-    Yellow, DarkestBlue, DarkBlue, Blue, LightBlue, Brown}; // Available colours.
+  enum {White=0, Black, Coral, DCoral, DarkGreen, DDarkGreen, LightGreen, DLightGreen, 
+        SkyBlue, DSkyBlue, Purple, DPurple, Orange, DOrange, Yellow, DYellow,
+        DarkestBlue, DarkBlue, Blue, LightBlue, Brown}; // Available colours.
 
   int getWidth() const;
   int getHeight() const;

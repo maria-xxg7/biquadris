@@ -12,33 +12,48 @@
 #include "zblock.h"
 #include "tblock.h"
 #include "textdisplay.h"
-#include "graphicsdisplay.h"
+// #include "graphicsdisplay.h"
 using namespace std;
 
 class Board {
-  vector<vector<Cell>> theBoard;
+
+  // GRID
+
+  vector<vector<shared_ptr<Cell>>> theBoard; // grid of cells
+  shared_ptr<TextDisplay> td; // text display for grid
+  vector<int> colHeights; // height of each col
+  // GraphicsDisplay *gd;
+
+  // SCORING
+
   int level, curScore, highScore, blockScore;
-  bool lose = false;
-  BlockType nextBlock;
-  TextDisplay *td;
-  GraphicsDisplay *gd;
+
+  // BLOCKS
+
   vector<vector<char>> lastConfig;
   vector<vector<int>> coords;
-  int totalShift = 0; int totalDown = 0;
-  bool clear = true;
-  vector<int> colHeights;
+  int totalShift = 0; 
+  int totalDown = 0;
+  BlockType nextBlock;
   RotateCW lastRotation;
+
+  // CONDITIONS
+
+  bool lose = false;
   bool isHeavy = false;
   bool isObstacle = false;
+  bool clear = true;
+
+  // FUNCS
 
   // checks if the move is valid
   bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
 
-  int findNextHeight(int row, int col);
+  // int findNextHeight(int row, int col);
 
-  bool checkHeads(int row);
+  // bool checkHeads(int row);
 
-  void reassignHead(int row);
+  // void reassignHead(int row);
   
   class BlockFactory {
     public:
@@ -49,11 +64,10 @@ class Board {
     Board();
     ~Board();
 
-    void init(Xwindow &wd); // initializes board
+    void init(); // initializes board
 
     void clearBoard();
     
-    // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setBlockType(BlockType b);
 
     int getLevel();
@@ -68,26 +82,26 @@ class Board {
 
     void setObstacle(bool obstacle);
 
-    // places block at the top left hand corner, checks loose cond if
-    // cannot fit
+    // // places block at the top left hand corner, checks loose cond if
+    // // cannot fit
     void moveBlock(string move);
-    // for each move in command, will update the block before moving 
-    // void moveBlock(string move); 
-    // must be called to make each move, checks lose cond if exceeds height
-    // before actually putting it down 
-    void dropBlock();
+    // // for each move in command, will update the block before moving 
+    // // void moveBlock(string move); 
+    // // must be called to make each move, checks lose cond if exceeds height
+    // // before actually putting it down 
+    // void dropBlock();
 
-    // given row, checks if that line should be cleared
-    bool checkLineClear(int row);
-    // clears specified row, updates high and cur score and checks if 
-    // blocks are cleards 
-    void lineClear(int row);
+    // // given row, checks if that line should be cleared
+    // bool checkLineClear(int row);
+    // // clears specified row, updates high and cur score and checks if 
+    // // blocks are cleards 
+    // void lineClear(int row);
 
-    void updateScore();
+    // void updateScore();
 
-    bool isLose() const;
+    // bool isLose() const;
     
-    friend ostream &operator<<(ostream &out, const Board &b);
+    // friend ostream &operator<<(ostream &out, const Board &b);
 };
 
 #endif

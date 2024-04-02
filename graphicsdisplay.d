@@ -1,2 +1,1 @@
-graphicsdisplay.o: graphicsdisplay.cc graphicsdisplay.h window.h \
- observer.h cell.h
+graphicsdisplay.o: graphicsdisplay.cc

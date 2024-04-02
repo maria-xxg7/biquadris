@@ -8,7 +8,7 @@ using namespace std;
 
 class Cell;
 
-class TextDisplay : public Observer {
+class TextDisplay : public Observer{
     vector<vector<char>> theDisplay;
   public:
     TextDisplay();
