@@ -42,7 +42,7 @@ class Board {
   
   class BlockFactory {
     public:
-      static unique_ptr<Block> buildBlock(BlockType b);
+      static shared_ptr<Block> buildBlock(BlockType b);
   };
 
   public:

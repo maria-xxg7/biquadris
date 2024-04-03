@@ -44,17 +44,11 @@ void Board::init(Xwindow &wd) {
       theBoard[row][col].setCoords(row, col);
       theBoard[row][col].attach(td);
       theBoard[row][col].attach(gd);
-      
-      // for (int ob = 0; ob < BOARD_W; ++ob) {
-      //   if (ob != col) {
-      //     theBoard[row][col].attach(&theBoard[row][ob]);
-      //   }
-      // }
     }
   }
 }
 
-share_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
+shared_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
   switch(bType) {
     case BlockType::IBlock: 
       return shared_ptr<IBlock>();
@@ -122,8 +116,8 @@ bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, boo
 }
 
 void Board::moveBlock(string move) {
-  unique_ptr<BlockFactory> makeBlock;
-  unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
+  shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>();
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
   int shift = 0; int down = 0;
   bool save = false;
   bool isSafe = true;
