@@ -44,58 +44,50 @@ void Board::init(Xwindow &wd) {
       theBoard[row][col].setCoords(row, col);
       theBoard[row][col].attach(td);
       theBoard[row][col].attach(gd);
+      
+      for (int ob = 0; ob < BOARD_W; ++ob) {
+        if (ob != col) {
+          theBoard[row][col].attach(&theBoard[row][ob]);
+        }
+      }
     }
   }
 }
 
-shared_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
+unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
   switch(bType) {
     case BlockType::IBlock: 
-      return shared_ptr<IBlock>();
+      return make_unique<IBlock>();
     case BlockType::JBlock:
-      return shared_ptr<JBlock>();
+      return make_unique<JBlock>();
     case BlockType::LBlock:
-      return shared_ptr<LBlock>();
+      return make_unique<LBlock>();
     case BlockType::OBlock:
-      return shared_ptr<OBlock>();
+      return make_unique<OBlock>();
     case BlockType::SBlock:
-      return shared_ptr<SBlock>();
+      return make_unique<SBlock>();
     case BlockType::ZBlock:
-      return shared_ptr<ZBlock>();
+      return make_unique<ZBlock>();
     case BlockType::TBlock:
-      return shared_ptr<TBlock>();
+      return make_unique<TBlock>();
     default:
-      return shared_ptr<TBlock>();
+      return nullptr;
   }
 }
 
-void Board::setBlockType(BlockType b) {
-  nextBlock = b;
-}
+void Board::setBlockType(BlockType b) { nextBlock = b; }
 
-int Board::getLevel() {
-  return level;
-}
+int Board::getLevel() { return level; }
 
-void Board::setLevel(int newLevel) {
-  level = newLevel;
-}
+void Board::setLevel(int newLevel) { level = newLevel; }
 
-bool Board::getHeavy() {
-  return isHeavy;
-}
+bool Board::getHeavy() { return isHeavy; }
 
-void Board::setHeavy(bool heavy) {
-  isHeavy = heavy;
-}
+void Board::setHeavy(bool heavy) { isHeavy = heavy; }
 
-bool Board::getObstacle() {
-  return isObstacle;
-}
+bool Board::getObstacle() { return isObstacle; }
 
-void Board::setObstacle(bool obstacle) {
-  isObstacle = obstacle;
-}
+void Board::setObstacle(bool obstacle) { isObstacle = obstacle; }
 
 bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, bool placing) {
   bool isSafe = true;
@@ -116,15 +108,17 @@ bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, boo
 }
 
 void Board::moveBlock(string move) {
-  shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>();
-  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
+  unique_ptr<BlockFactory> makeBlock;
+  unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
   int shift = 0; int down = 0;
   bool save = false;
   bool isSafe = true;
   bool placing = false;
 
   move == "" ? placing = true : placing = false;
-
+  if (newBlock->getRotation() == RotateCW::Degree0) {
+    cout << "degree 0" << endl;
+  }
   if (move == "") {
     while (newBlock->getRotation() != RotateCW::Degree0) {
       newBlock->rotateBlockCW();
@@ -153,9 +147,12 @@ void Board::moveBlock(string move) {
     newBlock->rotateBlockCCW();
   } else if (move == "save") {
     save = true;
+    cout << save << endl;
   }
 
   vector<vector<char>> blockBlock = newBlock->getConfig();
+  cout << shift << endl;
+  cout << down << endl;
 
   if (placing) { // check if the block can be placed
     for (int i = 0; i < BLOCK_DIM; ++i) {
@@ -234,9 +231,9 @@ void Board::moveBlock(string move) {
 // checks for lowest height cell can be dropped
 int Board::findNextHeight(int row, int col) {
   for (int i = BOARD_H + RESERVED - 1; i > row + 1; --i) {
-    cout << "Position checking " << i << endl;
+    // cout << "Position checking " << i << endl;
     if (theBoard[i][col].getState()) {
-      cout << "LOWEST POSSIBLE" << i << endl;
+      // cout << "LOWEST POSSIBLE" << i << endl;
       return i;
     }
   }
@@ -297,7 +294,7 @@ void Board::dropBlock() {
 
     // if all the blocks fit and it's distance is the current max, we update variable
     if (validFit) {
-      cout << validFit << endl;
+      // cout << validFit << endl;
       ++validNum;
       if (tempDist > maxDist) {
       // cout << "Valid last dist" << tempDist << endl;
@@ -389,7 +386,16 @@ void Board::reassignHead(int row) {
 
   // REASSIGN HEAD
 
-  for (int i = 0; i < BOARD_H + RESERVED; ++i) {
+  int start = RESERVED;
+  if (row - RESERVED > start) {
+    start = row - RESERVED;
+  }
+  int end = BOARD_H + RESERVED;
+  if (row + RESERVED < end) {
+    end = row + RESERVED;
+  }
+
+  for (int i = start; i < end; ++i) {
     for (int j = 0; j < BOARD_W; ++j) {
       for (int h = 0; h < headLen; ++h) {
         if (theBoard[i][j].getHeadRow() == heads[h][0] && theBoard[i][j].getHeadCol() == heads[h][1]
@@ -412,7 +418,7 @@ void Board::reassignHead(int row) {
 
   headLen = heads.size();
 
-  for (int i = 0; i < BOARD_H + RESERVED; ++i) {
+  for (int i = start; i < end; ++i) {
     for (int j = 0; j < BOARD_W; ++j) {
       for (int h = 0; h < headLen; ++h) {
         if (theBoard[i][j].getHeadRow() == heads[h][0] && theBoard[i][j].getHeadCol() == heads[h][1]) {
@@ -453,6 +459,7 @@ bool Board::checkHeads(int row) {
   headLen = heads.size();
 
   bool reassign = false;
+  
   for (int i = 0; i < BOARD_W; ++i) {
     for (int h = 0; h < headLen; ++h) {
       if (theBoard[row][i].cellsLeft() != 0 && theBoard[row][i].getHeadRow() == heads[h][0] &&
@@ -467,19 +474,9 @@ bool Board::checkHeads(int row) {
 }
 
 void Board::lineClear(int row) { // add lose condition, and check block type disappear
-  // cout << "LINE CLEAR -------------------------------" << endl;
-  // cout << "before" << endl;
-  // // print for testing
-  // for (int row = 0; row < BOARD_H + RESERVED; ++row) {
-  //   for (int col = 0; col < BOARD_W; ++col) {
-  //     cout << theBoard[row][col].cellsLeft();
-  //   }
-  //   cout << endl;
-  // }
-
   // update colHeights since moving everything down
   for (int i = 0; i < BOARD_W; ++i) {
-    --colHeights[i];
+    ++colHeights[i];
   }
 
   // UPDATE BLOCK OBSERVERS
@@ -493,7 +490,16 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     }
   } // update block observers in row being removed
 
-  for (int i = 0; i < BOARD_H + RESERVED; ++i) {
+  int start = RESERVED;
+  if (row - RESERVED > start) {
+    start = row - RESERVED;
+  }
+  int end = BOARD_H + RESERVED;
+  if (row + RESERVED < end) {
+    end = row + RESERVED;
+  }
+
+  for (int i = start; i < end; ++i) {
     for (int j = 0; j < BOARD_W; ++j) {
       for (int col = 0; col < BOARD_W; ++col) {
         theBoard[i][j].detachBlock(&theBoard[row][col]); // detach block observers
@@ -548,16 +554,20 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     theBoard[0][col].setType(BlockType::empty);
     theBoard[0][col].setCoords(0, col);
   }
+  int max = colHeights[0];
+  for (int i = 1; i < BOARD_W; ++i) {
+    if (colHeights[i] < max) {
+      max = colHeights[i];
+    }
+  }
 
   // update td
-  for (int i = row; i >= 0; --i) {
+  for (int i = row; i >= max - 1; --i) {
     for (int col = 0; col < BOARD_W; ++col) {
     // theBoard[row][i].detach(td); // detach the text display from the cells being removed
-
         theBoard[i][col].setCoords(i, col);
         theBoard[i][col].attach(td); // reattach the cells to the text display
         theBoard[i][col].attach(gd); // reattach the cells to the text display
-
 
         if (theBoard[i][col].bType() == BlockType::empty) {
           theBoard[i][col].setUnfilled();
@@ -585,10 +595,10 @@ void Board::updateScore() {
     }
   }
   int sqrtScore = numCleared + level;
-  cout << "Before square" << sqrtScore << endl;
+  cout << "Before square " << sqrtScore << endl;
   curScore += (sqrtScore * sqrtScore);
   curScore += blockScore;
-
+  // gd.setScore(curScore);
   if (curScore > highScore) {
     highScore = curScore;
   }
@@ -598,7 +608,6 @@ void Board::updateScore() {
 bool Board::isLose() const {
   return lose;
 }
-
 ostream &operator<<(ostream &out, const Board &b) {
   //print level and score (move to board class)
   string level = "Level: ";
@@ -613,24 +622,31 @@ ostream &operator<<(ostream &out, const Board &b) {
   switch(b.nextBlock) {
       case BlockType::IBlock:
         *newBlock = IBlock();
+        b.gd->updateNext(newBlock, b.nextBlock);
         break;
       case BlockType::JBlock:
         *newBlock = JBlock();
+         b.gd->updateNext(newBlock, b.nextBlock);
         break;
       case BlockType::LBlock:
         *newBlock = LBlock();
+        b.gd->updateNext(newBlock, b.nextBlock);
         break;
       case BlockType::OBlock:
         *newBlock = OBlock();
+        b.gd->updateNext(newBlock, b.nextBlock);
         break;
       case BlockType::SBlock:
         *newBlock = SBlock();
+        b.gd->updateNext(newBlock, b.nextBlock);
         break;
       case BlockType::ZBlock:
         *newBlock = ZBlock();
+        b.gd->updateNext(newBlock, b.nextBlock);
         break;
       case BlockType::TBlock:
         *newBlock = TBlock();
+        b.gd->updateNext(newBlock, b.nextBlock);
         break;
       case BlockType::empty:
         break;

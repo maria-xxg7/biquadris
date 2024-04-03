@@ -73,12 +73,17 @@ int main() {
           b.moveBlock(cmd);
           cout << b;
         } else if (cmd == "drop") {
-          b.moveBlock("save");
+         b.moveBlock("save");
           b.dropBlock();
           if (b.isLose()) {
             cout << "LOSE! END GAME!" << endl;
           }
           cout << "Calling update score" << endl;
+          for (int i = RESERVED; i < BOARD_H + RESERVED; ++i) {
+            if (b.checkLineClear(i)) {
+              b.lineClear(i);
+            }
+          }
           b.updateScore();
           cout << b;
         } else if (cmd == "stop") {
