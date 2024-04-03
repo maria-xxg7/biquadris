@@ -533,6 +533,7 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
   // input a new empty row at the top
   vector<Cell> newRow(BOARD_W, Cell());
   theBoard.insert(theBoard.begin(), newRow);
+  cout << "change" << endl;
 
   // init new row
   for (int col = 0; col < BOARD_W; ++col) {
