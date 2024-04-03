@@ -8,15 +8,14 @@ using namespace std;
 enum class RotateCW { Degree0, Degree90, Degree180, Degree270 };
 
 class Block {
+  protected:
   RotateCW curRotation;
   vector<vector<char>> config;
 
   public:
     Block(); // constructor
     vector<vector<char>> getConfig();
-    virtual void setConfig(vector<vector<char>> cf) = 0;
     RotateCW getRotation() const;
-    virtual void setRotation(RotateCW rotation) = 0;
     string getRotationString() const;
     virtual vector<int> getLeftCorner();
     virtual void rotateBlockCW() = 0;    

@@ -49,15 +49,15 @@ class Board {
   // checks if the move is valid
   bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
 
-  // int findNextHeight(int row, int col);
+  int findNextHeight(int row, int col);
 
-  // bool checkHeads(int row);
+  bool checkHeads(int row);
 
-  // void reassignHead(int row);
+  void reassignHead(int row);
   
   class BlockFactory {
     public:
-      static unique_ptr<Block> buildBlock(BlockType b);
+      static shared_ptr<Block> buildBlock(BlockType b);
   };
 
   public:
@@ -89,19 +89,19 @@ class Board {
     // // void moveBlock(string move); 
     // // must be called to make each move, checks lose cond if exceeds height
     // // before actually putting it down 
-    // void dropBlock();
+    void dropBlock();
 
     // // given row, checks if that line should be cleared
-    // bool checkLineClear(int row);
+    bool checkLineClear(int row);
     // // clears specified row, updates high and cur score and checks if 
     // // blocks are cleards 
-    // void lineClear(int row);
+    void lineClear(int row);
 
-    // void updateScore();
+    void updateScore();
 
-    // bool isLose() const;
+    bool isLose() const;
     
-    // friend ostream &operator<<(ostream &out, const Board &b);
+    friend ostream &operator<<(ostream &out, const Board &b);
 };
 
 #endif

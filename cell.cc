@@ -39,7 +39,7 @@ void Cell::setType(BlockType b) { type = b; }
 
 void Cell::setLevel(int lvl) { cellLevel = lvl; }
 
-// int Cell::cellsLeft() { return block.size(); };
+int Cell::cellsLeft() { return block.size(); };
 
 void Cell::attach(shared_ptr<Observer> o) { observers.emplace_back(o); }
 
@@ -60,24 +60,26 @@ void Cell::attach(shared_ptr<Observer> o) { observers.emplace_back(o); }
 //   }
 // }
 
-// void Cell::attachBlock(Observer *o) { block.emplace_back(o); }
+void Cell::attachBlock(shared_ptr<Observer> o) { 
+  // block.emplace_back(o); 
+  }
 
-// void Cell::detachBlock(Observer *o) { 
-//   vector<Observer*>::iterator it = block.begin();
-//   bool found = false;
-//   int len = block.size();
-//   for (int i = 0; i < len; ++i) {
-//     if (o == *it) { 
-//       found = true; 
-//       break; 
-//     } else {
-//       ++it;
-//     }
-//   }
-//   if (found && it != block.end()) {
-//     block.erase(it);
-//   }
-// }
+void Cell::detachBlock(shared_ptr<Observer> o) { 
+  // vector<shared_ptr<Observer>>::iterator it = block.begin();
+  // bool found = false;
+  // int len = block.size();
+  // for (int i = 0; i < len; ++i) {
+  //   if (*o == *it) { 
+  //     found = true; 
+  //     break; 
+  //   } else {
+  //     ++it;
+  //   }
+  // }
+  // if (found && it != block.end()) {
+  //   block.erase(it);
+  // }
+}
 
 BlockType Cell::bType() { return type; }
 

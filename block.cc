@@ -7,19 +7,11 @@ vector<vector<char>> Block::getConfig() {
 }
 
 RotateCW Block::getRotation() const {
-    return RotateCW::Degree0;
+    return curRotation;
 }
 
 vector<int> Block::getLeftCorner() {
     return vector<int> {3, 0};
-}
-
-void Block::setConfig(vector<vector<char>> cf) {
-  config = cf;
-}
-
-void Block::setRotation(RotateCW rotation) {
-  curRotation = rotation;
 }
 
 string Block::getRotationString() const {
