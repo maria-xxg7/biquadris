@@ -22,8 +22,6 @@ void Board::clearBoard() {
 }
 
 void Board::init(Xwindow &wd) {
-  delete td;
-  delete gd;
   td = new TextDisplay();
   nextBlock = BlockType::empty;
   lastRotation = RotateCW::Degree0;
