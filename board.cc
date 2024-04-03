@@ -52,24 +52,24 @@ void Board::init(Xwindow &wd) {
   }
 }
 
-unique_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
+shared_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
   switch(bType) {
     case BlockType::IBlock: 
-      return make_unique<IBlock>();
+      return make_shared<IBlock>();
     case BlockType::JBlock:
-      return make_unique<JBlock>();
+      return make_shared<JBlock>();
     case BlockType::LBlock:
-      return make_unique<LBlock>();
+      return make_shared<LBlock>();
     case BlockType::OBlock:
-      return make_unique<OBlock>();
+      return make_shared<OBlock>();
     case BlockType::SBlock:
-      return make_unique<SBlock>();
+      return make_shared<SBlock>();
     case BlockType::ZBlock:
-      return make_unique<ZBlock>();
+      return make_shared<ZBlock>();
     case BlockType::TBlock:
-      return make_unique<TBlock>();
+      return make_shared<TBlock>();
     default:
-      return nullptr;
+      return make_shared<IBlock>();
   }
 }
 
@@ -106,8 +106,8 @@ bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, boo
 }
 
 void Board::moveBlock(string move) {
-  unique_ptr<BlockFactory> makeBlock;
-  unique_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
+  shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>();
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
   int shift = 0; int down = 0;
   bool save = false;
   bool isSafe = true;
