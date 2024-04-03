@@ -2,7 +2,6 @@
 #define __CELL_H__
 #include <vector>
 #include "observer.h"
-#include <memory>
 using namespace std;
 
 extern const int BOARD_W;
@@ -12,8 +11,8 @@ extern const int BLOCK_DIM;
 
 class Cell : public Observer {
     bool isFilled = false;
-    vector<shared_ptr<Observer>> observers;
-    vector<shared_ptr<Observer>> block;
+    vector<Observer*> observers;
+    vector<Observer*> block;
     BlockType type;
     int row, col;
     vector<int> headCell = {0, 0};
@@ -33,10 +32,10 @@ class Cell : public Observer {
     void setType(BlockType b); // Sets teh type of block the cell is part of
     void setLevel(int lvl); // Sets teh type of block the cell is part of
     int cellsLeft();
-    void attach(shared_ptr<Observer> o);
-    // void detach(Observer *o);
-    void attachBlock(shared_ptr<Observer> o);
-    void detachBlock(shared_ptr<Observer> o);
+    void attach(Observer *o);
+    void detach(Observer *o);
+    void attachBlock(Observer *o);
+    void detachBlock(Observer *o);
 
     BlockType bType() override;
     CellType cType() override;

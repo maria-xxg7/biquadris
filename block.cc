@@ -25,6 +25,9 @@ string Block::getRotationString() const {
     return "Degree270";
   }
 }
+// shared_ptr<Cell> Block::getBlock() const {
+//   return theBlock;
+// }
 
 ostream &operator<<(ostream &out, Block &b) {
   vector<vector<char>> blockConfig = b.getConfig();
