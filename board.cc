@@ -227,6 +227,7 @@ void Board::moveBlock(string move) {
             if (lastConfig[i][j] != ' ') {
               theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
               theBoard[i + totalDown][j + totalShift].setUnfilled();
+              theBoard[i + totalDown][j + totalShift].setLevel(level);
             }
           }
         }
@@ -241,6 +242,7 @@ void Board::moveBlock(string move) {
               if (move != "") {
                 theBoard[i + totalDown + down][j + totalShift + shift].setType(curBlock);
                 theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
+                theBoard[i + totalDown + down][j + totalShift + shift].setLevel(level);
                 if (save) {
                   vector<int> point {i + totalDown + down, j + totalShift + shift};
                   coords.emplace_back(point);
@@ -248,6 +250,7 @@ void Board::moveBlock(string move) {
               } else {
                 theBoard[i][j].setType(curBlock);
                 theBoard[i][j].setFilled();
+                theBoard[i][j].setLevel(level);
               }
             }
           }
@@ -274,6 +277,7 @@ void Board::moveBlock(string move) {
             if (lastConfig[i][j] != ' ') {
               theBoard[i + totalDown][j + totalShift].setType(curBlock);
               theBoard[i + totalDown][j + totalShift].setFilled();
+              theBoard[i + totalDown][j + totalShift].setLevel(level);
             }
           }
         }
@@ -642,21 +646,23 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
 
 void Board::updateScore() {
   int numCleared = 0;
-  for (int i = 17; i <= 0; --i) {
+  for (int i = 17; i >= 0; --i) {
     if (checkLineClear(i)) {
       ++numCleared;
       lineClear(i);
     }
   }
-  int sqrtScore = numCleared + level;
-  cout << "Before square " << sqrtScore << endl;
-  curScore += (sqrtScore * sqrtScore);
-  curScore += blockScore;
-  // gd.setScore(curScore);
-  if (curScore > highScore) {
-    highScore = curScore;
+  if (numCleared != 0) {
+      int sqrtScore = numCleared + level;
+    cout << "Before square " << sqrtScore << endl;
+    curScore += (sqrtScore * sqrtScore);
+    curScore += blockScore;
+    // gd.setScore(curScore);
+    if (curScore > highScore) {
+      highScore = curScore;
   }
   blockScore = 0;
+  }
 }
 
 bool Board::isLose() const {

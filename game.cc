@@ -20,6 +20,7 @@ Game::Game(Xwindow &wd1, Xwindow &wd2) : playerTurn {0} {
 }
 
 void Game::restartGame() {
+  // reset game how to reset textdisplay
   playerBoards[0]->clearBoard();
   playerBoards[1]->clearBoard();
 
@@ -53,11 +54,7 @@ void Game::levelUp() {
     return;
   } else {
     if (playerLevel == 0) {
-      if (playerTurn) {
-        playerLevels[playerTurn] = make_shared<LevelOne>();
-      } else {
-        playerLevels[playerTurn] = make_shared<LevelOne>();
-      }
+      playerLevels[playerTurn] = make_shared<LevelOne>();
     } else if (playerLevel == 1) {
       playerLevels[playerTurn] = make_shared<LevelTwo>();
     } else if (playerLevel == 2) {
@@ -99,9 +96,26 @@ void Game::levelDown() {
   playerBoards[playerTurn]->setLevel(playerLevel - 1);
 }
 
+void Game::noRandom(string filename) {
+  int playerLevel = playerBoards[playerTurn]->getLevel();
+  playerLevels[playerTurn] = make_shared<LevelHard>(playerLevel, filename);
+}
+
+void Game::random() {
+  // change so it checks if it's alr random plz
+  int playerLevel = playerBoards[playerTurn]->getLevel();
+  playerLevels[playerTurn] = make_shared<LevelHard>(playerLevel);
+}
+
 void Game::playerPlay(bool player) {
   playerTurn = player;
-  cout << "Player enter your moves: " << endl;
+  string playerNumber;
+  if (player) {
+    playerNumber = "2 ";
+  } else {
+    playerNumber = "1 ";
+  }
+  cout << "Player " << playerNumber << "enter your moves: " << endl;
   // cin.exceptions(ios::eofbit|ios::failbit);
   shared_ptr<Board> bInPlay = playerBoards[playerTurn];
   string cmd;
@@ -110,12 +124,12 @@ void Game::playerPlay(bool player) {
     while (cin >> cmd) {  
         // cout << "reading commands" << endl;
         if (bInPlay->isLose()) {
-            cout << "LOSE! END GAME!" << endl;
+            cout << playerNumber << "LOST! END GAME!" << endl;
             restartGame();
         } else if (cmd == "left") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
-          cout << "Enter your moves: " << endl;
+          cout << "Player " << playerNumber << "enter your moves: " << endl;
         } else if (cmd == "right") {
           // cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
           // cout << "Next: " << playerBoards[0]->getNextType() << endl;
@@ -124,36 +138,50 @@ void Game::playerPlay(bool player) {
           // cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
           // cout << "Next: " << playerBoards[0]->getNextType() << endl;
           cout << *bInPlay;
-          cout << "Enter your moves: " << endl;
+          cout << "Player " << playerNumber << "enter your moves: " << endl;
         } else if (cmd == "down") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
-          cout << "Enter your moves: " << endl;
+          cout << "Player " << playerNumber << "enter your moves: " << endl;
         } else if (cmd == "clockwise") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
-          cout << "Enter your moves: " << endl;
+          cout << "Player " << playerNumber << "enter your moves: " << endl;
         } else if (cmd == "counterclockwise") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
-          cout << "Enter your moves: " << endl;
+          cout << "Player " << playerNumber << "enter your moves: " << endl;
         } else if (cmd == "drop") {
           bInPlay->moveBlock("save");
           bInPlay->dropBlock();
           if (bInPlay->isLose()) {
-            cout << "LOSE! END GAME!" << endl;
+            cout << "Player " << playerNumber << "LOST! END GAME!" << endl;
             restartGame();
           }
           bInPlay->updateScore();
           playerBoards[playerTurn]->moveBlock("");
           playerLevels[playerTurn]->newMove(bInPlay);
           cout << *bInPlay;
-          cout << "Turn ended. Next Player's turn";
+          cout << "Turn ended. Next player's turn" << endl;
           return;
         } else if (cmd == "levelup") {
           levelUp();
+          cout << "Player " << playerNumber << "leveled up! Enter your moves: " << endl;
         } else if (cmd == "leveldown") {
           levelDown();
+          cout << "Player " << playerNumber << "leveled down! Enter your moves: " << endl;
+        } else if (cmd == "norandom") {
+          string filename;
+          cin >> filename;
+          noRandom(filename);
+          cout << "Player " << playerNumber << "enter your moves: " << endl;
+        } else if (cmd == "random") {
+          random();
+          cout << "Player " << playerNumber << "enter your moves: " << endl;
+        } else if (cmd == "reset") {
+          restartGame();
+          cout << *bInPlay;
+          cout << "Reset game! Start again!" << endl;
         } else {
           break;
         } // if

@@ -18,6 +18,8 @@ class Game {
     void startGame();
     void levelUp();
     void levelDown();
-    string blockToString(BlockType blockHere);
+    void noRandom(string filename);
+    void random();
+    // string blockToString(BlockType blockHere);
     void playerPlay(bool player);
 };

@@ -53,17 +53,18 @@ class Board {
 
     void clearBoard();
     
-    // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setBlockType(BlockType b);
 
     BlockType getBlockType();
 
+    // TEMP FUNCTION FOR TESTING ONLY!!!!
     string getNextType();
 
     void setCurBlock(BlockType b);
 
     BlockType getCurBlockB();
 
+    // TEMP FUNCTION FOR TESTING ONLY!!!!
     string getCurBlock();
 
     int getLevel();
