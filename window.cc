@@ -32,7 +32,7 @@ Xwindow::Xwindow(int width, int height) : width{width}, height{height} {
   XColor xcolour;
   Colormap cmap;
 
-  char color_vals[21][15]={"white", "black", 
+  char color_vals[22][15]={"white", "dim gray", "rgb:21/25/29", 
     "rgb:ff/82/8b", "rgb:de/70/78",
     "rgb:70/a8/94", "rgb:60/92/80",
     "rgb:9f/e7/93", "rgb:8a/c9/7f",
@@ -43,7 +43,7 @@ Xwindow::Xwindow(int width, int height) : width{width}, height{height} {
     "rgb:00/20/2e", "rgb:00/3f/5c", "rgb:2c/48/75", "rgb:d1/db/e4", "rgb:66/53/4c" };
 
   cmap=DefaultColormap(d,DefaultScreen(d));
-  for(int i=0; i < 21; ++i) {
+  for(int i=0; i < 22; ++i) {
       XParseColor(d,cmap,color_vals[i],&xcolour);
       XAllocColor(d,cmap,&xcolour);
       colours[i]=xcolour.pixel;

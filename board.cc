@@ -1,9 +1,9 @@
 #include "board.h"
 #include <memory>
 
-Board::Board() : theBoard {}, level {0}, curScore {0}, highScore {0}, blockScore {0},
-  curBlock{BlockType::empty}, nextBlock{BlockType::empty}, td{new TextDisplay{}} // gd{nullptr}
-  {}
+Board::Board() : theBoard {}, td{new TextDisplay{}}, gd{nullptr}, level {0}, 
+  curScore {0}, highScore {0}, blockScore {0}, curBlock{BlockType::empty}, 
+  nextBlock{BlockType::empty} {}
 
 Board::~Board() {
   delete td;
@@ -23,14 +23,12 @@ void Board::clearBoard() {
 }
 
 void Board::init(Xwindow &wd) {
-  td = new TextDisplay();
+  gd = new GraphicsDisplay(wd); 
   nextBlock = BlockType::empty;
   lastRotation = RotateCW::Degree0;
   
   vector<int> colRow (BOARD_W, BOARD_H + RESERVED);
   colHeights = colRow;
-
-  gd = new GraphicsDisplay(wd); 
 
   vector<Cell> new_row (BOARD_W, Cell());
   for (int grid_r = 0; grid_r < BOARD_H + RESERVED; ++grid_r) {
@@ -43,15 +41,11 @@ void Board::init(Xwindow &wd) {
       theBoard[row][col].setCoords(row, col);
       theBoard[row][col].attach(td);
       theBoard[row][col].attach(gd);
-      
-      for (int ob = 0; ob < BOARD_W; ++ob) {
-        if (ob != col) {
-          theBoard[row][col].attach(&theBoard[row][ob]);
-        }
-      }
     }
   }
 }
+
+bool Board::isLose() const { return lose; }
 
 shared_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
   switch(bType) {
@@ -136,14 +130,20 @@ bool Board::getObstacle() { return isObstacle; }
 
 void Board::setObstacle(bool obstacle) { isObstacle = obstacle; }
 
+bool Board::finishedMove() const { return heavyDrop; }
+
+void Board::setBlind(bool isOn) { isBlind = isOn; }
+
+bool Board::getSpecial() const { return specialAction; }
+
 bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, bool placing) {
-  bool isSafe = true;
+  bool isSafe = true; // temp indicator for if it is safe to place a block
   for (int i = 0; i < BLOCK_DIM; ++i) {
     for (int j = 0; j < BLOCK_DIM; ++j) {
       if ((*blockBlock)[i][j] != ' ') {
-        if (i + totalDown + down > BOARD_H + RESERVED - 1) { 
+        if (i + totalDown + down > BOARD_H + RESERVED - 1) { // check if moves goes past the bottom border
           isSafe = false; 
-        } else if (j + totalShift + shift < 0 || j + totalShift + shift > 10) {
+        } else if (j + totalShift + shift < 0 || j + totalShift + shift > 10) {  // check if move goes past left/right border
           isSafe = false;
         } else if (theBoard[i + totalDown + down][j + totalShift + shift].bType() != BlockType::empty) { 
           isSafe = false; // no longer safe to place block
@@ -155,142 +155,161 @@ bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, boo
 }
 
 void Board::moveBlock(string move) {
-  cout << "In move: " << endl;
-  cout << "Cur: " << getCurBlock() << endl;
-  cout << "Next: " << getNextType() << endl;
-  shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>();
-  shared_ptr<Block> newBlock = makeBlock->buildBlock(curBlock);
-  cout << "Cur: " << getCurBlock() << endl;
-  cout << "Next: " << getNextType() << endl;
+  // cout << "In move: " << endl;
+  // cout << "Cur: " << getCurBlock() << endl;
+  // cout << "Next: " << getNextType() << endl;
+  shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>(); // create block factory
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(curBlock); // make a pointer to the current block
+  // cout << "Cur: " << getCurBlock() << endl;
+  // cout << "Next: " << getNextType() << endl;
 
-  int shift = 0; int down = 0;
-  bool save = false;
-  bool isSafe = true;
-  bool placing = false;
+  gd->setLevel(level);
+  int shift = 0; int down = 0; // block moves
+  bool save = false; // save block coords
+  bool isSafe = true; // indicates if it is safe to place the block
+  bool placing = false; // if the block is being placed not moved
 
-  move == "" ? placing = true : placing = false;
-  if (newBlock->getRotation() == RotateCW::Degree0) {
-    cout << "degree 0" << endl;
-  }
-  if (move == "") {
-    while (newBlock->getRotation() != RotateCW::Degree0) {
-      newBlock->rotateBlockCW();
+  move == "" ? placing = true : placing = false; // check if block is being placed
+
+  if (placing) { // if placing the block
+    while (newBlock->getRotation() != RotateCW::Degree0) { 
+      newBlock->rotateBlockCW(); // rotate to starting rotation (degree 0)
     }
-  } else if (move != "") {
+  } else if (!placing) {
     while (lastRotation != newBlock->getRotation()) {
-      newBlock->rotateBlockCW();
+      newBlock->rotateBlockCW(); // rotate to previous rotation
     }
   }
 
-  if (move == "") {
-    shift = 0;
+  if (placing) { // no movement
+    shift = 0; 
     down = 0;
-  } else if (move == "left") {
+  } else if (move == "left") { // move left
     shift = -1;
     down = 0;
-  } else if (move == "right") {
+  } else if (move == "right") { // move right
     shift = 1;
     down = 0;
-  } else if (move == "down") {
+  } else if (move == "down") { // move down
     down = 1;
     shift = 0;
-  } else if (move == "clockwise") {
+  } else if (move == "clockwise") { // rotate clockwise
     newBlock->rotateBlockCW();
-  } else if (move == "counterclockwise") {
+  } else if (move == "counterclockwise") { // rotate counterclockwise
     newBlock->rotateBlockCCW();
-  } else if (move == "save") {
+  } else if (move == "save") { // save the block
     save = true;
-    cout << save << endl;
   }
 
-  vector<vector<char>> blockBlock = newBlock->getConfig();
-  cout << shift << endl;
-  cout << down << endl;
+  vector<vector<char>> blockBlock = newBlock->getConfig(); // get configuration
 
   if (placing) { // check if the block can be placed
     for (int i = 0; i < BLOCK_DIM; ++i) {
       for (int j = 0; j < BLOCK_DIM; ++j) {
         if ((blockBlock)[i][j] != ' ') {
-          if (theBoard[i][j].bType() != BlockType::empty) { 
-            lose = true;
+          if (theBoard[i][j].bType() != BlockType::empty) { // check if the cells are filled
+            lose = true; // block cannot be place => lose the game
           }
         }
       }
     }
   } 
-  if (lose) {
-    return;
-  } else {
-    if (!clear) {
-        for (int i = 0; i < BLOCK_DIM; ++i) {
-          for (int j = 0; j < BLOCK_DIM; ++j) {
-            if (lastConfig[i][j] != ' ') {
-              theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
-              theBoard[i + totalDown][j + totalShift].setUnfilled();
-              theBoard[i + totalDown][j + totalShift].setLevel(level);
-            }
+
+  if (lose) { return; } // if lost, exit moveBlock
+
+  if (!clear) { // check if the board isn't clear of the previous block
+      for (int i = 0; i < BLOCK_DIM; ++i) {
+        for (int j = 0; j < BLOCK_DIM; ++j) {
+          if (lastConfig[i][j] != ' ') {
+            // clear the filled cells
+            theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
+            theBoard[i + totalDown][j + totalShift].setUnfilled();
+            theBoard[i + totalDown][j + totalShift].setLevel(level);
           }
         }
       }
+    }
 
-      isSafe = validMove(&blockBlock, shift, down, placing);
+    isSafe = validMove(&blockBlock, shift, down, placing); // check if safe to make the move
 
-      if (isSafe) {
-        for (int i = 0; i < BLOCK_DIM; ++i) {
-          for (int j = 0; j < BLOCK_DIM; ++j) {
-            if (blockBlock[i][j] != ' ') {
-              if (move != "") {
-                theBoard[i + totalDown + down][j + totalShift + shift].setType(curBlock);
-                theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
-                theBoard[i + totalDown + down][j + totalShift + shift].setLevel(level);
-                if (save) {
-                  vector<int> point {i + totalDown + down, j + totalShift + shift};
-                  coords.emplace_back(point);
-                }
-              } else {
-                theBoard[i][j].setType(curBlock);
-                theBoard[i][j].setFilled();
-                theBoard[i][j].setLevel(level);
-              }
-            }
-          }
-        }
+    // special action: check if isHeavy is enabled and the move made was horizontal & legal
+    if (isSafe && isHeavy && (move == "left" || move == "right")) { 
+      bool oneDown = validMove(&blockBlock, shift, down + 1, placing);
+      bool doubleDown = validMove(&blockBlock, shift, down + 2, placing);
 
-        if (move == "") {
-          clear = false; 
-          lastConfig = blockBlock;
-        } else {
-          if (save) {
-            totalShift = 0;
-            totalDown = 0;
-            lastRotation = RotateCW::Degree0;
-          } else {
-            lastRotation = newBlock->getRotation();
-            totalShift += shift;
-            totalDown += down;
-            lastConfig = blockBlock;
-          }
-        }
+      if (oneDown && doubleDown) { // check if can move down 2 (in addition to the left/right move)
+        down += 2;
       } else {
-        for (int i = 0; i < BLOCK_DIM; ++i) {
-          for (int j = 0; j < BLOCK_DIM; ++j) {
-            if (lastConfig[i][j] != ' ') {
-              theBoard[i + totalDown][j + totalShift].setType(curBlock);
-              theBoard[i + totalDown][j + totalShift].setFilled();
-              theBoard[i + totalDown][j + totalShift].setLevel(level);
+        heavyDrop = true;
+      }
+    }
+
+    // safe to place
+    if (isSafe) {
+      for (int i = 0; i < BLOCK_DIM; ++i) {
+        for (int j = 0; j < BLOCK_DIM; ++j) {
+          if (blockBlock[i][j] != ' ') {
+            if (!placing) { // check if moving (not placing)
+              // set cells on in new block position
+              theBoard[i + totalDown + down][j + totalShift + shift].setType(curBlock);
+
+              if (isBlind && checkBlindCell(theBoard[i + totalDown + down][j + totalShift + shift])) {
+                cout << "checking" << endl;
+                theBoard[i + totalDown + down][j + totalShift + shift].setUnfilled();
+              } else {
+                theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
+              }
+              theBoard[i + totalDown + down][j + totalShift + shift].setLevel(level);
+              if (save) { // check if final move
+                // save coordinates of final block position
+                vector<int> point {i + totalDown + down, j + totalShift + shift};
+                coords.emplace_back(point);
+              }
+            } else { // if placing block
+              // set cells on in starting block config position
+              theBoard[i][j].setType(curBlock);
+              theBoard[i][j].setFilled();
+              theBoard[i][j].setLevel(level);
             }
           }
         }
       }
-  } 
+
+      if (placing) { // check if placing block
+        clear = false; // board no longer clear
+        lastConfig = blockBlock; // save last config
+      } else {
+        if (save) { // check if saving block 
+          // reset state of block
+          totalShift = 0;
+          totalDown = 0;
+          lastRotation = RotateCW::Degree0;
+          heavyDrop = false;
+        } else { // check if still moving block
+          // save state of previous block & update total movements
+          lastRotation = newBlock->getRotation();
+          lastConfig = blockBlock;
+          totalShift += shift;
+          totalDown += down;
+        }
+      }
+    } else { // if not safe to place
+      for (int i = 0; i < BLOCK_DIM; ++i) {
+        for (int j = 0; j < BLOCK_DIM; ++j) {
+          if (lastConfig[i][j] != ' ') { 
+            // set the block back to where it used to be (no movement)
+            theBoard[i + totalDown][j + totalShift].setType(curBlock);
+            theBoard[i + totalDown][j + totalShift].setFilled();
+            theBoard[i + totalDown][j + totalShift].setLevel(level);
+          }
+        }
+      }
+    }
 }
 
-// checks for lowest height cell can be dropped
 int Board::findNextHeight(int row, int col) {
   for (int i = BOARD_H + RESERVED - 1; i > row + 1; --i) {
-    // cout << "Position checking " << i << endl;
     if (theBoard[i][col].getState()) {
-      // cout << "LOWEST POSSIBLE" << i << endl;
       return i;
     }
   }
@@ -300,7 +319,6 @@ int Board::findNextHeight(int row, int col) {
 void Board::dropBlock() {
   // erase block
   for (int i = 0; i < BLOCK_DIM; ++i) {
-    // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0]][coords[i][1]].setType(BlockType::empty);
     theBoard[coords[i][0]][coords[i][1]].setUnfilled();
   }
@@ -314,62 +332,49 @@ void Board::dropBlock() {
   // iterate throught each block, calculate the different for that one column,
   // and check if dropping all blocks by that distance will work
   for (int i = 0; i < BLOCK_DIM; ++i) {
-    // cout << "STARTING POINT: " << colHeights[coords[i][1]] << " and " << coords[i][0] << endl;
     int tempDist = 0;
     bool validFit = true; // indicator that this dist did not work
+
     // placed below maxHeight - since move checks this is valid
     if (coords[i][0] > colHeights[coords[i][1]]) {
-      // cout << "cond less than" << endl;
       below = true;
       tempDist = findNextHeight(coords[i][0], coords[i][1]) - coords[i][0] - 1;
-      // cout << tempDist << endl;
     } else {
-      // tempDist = colHeights[coords[i][1]] - coords[i][0] - 1;
       tempDist = colHeights[coords[i][1]] - coords[i][0] - 1;
     }
 
     //checking all other blocks with this tempDist
-    // cout << "Checking dist wrt this point" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
     for (int j = 0; j < BLOCK_DIM; ++j) {
-      // cout << "NEW POINT: " << "(" << coords[j][0] << "," << coords[j][1] << ")" << endl;
       if (((coords[j][0] + tempDist) >= 18) || ((coords[j][0] + tempDist) < 3)) { // out of bounds
-        // cout << "Out of Bounds 1: " << coords[j][0] << "and " << tempDist << endl;
         validFit = false; 
         break;
-      } else if (theBoard[coords[j][0] + tempDist][coords[j][1]].getState()) { // alr filled by another block
-        // cout << "Out of Bounds 2: " << coords[j][0] << "and " << tempDist << endl;
+      } else if (theBoard[coords[j][0] + tempDist][coords[j][1]].bType() != BlockType::empty) { // alr filled by another block
         validFit = false;
          break;   
         // iterate through to next height
       } else if (coords[j][0] + tempDist > colHeights[coords[j][1]] && !below) {
-        // cout << "Out of Bounds 3: " << coords[j][0] << "and " << tempDist << endl;
         validFit = false;
       }
-      // cout << "Good: " << coords[j][0] << " and " << tempDist << endl;
     } // exit this for loop by either breaking since one of the blocks didnt fit or we exit
       // after all the blocks are checked and fit
 
     // if all the blocks fit and it's distance is the current max, we update variable
     if (validFit) {
-      // cout << validFit << endl;
       ++validNum;
       if (tempDist > maxDist) {
-      // cout << "Valid last dist" << tempDist << endl;
-      // cout << "Point with max dist" << "(" << coords[i][0] << "," << coords[i][1] << ")" << endl;
         maxDist = tempDist;
       }
     }
   } // after this for is exited, we've checked that blocks col height distance 
     // and checked if each block fits based on this difference
+
   // once we know which distance is the most suitable, we set the board
-  // cout << "Max distance " << maxDist << endl;
   if (validNum == 0 && !below) {
     lose = true;
     return;
   }
   
   for (int i = 0; i < BLOCK_DIM; ++i) {
-    // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(curBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
     if (i != 0) {
@@ -384,19 +389,21 @@ void Board::dropBlock() {
     if (i != 3) {
       theBoard[coords[3][0] + maxDist][coords[3][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
     }
-    // theBoard[0][0].setHead(0, 0);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setHead(coords[0][0] + maxDist, coords[0][1]);
 
     if (colHeights[coords[i][1]] > maxDist + coords[i][0]) {
       colHeights[coords[i][1]] = maxDist + coords[i][0];
     }
-    // cout << "Height of " << coords[i][1] << " is: " << colHeights[coords[i][1]] << endl;
   }
 
-  cout << "drop" << endl;
-
+  // reset states:
   coords.clear();
   curBlock = nextBlock;
+  isHeavy = false;
+  if (isBlind) {
+    blinding(false); // turn off blind
+    isBlind = false;
+  }
 }
 
 bool Board::checkLineClear(int row) {
@@ -644,30 +651,62 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
   }
 }
 
+bool Board::checkBlindCell(Cell &c) {
+  for (int i = 5; i < BOARD_H; ++i) {
+    for (int j = 2; j < 9; ++j) {
+      if (c.getRow() == i && c.getCol() == j) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+void Board::blinding(bool blind) {
+  // hide columns 3-9, and from rows 3-12
+  if (blind) {
+    for (int i = 5; i < BOARD_H; ++i) {
+      for (int j = 2; j < 9; ++j) {
+        theBoard[i][j].hide();
+        theBoard[i][j].setUnfilled();
+        // gd->blindDraw(true);
+      }
+    }
+  } else {
+     for (int i = 5; i < BOARD_H; ++i) {
+      for (int j = 2; j < 9; ++j) {
+        theBoard[i][j].show();
+        theBoard[i][j].setFilled();
+      }
+    }   
+  }
+}
+
 void Board::updateScore() {
   int numCleared = 0;
-  for (int i = 17; i >= 0; --i) {
+  for (int i = RESERVED; i < BOARD_H + RESERVED; ++i) {
     if (checkLineClear(i)) {
       ++numCleared;
       lineClear(i);
     }
   }
+
+  numCleared >= 2 ? specialAction = true : specialAction = false;
+
   if (numCleared != 0) {
-      int sqrtScore = numCleared + level;
-    cout << "Before square " << sqrtScore << endl;
+    int sqrtScore = numCleared + level;
     curScore += (sqrtScore * sqrtScore);
     curScore += blockScore;
-    // gd.setScore(curScore);
+
     if (curScore > highScore) {
       highScore = curScore;
-  }
-  blockScore = 0;
+    }
+    gd->setScore(curScore);
+    gd->setHiScore(highScore);
+   blockScore = 0;
   }
 }
 
-bool Board::isLose() const {
-  return lose;
-}
 ostream &operator<<(ostream &out, const Board &b) {
   //print level and score (move to board class)
   string level = "Level: ";

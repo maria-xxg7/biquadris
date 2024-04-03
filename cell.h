@@ -17,9 +17,11 @@ class Cell : public Observer {
     int row, col;
     vector<int> headCell = {0, 0};
     int cellLevel = 0;
+    bool hidden = false;
   public:
     Cell(); // default constructor
     bool getState() const; // returns value of isFilled
+    bool getHidden() const;
     int getRow() const; // returns the value or row 
     int getCol() const; // returns the value of col
     int getHeadRow() const;
@@ -27,6 +29,8 @@ class Cell : public Observer {
     int getLevel() const;
     void setFilled(); // Explicitly sets to filled
     void setUnfilled();
+    void hide();
+    void show();
     void setCoords(int r, int c); // Sets the row and col location
     void setHead(int r, int c); 
     void setType(BlockType b); // Sets teh type of block the cell is part of

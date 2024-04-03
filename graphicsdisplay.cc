@@ -11,6 +11,9 @@ GraphicsDisplay::GraphicsDisplay(Xwindow &wd): wd{wd} {
   wd.drawString(spacing + spacing, nextSpaceH + spacing/2, to_string(level), Xwindow::White);
   wd.drawString(spacing, nextSpaceH + spacing + 10, "Score: ", Xwindow::White);
   wd.drawString(spacing + spacing, nextSpaceH + spacing + 10, to_string(score), Xwindow::White);
+  wd.drawString(spacing, nextSpaceH + spacing * 2, "High Score: ", Xwindow::White);
+  wd.drawString(spacing + spacing * 2 - 10, nextSpaceH + spacing * 2, to_string(hiScore), Xwindow::White);
+
   wd.drawString(nextSpaceW, nextSpaceH - spacing/2 + 5, "Next Block: ", Xwindow::White);
 
   // fill in board grid pattern
@@ -42,7 +45,7 @@ void GraphicsDisplay::drawCell(Cell &c, int locW, int locH, int colour) {
     wd.fillRectangle(locW + 1 + 22 + c.getCol() * cellSize, locH + 1 + 4 + c.getRow() * cellSize, 2, 2, Xwindow::LightBlue);
   }
   
-  if (colour == Xwindow::DarkestBlue) {
+  if (colour == Xwindow::DarkestBlue || colour == Xwindow::Grey) {
     wd.drawRectangle(locW + c.getCol() * cellSize, locH + c.getRow() * cellSize, cellSize, cellSize, Xwindow::LightBlue);
   } else {
     wd.drawRectangle(locW + c.getCol() * cellSize, locH + c.getRow() * cellSize, cellSize, cellSize, Xwindow::Blue);
@@ -119,6 +122,14 @@ void GraphicsDisplay::setScore(int s) {
   wd.drawString(spacing + spacing, nextSpaceH + spacing + 10, to_string(s), Xwindow::White);
   score = s; 
 }
+
+void GraphicsDisplay::setHiScore(int hs) { 
+  if (hiScore == hs) { return; }
+  wd.drawString(spacing + spacing * 2 - 10, nextSpaceH + spacing * 2, to_string(hiScore), Xwindow::DarkBlue);
+  wd.drawString(spacing + spacing * 2 - 10, nextSpaceH + spacing * 2, to_string(hs), Xwindow::White);
+  hiScore = hs; 
+}
+
 void GraphicsDisplay::setLevel(int l) { 
   if (level == l) { return; }
   wd.drawString(spacing + spacing, nextSpaceH + spacing/2, to_string(level), Xwindow::DarkBlue);
@@ -128,31 +139,39 @@ void GraphicsDisplay::setLevel(int l) {
 
 void GraphicsDisplay::notify(Cell &c) {
   // fill in board grid pattern
-  switch(c.bType()) {
-    case BlockType::IBlock:
-      drawCell(c, spacing, spacing, Xwindow::SkyBlue);
-      break;
-    case BlockType::JBlock:
-      drawCell(c, spacing, spacing, Xwindow::Purple);
-      break;
-    case BlockType::LBlock:
-      drawCell(c, spacing, spacing, Xwindow::Coral);
-      break;
-    case BlockType::OBlock:
-      drawCell(c, spacing, spacing, Xwindow::Orange);
-      break;
-    case BlockType::SBlock:
-      drawCell(c, spacing, spacing, Xwindow::LightGreen);
-      break;
-    case BlockType::ZBlock:
-      drawCell(c, spacing, spacing, Xwindow::DarkGreen);
-      break;
-    case BlockType::TBlock:
-      drawCell(c, spacing, spacing, Xwindow::Yellow);
-      break;
-    case BlockType::empty:
+  if (c.getState() && !c.getHidden()) {
+    switch(c.bType()) {
+      case BlockType::IBlock:
+        drawCell(c, spacing, spacing, Xwindow::SkyBlue);
+        break;
+      case BlockType::JBlock:
+        drawCell(c, spacing, spacing, Xwindow::Purple);
+        break;
+      case BlockType::LBlock:
+        drawCell(c, spacing, spacing, Xwindow::Coral);
+        break;
+      case BlockType::OBlock:
+        drawCell(c, spacing, spacing, Xwindow::Orange);
+        break;
+      case BlockType::SBlock:
+        drawCell(c, spacing, spacing, Xwindow::LightGreen);
+        break;
+      case BlockType::ZBlock:
+        drawCell(c, spacing, spacing, Xwindow::DarkGreen);
+        break;
+      case BlockType::TBlock:
+        drawCell(c, spacing, spacing, Xwindow::Yellow);
+        break;
+      case BlockType::empty:
+        drawCell(c, spacing, spacing, Xwindow::DarkestBlue);
+        break;
+    }
+  } else {
+    if (c.getHidden()) {
+      drawCell(c, spacing, spacing, Xwindow::Grey);
+    } else {
       drawCell(c, spacing, spacing, Xwindow::DarkestBlue);
-      break;
+    }
   }
 }
 

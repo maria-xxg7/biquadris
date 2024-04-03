@@ -4,6 +4,7 @@
 #include <vector>
 #include "observer.h"
 #include "cell.h"
+
 using namespace std;
 
 class Cell;

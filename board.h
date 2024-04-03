@@ -16,87 +16,95 @@
 using namespace std;
 
 class Board {
+  // grid
   vector<vector<Cell>> theBoard;
-  int level, curScore, highScore, blockScore;
-  bool lose = false;
-  BlockType curBlock, nextBlock;
   TextDisplay *td;
   GraphicsDisplay *gd;
+  int level, curScore, highScore, blockScore;
+  BlockType curBlock, nextBlock;
+  bool lose = false;
+
+  // move/drop block
   vector<vector<char>> lastConfig;
   vector<vector<int>> coords;
-  int totalShift = 0; int totalDown = 0;
-  bool clear = true;
   vector<int> colHeights;
+  int totalShift = 0; int totalDown = 0;
   RotateCW lastRotation;
+  bool clear = true;
+  bool heavyDrop = false;
+
+  // special actions
+  bool specialAction = false;
   bool isHeavy = false;
+  bool isBlind = false;
   bool isObstacle = false;
 
   // checks if the move is valid
   bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
 
+  // checks for lowest height cell can be dropped
   int findNextHeight(int row, int col);
 
+  // check if any of the head cells are being removed
   bool checkHeads(int row);
 
+  // reassign the block's head cell
   void reassignHead(int row);
   
+  bool checkBlindCell(Cell &c);
+  // create blocks
   class BlockFactory {
     public:
       static shared_ptr<Block> buildBlock(BlockType b);
   };
 
   public:
-    Board();
-    ~Board();
+    Board(); // constructor
+    ~Board(); // destructor
 
     void init(Xwindow &wd); // initializes board
-
-    void clearBoard();
+    void clearBoard(); // reset the board
+    bool isLose() const;
     
-    void setBlockType(BlockType b);
-
-    BlockType getBlockType();
-
-    // TEMP FUNCTION FOR TESTING ONLY!!!!
-    string getNextType();
-
+    // blocks
+    BlockType getBlockType(); // get block type
+    void setBlockType(BlockType b); // set block type
+    string getNextType(); // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setCurBlock(BlockType b);
-
     BlockType getCurBlockB();
+    string getCurBlock(); // TEMP FUNCTION FOR TESTING ONLY!!!!
+    bool finishedMove() const;
+    void setBlind(bool isOn); // TEMP FUNCTION FOR TESTING ONLY!!!!
 
-    // TEMP FUNCTION FOR TESTING ONLY!!!!
-    string getCurBlock();
-
+    // levels
     int getLevel();
-
     void setLevel(int newLevel);
 
+    // special actions:
+    bool getSpecial() const;
     bool getHeavy();
-
     void setHeavy(bool heavy);
-
     bool getObstacle();
-
     void setObstacle(bool obstacle);
 
-    // places block at the top left hand corner, checks loose cond if
-    // cannot fit
+    // places/moves block based on move command
     void moveBlock(string move);
-    // for each move in command, will update the block before moving 
-    // void moveBlock(string move); 
-    // must be called to make each move, checks lose cond if exceeds height
+
+    // must be called after finishing moving a block, checks lose cond if exceeds height
     // before actually putting it down 
     void dropBlock();
 
     // given row, checks if that line should be cleared
     bool checkLineClear(int row);
-    // clears specified row, updates high and cur score and checks if 
-    // blocks are cleards 
+
+    // clears specified row, updates high and cur score and checks if blocks are cleared
     void lineClear(int row);
 
-    void updateScore();
+    // blinds/unblinds player's board
+    void blinding(bool blind);
 
-    bool isLose() const;
+    // updates current & high score
+    void updateScore();
     
     friend ostream &operator<<(ostream &out, const Board &b);
 };

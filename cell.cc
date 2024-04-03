@@ -11,6 +11,8 @@ Cell::Cell(): row{0}, col{0} {}
 
 bool Cell::getState() const { return isFilled; }
 
+bool Cell::getHidden() const { return hidden; }
+
 int Cell::getRow() const { return row; }
 
 int Cell::getCol() const { return col; }
@@ -30,6 +32,10 @@ void Cell::setUnfilled() {
   isFilled = false;
   notifyAllObservers();
 }
+
+void Cell::hide() { hidden = true; }
+
+void Cell::show() { hidden = false; }
 
 void Cell::setCoords(int r, int c) { row = r; col = c; }
 

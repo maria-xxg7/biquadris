@@ -8,16 +8,23 @@ using namespace std;
 
 int main() {
   //cin.exceptions(ios::eofbit|ios::failbit);
-  Xwindow wd1;
-  Xwindow wd2;
-  bool player = 0;
-  Game theGame = Game(wd1, wd2);
-  theGame.startGame();
-  while (true) {
-    theGame.playerPlay(player);
-    player = !player;
-  }
-  //string cmd;
+  // Xwindow wd1;
+  // Xwindow wd2;
+  // bool player = 0;
+  // Game theGame = Game(wd1, wd2);
+  // theGame.startGame();
+  // while (true) {
+  //   theGame.playerPlay(player);
+  //   player = !player;
+  // }
+  // int numLineclears = 0;
+
+
+  // KEEP TEST HARNESS FOR TESTING 
+  
+  // Board b;
+  // Xwindow wd;
+  // string cmd;
 
   // try {
   //   while (cin >> cmd) {
@@ -67,9 +74,25 @@ int main() {
   //         cout << b;
   //       } else if (cmd == "left") {
   //         b.moveBlock(cmd);
+  //         if (b.finishedMove()) {
+  //           b.moveBlock("save");
+  //           b.dropBlock();
+  //           if (b.isLose()) {
+  //             cout << "LOSE! END GAME!" << endl;
+  //           }
+  //           b.updateScore();
+  //         }
   //         cout << b;
   //       } else if (cmd == "right") {
   //         b.moveBlock(cmd);
+  //         if (b.finishedMove()) {
+  //           b.moveBlock("save");
+  //           b.dropBlock();
+  //           if (b.isLose()) {
+  //             cout << "LOSE! END GAME!" << endl;
+  //           }
+  //           b.updateScore();
+  //         }
   //         cout << b;
   //       } else if (cmd == "down") {
   //         b.moveBlock(cmd);
@@ -80,17 +103,15 @@ int main() {
   //       } else if (cmd == "counterclockwise") {
   //         b.moveBlock(cmd);
   //         cout << b;
+  //       } else if (cmd == "blind") {
+  //         b.setBlind(true);
+  //         b.blinding(true);
+  //         cout << b;
   //       } else if (cmd == "drop") {
   //        b.moveBlock("save");
   //         b.dropBlock();
   //         if (b.isLose()) {
   //           cout << "LOSE! END GAME!" << endl;
-  //         }
-  //         cout << "Calling update score" << endl;
-  //         for (int i = RESERVED; i < BOARD_H + RESERVED; ++i) {
-  //           if (b.checkLineClear(i)) {
-  //             b.lineClear(i);
-  //           }
   //         }
   //         b.updateScore();
   //         cout << b;

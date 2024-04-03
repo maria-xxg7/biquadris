@@ -22,12 +22,14 @@ class GraphicsDisplay : public Observer {
   void drawCell(Cell &c, int locW, int locH, int colour);
   BlockType curType;
   int score = 0;
+  int hiScore = 0;
   int level = 0;
 
   public:
     GraphicsDisplay(Xwindow &wd);
     void updateNext(shared_ptr<Block> block, BlockType b);
     void setScore(int s);
+    void setHiScore(int s);
     void setLevel(int l);
     void notify(Cell &c) override;
     BlockType bType() override;
