@@ -22,7 +22,8 @@ void LevelZero::newMove(shared_ptr<Board> b) {
     }
   }
   ++counter;
-  b->setBlockType(BlockType::JBlock);
+  cout << getBlockType << endl;
+  b->setBlockType(stringToBlock(getBlockType));
   // cout << "Current block type: " << getBlockType << endl;
   // cout << "Next index: " << counter << endl;
 }

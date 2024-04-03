@@ -96,10 +96,10 @@ void Game::playerPlay() {
   // cin.exceptions(ios::eofbit|ios::failbit);
   shared_ptr<Board> bInPlay = playerBoards[playerTurn];
   string cmd;
-  Xwindow wd;
+  // Xwindow wd;
   // try {
     while (cin >> cmd) {  
-        cout << "reading commands" << endl;
+        // cout << "reading commands" << endl;
         if (bInPlay->isLose()) {
             cout << "LOSE! END GAME!" << endl;
             restartGame();
