@@ -10,9 +10,13 @@ int main() {
   //cin.exceptions(ios::eofbit|ios::failbit);
   Xwindow wd1;
   Xwindow wd2;
+  bool player = 0;
   Game theGame = Game(wd1, wd2);
   theGame.startGame();
-  theGame.playerPlay();
+  while (true) {
+    theGame.playerPlay(player);
+    player = !player;
+  }
   //string cmd;
 
   // try {

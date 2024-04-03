@@ -19,7 +19,7 @@ class Board {
   vector<vector<Cell>> theBoard;
   int level, curScore, highScore, blockScore;
   bool lose = false;
-  BlockType nextBlock;
+  BlockType curBlock, nextBlock;
   TextDisplay *td;
   GraphicsDisplay *gd;
   vector<vector<char>> lastConfig;
@@ -55,6 +55,16 @@ class Board {
     
     // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setBlockType(BlockType b);
+
+    BlockType getBlockType();
+
+    string getNextType();
+
+    void setCurBlock(BlockType b);
+
+    BlockType getCurBlockB();
+
+    string getCurBlock();
 
     int getLevel();
 

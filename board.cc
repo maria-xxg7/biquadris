@@ -2,7 +2,7 @@
 #include <memory>
 
 Board::Board() : theBoard {}, level {0}, curScore {0}, highScore {0}, blockScore {0},
-  nextBlock{BlockType::empty}, td{new TextDisplay{}} // gd{nullptr}
+  curBlock{BlockType::empty}, nextBlock{BlockType::empty}, td{new TextDisplay{}} // gd{nullptr}
   {}
 
 Board::~Board() {
@@ -15,6 +15,7 @@ void Board::clearBoard() {
   curScore = 0;
   blockScore = 0;
   lose = true;
+  curBlock = BlockType::empty;
   nextBlock = BlockType::empty;
   clear = true;
   vector<int> colRow (BOARD_W, BOARD_H + RESERVED);
@@ -75,6 +76,54 @@ shared_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
 
 void Board::setBlockType(BlockType b) { nextBlock = b; }
 
+BlockType Board::getBlockType() { return nextBlock; }
+
+string Board::getNextType() {
+  switch(nextBlock) {
+    case BlockType::IBlock: 
+      return "I Block";
+    case BlockType::JBlock:
+      return "J Block";
+    case BlockType::LBlock:
+      return "L Block";
+    case BlockType::OBlock:
+      return "O Block";
+    case BlockType::SBlock:
+      return "S Block";
+    case BlockType::ZBlock:
+      return "Z Block";
+    case BlockType::TBlock:
+      return "T Block";
+    default:
+      return "I Block";
+  }
+}
+
+void Board::setCurBlock(BlockType b) { curBlock = b; }
+
+BlockType Board::getCurBlockB() { return curBlock; }
+
+string Board::getCurBlock() { 
+  switch(curBlock) {
+    case BlockType::IBlock: 
+      return "I Block";
+    case BlockType::JBlock:
+      return "J Block";
+    case BlockType::LBlock:
+      return "L Block";
+    case BlockType::OBlock:
+      return "O Block";
+    case BlockType::SBlock:
+      return "S Block";
+    case BlockType::ZBlock:
+      return "Z Block";
+    case BlockType::TBlock:
+      return "T Block";
+    default:
+      return "I Block";
+  }
+}
+
 int Board::getLevel() { return level; }
 
 void Board::setLevel(int newLevel) { level = newLevel; }
@@ -106,8 +155,14 @@ bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, boo
 }
 
 void Board::moveBlock(string move) {
+  cout << "In move: " << endl;
+  cout << "Cur: " << getCurBlock() << endl;
+  cout << "Next: " << getNextType() << endl;
   shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>();
-  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(curBlock);
+  cout << "Cur: " << getCurBlock() << endl;
+  cout << "Next: " << getNextType() << endl;
+
   int shift = 0; int down = 0;
   bool save = false;
   bool isSafe = true;
@@ -184,14 +239,14 @@ void Board::moveBlock(string move) {
           for (int j = 0; j < BLOCK_DIM; ++j) {
             if (blockBlock[i][j] != ' ') {
               if (move != "") {
-                theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
+                theBoard[i + totalDown + down][j + totalShift + shift].setType(curBlock);
                 theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
                 if (save) {
                   vector<int> point {i + totalDown + down, j + totalShift + shift};
                   coords.emplace_back(point);
                 }
               } else {
-                theBoard[i][j].setType(nextBlock);
+                theBoard[i][j].setType(curBlock);
                 theBoard[i][j].setFilled();
               }
             }
@@ -217,7 +272,7 @@ void Board::moveBlock(string move) {
         for (int i = 0; i < BLOCK_DIM; ++i) {
           for (int j = 0; j < BLOCK_DIM; ++j) {
             if (lastConfig[i][j] != ' ') {
-              theBoard[i + totalDown][j + totalShift].setType(nextBlock);
+              theBoard[i + totalDown][j + totalShift].setType(curBlock);
               theBoard[i + totalDown][j + totalShift].setFilled();
             }
           }
@@ -311,7 +366,7 @@ void Board::dropBlock() {
   
   for (int i = 0; i < BLOCK_DIM; ++i) {
     // cout << "(" << coords[i][0] + maxDist << "," << coords[i][1] << ")" << endl;
-    theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
+    theBoard[coords[i][0] + maxDist][coords[i][1]].setType(curBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
     if (i != 0) {
       theBoard[coords[0][0] + maxDist][coords[0][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
@@ -337,6 +392,7 @@ void Board::dropBlock() {
   cout << "drop" << endl;
 
   coords.clear();
+  curBlock = nextBlock;
 }
 
 bool Board::checkLineClear(int row) {

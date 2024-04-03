@@ -3,6 +3,7 @@
 LevelZero::LevelZero(string filename, int level, int counter): BlockGenerator{level}, filename{filename}, counter{counter} {}
 
 void LevelZero::newMove(shared_ptr<Board> b) {
+  cout << "NEW MOVE" << endl;
   int index = 0;
   char getBlockType;
   string sequence;

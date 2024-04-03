@@ -18,5 +18,6 @@ class Game {
     void startGame();
     void levelUp();
     void levelDown();
-    void playerPlay();
+    string blockToString(BlockType blockHere);
+    void playerPlay(bool player);
 };

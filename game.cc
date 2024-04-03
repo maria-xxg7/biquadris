@@ -27,12 +27,20 @@ void Game::restartGame() {
 }
 
 void Game::startGame() {
+  // init player 1 board
   playerLevels[0]->newMove(playerBoards[0]);
+  playerBoards[0]->setCurBlock(playerBoards[0]->getBlockType());
   playerBoards[0]->moveBlock("");
   playerLevels[0]->newMove(playerBoards[0]);
+
+  // cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
+  // cout << "Next: " << playerBoards[0]->getNextType() << endl;
   cout << "PLAYER 1: " << endl;
   cout << *playerBoards[0] << endl;
+
+  // init player 2 board
   playerLevels[1]->newMove(playerBoards[1]);
+  playerBoards[1]->setCurBlock(playerBoards[1]->getBlockType());
   playerBoards[1]->moveBlock("");
   playerLevels[1]->newMove(playerBoards[1]);
   cout << "PLAYER 2: " << endl;
@@ -91,8 +99,9 @@ void Game::levelDown() {
   playerBoards[playerTurn]->setLevel(playerLevel - 1);
 }
 
-void Game::playerPlay() {
-  cout << "Enter your moves: " << endl;
+void Game::playerPlay(bool player) {
+  playerTurn = player;
+  cout << "Player enter your moves: " << endl;
   // cin.exceptions(ios::eofbit|ios::failbit);
   shared_ptr<Board> bInPlay = playerBoards[playerTurn];
   string cmd;
@@ -106,19 +115,28 @@ void Game::playerPlay() {
         } else if (cmd == "left") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
+          cout << "Enter your moves: " << endl;
         } else if (cmd == "right") {
-          cout << "correct command read in" << endl;
+          // cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
+          // cout << "Next: " << playerBoards[0]->getNextType() << endl;
           bInPlay->moveBlock(cmd);
+          // cout << "after move" << endl;
+          // cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
+          // cout << "Next: " << playerBoards[0]->getNextType() << endl;
           cout << *bInPlay;
+          cout << "Enter your moves: " << endl;
         } else if (cmd == "down") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
+          cout << "Enter your moves: " << endl;
         } else if (cmd == "clockwise") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
+          cout << "Enter your moves: " << endl;
         } else if (cmd == "counterclockwise") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
+          cout << "Enter your moves: " << endl;
         } else if (cmd == "drop") {
           bInPlay->moveBlock("save");
           bInPlay->dropBlock();
@@ -127,10 +145,11 @@ void Game::playerPlay() {
             restartGame();
           }
           bInPlay->updateScore();
-          cout << *bInPlay;
           playerBoards[playerTurn]->moveBlock("");
           playerLevels[playerTurn]->newMove(bInPlay);
-          playerTurn = !playerTurn;
+          cout << *bInPlay;
+          cout << "Turn ended. Next Player's turn";
+          return;
         } else if (cmd == "levelup") {
           levelUp();
         } else if (cmd == "leveldown") {
