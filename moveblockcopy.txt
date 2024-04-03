@@ -1,0 +1,115 @@
+shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>();
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock);
+  int shift = 0; int down = 0;
+  bool save = false;
+  bool isSafe = true;
+  bool placing = false;
+
+  move == "" ? placing = true : placing = false;
+
+  if (move == "") {
+    while (newBlock->getRotation() != RotateCW::Degree0) {
+      newBlock->rotateBlockCW();
+    }
+  } else if (move != "") {
+    while (lastRotation != newBlock->getRotation()) {
+      newBlock->rotateBlockCW();
+    }
+  }
+
+  if (move == "") {
+    shift = 0;
+    down = 0;
+  } else if (move == "left") {
+    shift = -1;
+    down = 0;
+  } else if (move == "right") {
+    shift = 1;
+    down = 0;
+  } else if (move == "down") {
+    down = 1;
+    shift = 0;
+  } else if (move == "clockwise") {
+    newBlock->rotateBlockCW();
+  } else if (move == "counterclockwise") {
+    newBlock->rotateBlockCCW();
+  } 
+  else if (move == "save") {
+    save = true;
+  }
+
+  vector<vector<char>> blockBlock = newBlock->getConfig();
+
+  if (placing) { // check if the block can be placed
+    for (int i = 0; i < BLOCK_DIM; ++i) {
+      for (int j = 0; j < BLOCK_DIM; ++j) {
+        if ((blockBlock)[i][j] != ' ') {
+          if (theBoard[i][j]->bType() != BlockType::empty) { 
+            lose = true;
+          }
+        }
+      }
+    }
+  } 
+  if (lose) {
+    return;
+  } else {
+    if (!clear) {
+        for (int i = 0; i < BLOCK_DIM; ++i) {
+          for (int j = 0; j < BLOCK_DIM; ++j) {
+            if (lastConfig[i][j] != ' ') {
+              theBoard[i + totalDown][j + totalShift]->setType(BlockType::empty);
+              theBoard[i + totalDown][j + totalShift]->setUnfilled();
+            }
+          }
+        }
+      }
+
+      isSafe = validMove(&blockBlock, shift, down, placing);
+
+      if (isSafe) {
+        for (int i = 0; i < BLOCK_DIM; ++i) {
+          for (int j = 0; j < BLOCK_DIM; ++j) {
+            if (blockBlock[i][j] != ' ') {
+              if (move != "") {
+                theBoard[i + totalDown + down][j + totalShift + shift]->setType(nextBlock);
+                theBoard[i + totalDown + down][j + totalShift + shift]->setFilled();
+                if (save) {
+                  vector<int> point {i + totalDown + down, j + totalShift + shift};
+                  coords.emplace_back(point);
+                }
+              } else {
+                theBoard[i][j]->setType(nextBlock);
+                theBoard[i][j]->setFilled();
+              }
+            }
+          }
+        }
+
+        if (move == "") {
+          clear = false; 
+          lastConfig = blockBlock;
+        } else {
+          if (save) {
+            totalShift = 0;
+            totalDown = 0;
+            lastRotation = RotateCW::Degree0;
+          } else {
+            lastRotation = newBlock->getRotation();
+            totalShift += shift;
+            totalDown += down;
+            lastConfig = blockBlock;
+          }
+        }
+      } else {
+        for (int i = 0; i < BLOCK_DIM; ++i) {
+          for (int j = 0; j < BLOCK_DIM; ++j) {
+            if (lastConfig[i][j] != ' ') {
+              theBoard[i + totalDown][j + totalShift]->setType(nextBlock);
+              theBoard[i + totalDown][j + totalShift]->setFilled();
+            }
+          }
+        }
+      }
+  } 
+  
