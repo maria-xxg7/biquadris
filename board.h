@@ -67,24 +67,25 @@ class Board {
     bool isLose() const;
     
     // blocks
-    BlockType getBlockType(); // get block type
+    BlockType getBlockType() const; // get block type
     void setBlockType(BlockType b); // set block type
     string getNextType(); // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setCurBlock(BlockType b);
-    BlockType getCurBlockB();
+    BlockType getCurBlockB() const;
     string getCurBlock(); // TEMP FUNCTION FOR TESTING ONLY!!!!
     bool finishedMove() const;
-    void setBlind(bool isOn); // TEMP FUNCTION FOR TESTING ONLY!!!!
+    void setBlind(bool isOn); 
 
     // levels
-    int getLevel();
+    int getLevel() const;
     void setLevel(int newLevel);
 
     // special actions:
     bool getSpecial() const;
-    bool getHeavy();
+    void setSpecial(bool isOn);
+    bool getHeavy() const;
     void setHeavy(bool heavy);
-    bool getObstacle();
+    bool getObstacle() const;
     void setObstacle(bool obstacle);
 
     // places/moves block based on move command

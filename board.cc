@@ -14,16 +14,47 @@ void Board::clearBoard() {
   theBoard.clear();
   curScore = 0;
   blockScore = 0;
-  lose = true;
+  level = 0;
+  totalShift = 0;
+  totalDown = 0;
+  gd->setLevel(level);
+  gd->setScore(curScore);
+
   curBlock = BlockType::empty;
   nextBlock = BlockType::empty;
+  lastRotation = RotateCW::Degree0;
+
+  lose = false;
   clear = true;
+  specialAction = false;
+  isHeavy = false;
+  isBlind = false;
+  isObstacle = false;
+
   vector<int> colRow (BOARD_W, BOARD_H + RESERVED);
   colHeights = colRow;
+
+  lastConfig.clear();
+  coords.clear();
+
+  vector<Cell> new_row (BOARD_W, Cell());
+  for (int grid_r = 0; grid_r < BOARD_H + RESERVED; ++grid_r) {
+    theBoard.emplace_back(new_row);
+  }
+
+  for (int row = 0; row < BOARD_H + RESERVED; ++row) {
+    for (int col = 0; col < BOARD_W; ++col) {
+      theBoard[row][col].setType(BlockType::empty);
+      theBoard[row][col].setCoords(row, col);
+      theBoard[row][col].attach(td);
+      theBoard[row][col].attach(gd);
+    }
+  }
 }
 
 void Board::init(Xwindow &wd) {
   gd = new GraphicsDisplay(wd); 
+  curBlock = BlockType::empty;
   nextBlock = BlockType::empty;
   lastRotation = RotateCW::Degree0;
   
@@ -70,7 +101,7 @@ shared_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
 
 void Board::setBlockType(BlockType b) { nextBlock = b; }
 
-BlockType Board::getBlockType() { return nextBlock; }
+BlockType Board::getBlockType() const { return nextBlock; }
 
 string Board::getNextType() {
   switch(nextBlock) {
@@ -95,7 +126,7 @@ string Board::getNextType() {
 
 void Board::setCurBlock(BlockType b) { curBlock = b; }
 
-BlockType Board::getCurBlockB() { return curBlock; }
+BlockType Board::getCurBlockB() const { return curBlock; }
 
 string Board::getCurBlock() { 
   switch(curBlock) {
@@ -118,15 +149,15 @@ string Board::getCurBlock() {
   }
 }
 
-int Board::getLevel() { return level; }
+int Board::getLevel() const { return level; }
 
 void Board::setLevel(int newLevel) { level = newLevel; }
 
-bool Board::getHeavy() { return isHeavy; }
+bool Board::getHeavy() const { return isHeavy; }
 
 void Board::setHeavy(bool heavy) { isHeavy = heavy; }
 
-bool Board::getObstacle() { return isObstacle; }
+bool Board::getObstacle() const { return isObstacle; }
 
 void Board::setObstacle(bool obstacle) { isObstacle = obstacle; }
 
@@ -135,6 +166,8 @@ bool Board::finishedMove() const { return heavyDrop; }
 void Board::setBlind(bool isOn) { isBlind = isOn; }
 
 bool Board::getSpecial() const { return specialAction; }
+
+void Board::setSpecial(bool isOn) { specialAction = isOn; }
 
 bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, bool placing) {
   bool isSafe = true; // temp indicator for if it is safe to place a block
@@ -399,7 +432,7 @@ void Board::dropBlock() {
   // reset states:
   coords.clear();
   curBlock = nextBlock;
-  isHeavy = false;
+  if (level <= 3) { isHeavy = false; }
   if (isBlind) {
     blinding(false); // turn off blind
     isBlind = false;
