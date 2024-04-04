@@ -48,6 +48,10 @@ void Board::clearBoard() {
       theBoard[row][col].setCoords(row, col);
       theBoard[row][col].attach(td);
       theBoard[row][col].attach(gd);
+      theBoard[row][col].setUnfilled();
+      if (theBoard[row][col].bType() == BlockType::empty) {
+        cout << "empty" << endl;
+      }
     }
   }
 }
@@ -189,7 +193,7 @@ bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, boo
 
 void Board::moveBlock(string move) {
   shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>(); // create block factory
-  shared_ptr<Block> newBlock = makeBlock->buildBlock(curBlock); // make a pointer to the current block
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock); // make a pointer to the current block
 
   int shift = 0; int down = 0; // block moves
   bool save = false; // save block coords
@@ -211,6 +215,7 @@ void Board::moveBlock(string move) {
   if (placing) { // no movement
     shift = 0; 
     down = 0;
+    cellLevel = level;
   } else if (move == "left") { // move left
     shift = -1;
     down = 0;
@@ -251,7 +256,6 @@ void Board::moveBlock(string move) {
             // clear the filled cells
             theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
             theBoard[i + totalDown][j + totalShift].setUnfilled();
-            theBoard[i + totalDown][j + totalShift].setLevel(level);
           }
         }
       }
@@ -287,12 +291,10 @@ void Board::moveBlock(string move) {
               theBoard[i + totalDown + down][j + totalShift + shift].setType(curBlock);
 
               if (isBlind && checkBlindCell(theBoard[i + totalDown + down][j + totalShift + shift])) {
-                cout << "checking" << endl;
                 theBoard[i + totalDown + down][j + totalShift + shift].setUnfilled();
               } else {
                 theBoard[i + totalDown + down][j + totalShift + shift].setFilled();
               }
-              theBoard[i + totalDown + down][j + totalShift + shift].setLevel(level);
               if (save) { // check if final move
                 // save coordinates of final block position
                 vector<int> point {i + totalDown + down, j + totalShift + shift};
@@ -302,7 +304,6 @@ void Board::moveBlock(string move) {
               // set cells on in starting block config position
               theBoard[i][j].setType(curBlock);
               theBoard[i][j].setFilled();
-              theBoard[i][j].setLevel(level);
             }
           }
         }
@@ -326,14 +327,13 @@ void Board::moveBlock(string move) {
           totalDown += down;
         }
       }
-    } else { // if not safe to place
+    } else { // if not safe to move
       for (int i = 0; i < BLOCK_DIM; ++i) {
         for (int j = 0; j < BLOCK_DIM; ++j) {
           if (lastConfig[i][j] != ' ') { 
             // set the block back to where it used to be (no movement)
             theBoard[i + totalDown][j + totalShift].setType(curBlock);
             theBoard[i + totalDown][j + totalShift].setFilled();
-            theBoard[i + totalDown][j + totalShift].setLevel(level);
           }
         }
       }
@@ -342,14 +342,13 @@ void Board::moveBlock(string move) {
 
 void Board::clearPlaced() {
   for (int i = 0; i < BLOCK_DIM; ++i) {
-        for (int j = 0; j < BLOCK_DIM; ++j) {
-          if (lastConfig[i][j] != ' ') {
-            // clear the filled cells
-            theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
-            theBoard[i + totalDown][j + totalShift].setUnfilled();
-            theBoard[i + totalDown][j + totalShift].setLevel(level);
-          }
-        }
+    for (int j = 0; j < BLOCK_DIM; ++j) {
+      if (lastConfig[i][j] != ' ') {
+        // clear the filled cells
+        theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
+        theBoard[i + totalDown][j + totalShift].setUnfilled();
+      }
+    }
   }
 }
 
@@ -423,6 +422,7 @@ void Board::dropBlock() {
   
   for (int i = 0; i < BLOCK_DIM; ++i) {
     theBoard[coords[i][0] + maxDist][coords[i][1]].setType(curBlock);
+    theBoard[coords[i][0] + maxDist][coords[i][1]].setLevel(cellLevel);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
     if (i != 0) {
       theBoard[coords[0][0] + maxDist][coords[0][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
@@ -445,6 +445,8 @@ void Board::dropBlock() {
 
   // reset states:
   coords.clear();
+  cout << "cell level: " << cellLevel << endl;
+  cellLevel = 0;
   curBlock = nextBlock;
   isHeavy = false;
   if (isBlind) {
@@ -676,7 +678,6 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
   // update td
   for (int i = row; i >= max - 1; --i) {
     for (int col = 0; col < BOARD_W; ++col) {
-    // theBoard[row][i].detach(td); // detach the text display from the cells being removed
         theBoard[i][col].setCoords(i, col);
         theBoard[i][col].attach(td); // reattach the cells to the text display
         theBoard[i][col].attach(gd); // reattach the cells to the text display
@@ -729,7 +730,6 @@ void Board::blinding(bool blind) {
 }
 
 void Board::updateScore() {
-
   int numCleared = 0;
   for (int i = RESERVED; i < BOARD_H + RESERVED; ++i) {
     if (checkLineClear(i)) {
@@ -738,7 +738,7 @@ void Board::updateScore() {
     }
   }
 
-  numCleared >= 2 ? specialAction = true : specialAction = false;
+  // numCleared >= 2 ? specialAction = true : specialAction = false;
 
   if (numCleared != 0) {
     int max = colHeights[0];
@@ -747,10 +747,10 @@ void Board::updateScore() {
         max = colHeights[i];
       }
     }
+
     // update td
-    for (int i = max - 1; i >= RESERVED; --i) {
+    for (int i = max - 1; i >= 0; --i) {
       for (int col = 0; col < BOARD_W; ++col) {
-      // theBoard[row][i].detach(td); // detach the text display from the cells being removed
           theBoard[i][col].setCoords(i, col);
           theBoard[i][col].attach(td); // reattach the cells to the text display
           theBoard[i][col].attach(gd); // reattach the cells to the text display
@@ -771,7 +771,7 @@ void Board::updateScore() {
     }
     gd->setScore(curScore);
     gd->setHiScore(highScore);
-   blockScore = 0;
+    blockScore = 0;
   } else {
     if (numBlocksDropped == 5 && level == 4) {
       if (theBoard[3][5].bType() != BlockType::empty) {

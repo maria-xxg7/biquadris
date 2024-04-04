@@ -29,6 +29,7 @@ class Board {
   vector<vector<int>> coords;
   vector<int> colHeights;
   int totalShift = 0; int totalDown = 0;
+  int cellLevel = 0;
   RotateCW lastRotation;
   bool clear = true;
   bool heavyDrop = false;
