@@ -32,14 +32,17 @@ GraphicsDisplay::GraphicsDisplay(Xwindow &wd): wd{wd} {
 }
 
 void GraphicsDisplay::drawCell(Cell &c, int locW, int locH, int colour) {
-  if (colour != Xwindow::DarkestBlue) {
+  if (colour != Xwindow::DarkestBlue && colour != Xwindow::Brown) {
     wd.fillRectangle(locW + 1 + c.getCol() * cellSize, locH + 1 + c.getRow() * cellSize, cellSize, cellSize, colour + 1);
     wd.fillRectangle(locW + 1 + 5 + c.getCol() * cellSize, locH + 1 + 5 + c.getRow() * cellSize, cellSize - 5, cellSize - 5, colour);
+  } else if (colour == Xwindow::Brown) {
+    wd.fillRectangle(locW + 1 + c.getCol() * cellSize, locH + 1 + c.getRow() * cellSize, cellSize, cellSize, colour);
+    wd.fillRectangle(locW + 1 + + 5 + c.getCol() * cellSize, locH + 1 + 5 + c.getRow() * cellSize, cellSize - 11, cellSize - 11, colour + 1);
   } else {
     wd.fillRectangle(locW + 1 + c.getCol() * cellSize, locH + 1 + c.getRow() * cellSize, cellSize, cellSize, colour);
   }
 
-  if (colour != Xwindow::DarkestBlue) {
+  if (colour != Xwindow::DarkestBlue && colour != Xwindow::Brown) {
     wd.fillRectangle(locW + 1 + 22 + c.getCol() * cellSize, locH + 1 + 8 + c.getRow() * cellSize, 2, outlineSize * 2 - 3, Xwindow::LightBlue);
     wd.fillRectangle(locW + 1 + 4 + c.getCol() * cellSize, locH + 1 + 23 + c.getRow() * cellSize, outlineSize * 2 - 1, 2, Xwindow::LightBlue);
     wd.fillRectangle(locW + 1 + 22 + c.getCol() * cellSize, locH + 1 + 4 + c.getRow() * cellSize, 2, 2, Xwindow::LightBlue);
@@ -112,6 +115,8 @@ void GraphicsDisplay::updateNext(shared_ptr<Block> block, BlockType b) {
       break;
     case BlockType::empty:
       break;
+    case BlockType::SHIT:
+      break;
   }
   curType = b;
 }
@@ -165,6 +170,8 @@ void GraphicsDisplay::notify(Cell &c) {
       case BlockType::empty:
         drawCell(c, spacing, spacing, Xwindow::DarkestBlue);
         break;
+      case BlockType::SHIT:
+        drawCell(c, spacing, spacing, Xwindow::Brown);
     }
   } else {
     if (c.getHidden()) {

@@ -38,6 +38,7 @@ class Board {
   bool isHeavy = false;
   bool isBlind = false;
   bool isObstacle = false;
+  int numBlocksDropped = 0;
 
   // checks if the move is valid
   bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
@@ -77,7 +78,7 @@ class Board {
     void setBlind(bool isOn); 
 
     // levels
-    int getLevel();
+    int getLevel() const;
     void setLevel(int newLevel);
 
     // special actions:

@@ -3,7 +3,7 @@
 
 class Cell;
 
-enum class BlockType { IBlock, JBlock, LBlock, OBlock, SBlock, ZBlock, TBlock, empty };
+enum class BlockType { IBlock, JBlock, LBlock, OBlock, SBlock, ZBlock, TBlock, empty, SHIT };
 enum class CellType { All, InBlock };
 
 class Observer {

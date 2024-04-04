@@ -149,7 +149,7 @@ string Board::getCurBlock() {
   }
 }
 
-int Board::getLevel() { return level; }
+int Board::getLevel() const { return level; }
 
 void Board::setLevel(int newLevel) { level = newLevel; }
 
@@ -188,15 +188,9 @@ bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, boo
 }
 
 void Board::moveBlock(string move) {
-  // cout << "In move: " << endl;
-  // cout << "Cur: " << getCurBlock() << endl;
-  // cout << "Next: " << getNextType() << endl;
   shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>(); // create block factory
-  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock); // make a pointer to the current block
-  // cout << "Cur: " << getCurBlock() << endl;
-  // cout << "Next: " << getNextType() << endl;
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(curBlock); // make a pointer to the current block
 
-  gd->setLevel(level);
   int shift = 0; int down = 0; // block moves
   bool save = false; // save block coords
   bool isSafe = true; // indicates if it is safe to place the block
@@ -265,6 +259,12 @@ void Board::moveBlock(string move) {
 
     isSafe = validMove(&blockBlock, shift, down, placing); // check if safe to make the move
 
+    if (level == 3 && !isHeavy && isSafe) {
+      bool oneDown = validMove(&blockBlock, shift, down + 1, placing);
+      if (oneDown) { ++down; }
+      else { heavyDrop = true; }
+    }
+
     // special action: check if isHeavy is enabled and the move made was horizontal & legal
     if (isSafe && isHeavy && (move == "left" || move == "right")) { 
       bool oneDown = validMove(&blockBlock, shift, down + 1, placing);
@@ -284,7 +284,7 @@ void Board::moveBlock(string move) {
           if (blockBlock[i][j] != ' ') {
             if (!placing) { // check if moving (not placing)
               // set cells on in new block position
-              theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
+              theBoard[i + totalDown + down][j + totalShift + shift].setType(curBlock);
 
               if (isBlind && checkBlindCell(theBoard[i + totalDown + down][j + totalShift + shift])) {
                 cout << "checking" << endl;
@@ -300,7 +300,7 @@ void Board::moveBlock(string move) {
               }
             } else { // if placing block
               // set cells on in starting block config position
-              theBoard[i][j].setType(nextBlock);
+              theBoard[i][j].setType(curBlock);
               theBoard[i][j].setFilled();
               theBoard[i][j].setLevel(level);
             }
@@ -331,7 +331,7 @@ void Board::moveBlock(string move) {
         for (int j = 0; j < BLOCK_DIM; ++j) {
           if (lastConfig[i][j] != ' ') { 
             // set the block back to where it used to be (no movement)
-            theBoard[i + totalDown][j + totalShift].setType(nextBlock);
+            theBoard[i + totalDown][j + totalShift].setType(curBlock);
             theBoard[i + totalDown][j + totalShift].setFilled();
             theBoard[i + totalDown][j + totalShift].setLevel(level);
           }
@@ -350,6 +350,7 @@ int Board::findNextHeight(int row, int col) {
 }
 
 void Board::dropBlock() {
+  ++numBlocksDropped;
   // erase block
   for (int i = 0; i < BLOCK_DIM; ++i) {
     theBoard[coords[i][0]][coords[i][1]].setType(BlockType::empty);
@@ -408,7 +409,7 @@ void Board::dropBlock() {
   }
   
   for (int i = 0; i < BLOCK_DIM; ++i) {
-    theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
+    theBoard[coords[i][0] + maxDist][coords[i][1]].setType(curBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
     if (i != 0) {
       theBoard[coords[0][0] + maxDist][coords[0][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
@@ -431,8 +432,8 @@ void Board::dropBlock() {
 
   // reset states:
   coords.clear();
-  // curBlock = nextBlock;
-  if (level <= 3) { isHeavy = false; }
+  curBlock = nextBlock;
+  isHeavy = false;
   if (isBlind) {
     blinding(false); // turn off blind
     isBlind = false;
@@ -702,7 +703,6 @@ void Board::blinding(bool blind) {
       for (int j = 2; j < 9; ++j) {
         theBoard[i][j].hide();
         theBoard[i][j].setUnfilled();
-        // gd->blindDraw(true);
       }
     }
   } else {
@@ -716,6 +716,7 @@ void Board::blinding(bool blind) {
 }
 
 void Board::updateScore() {
+
   int numCleared = 0;
   for (int i = RESERVED; i < BOARD_H + RESERVED; ++i) {
     if (checkLineClear(i)) {
@@ -724,9 +725,30 @@ void Board::updateScore() {
     }
   }
 
-  // numCleared >= 2 ? specialAction = true : specialAction = false;
+  numCleared >= 2 ? specialAction = true : specialAction = false;
 
   if (numCleared != 0) {
+    int max = colHeights[0];
+    for (int i = 1; i < BOARD_W; ++i) {
+      if (colHeights[i] < max) {
+        max = colHeights[i];
+      }
+    }
+    // update td
+    for (int i = max - 1; i >= RESERVED; --i) {
+      for (int col = 0; col < BOARD_W; ++col) {
+      // theBoard[row][i].detach(td); // detach the text display from the cells being removed
+          theBoard[i][col].setCoords(i, col);
+          theBoard[i][col].attach(td); // reattach the cells to the text display
+          theBoard[i][col].attach(gd); // reattach the cells to the text display
+
+          if (theBoard[i][col].bType() == BlockType::empty) {
+            theBoard[i][col].setUnfilled();
+          } else {
+            theBoard[i][col].setFilled();
+          }
+      }
+    }
     int sqrtScore = numCleared + level;
     curScore += (sqrtScore * sqrtScore);
     curScore += blockScore;
@@ -737,6 +759,19 @@ void Board::updateScore() {
     gd->setScore(curScore);
     gd->setHiScore(highScore);
    blockScore = 0;
+  } else {
+    if (numBlocksDropped == 5 && level == 4) {
+      if (theBoard[3][5].bType() != BlockType::empty) {
+        lose = true;
+        numBlocksDropped = 0;
+        return;
+      } else {
+        theBoard[colHeights[5] - 1][5].setType(BlockType::SHIT);
+        theBoard[colHeights[5] - 1][5].setFilled();
+        --colHeights[5];
+      }
+      numBlocksDropped = 0;
+    }
   }
 }
 
@@ -745,6 +780,7 @@ ostream &operator<<(ostream &out, const Board &b) {
   string level = "Level: ";
   string score = "Score: ";
   string hiScore = "Hi Score: ";
+  b.gd->setLevel(b.getLevel());
   out << level << b.level << endl;
   out << score << b.curScore << endl;
   out << hiScore << b.highScore << endl;
@@ -781,6 +817,8 @@ ostream &operator<<(ostream &out, const Board &b) {
         b.gd->updateNext(newBlock, b.nextBlock);
         break;
       case BlockType::empty:
+        break;
+      case BlockType::SHIT:
         break;
     }
   out << *newBlock;
