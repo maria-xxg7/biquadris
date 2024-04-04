@@ -28,3 +28,6 @@ void LevelZero::newMove(shared_ptr<Board> b) {
   // cout << "Current block type: " << getBlockType << endl;
   // cout << "Next index: " << counter << endl;
 }
+
+string LevelZero::getFileSeq() { return filename; }
+

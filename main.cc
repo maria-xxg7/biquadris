@@ -6,17 +6,57 @@
 #include "window.h"
 using namespace std;
 
-int main() {
-  //cin.exceptions(ios::eofbit|ios::failbit);
-  // Xwindow wd1;
-  // Xwindow wd2;
-  // bool player = 0;
-  // Game theGame = Game(wd1, wd2);
-  // theGame.startGame();
-  // while (true) {
-  //   theGame.playerPlay(player);
-  //   player = !player;
-  // }
+int main( int argc, char *argv[]) {
+  cin.exceptions(ios::eofbit|ios::failbit);
+  Xwindow wd1;
+  Xwindow wd2;
+
+  int countFile = 0;
+  string filename1 = "";
+  string filename2 = "";
+  bool start = false;
+  string levelStart = 0;
+  bool seed = false;
+  string seedSet = "";
+  bool text = false;
+
+  for (int i = 1; i <= argc - 1; ++i) { // since first argument is the executable 
+		string s = argv[i];
+    if (s == "-scriptfile1") {
+      ++countFile;
+      filename1 = argv[i + 1];
+    }
+    if (s == "-scriptfile2") {
+      ++countFile;
+      filename2 = argv[i + 1];
+    }
+    if (s == "-startlevel") {
+      start = true;
+      levelStart = argv[i + 1];
+    } 
+    if (s == "-seed") {
+      seed = true;
+      seedSet = argv[i + 1];
+    }
+    if (s == "text") {
+      text = true;
+    }
+	}
+
+  Game theGame = Game(wd1, wd2);
+  theGame.startGame();
+
+  while (true) {
+    if (theGame.getTesting()) {
+      ifstream file {theGame.getFilename()};
+      theGame.playerPlay(file);
+      if (!theGame.getTesting()) {
+        break;
+      }
+    } else if (!theGame.getTesting()) {
+      theGame.playerPlay(cin);
+    }
+  }
   // int numLineclears = 0;
 
 

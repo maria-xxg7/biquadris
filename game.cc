@@ -3,12 +3,13 @@ using namespace std;
 
 // adding textdisplay and graphics display to this
 
-Game::Game(Xwindow &wd1, Xwindow &wd2) : playerTurn {0} {
+Game::Game(Xwindow &wd1, Xwindow &wd2, string file1, string file2) : playerTurn {0}, isRandom{true}, testing {false}, onSpecialActions{false},
+  file1{file1}, file2{file2} {
   shared_ptr<Board> boardPlayer1 = make_shared<Board>();
   shared_ptr<Board> boardPlayer2 = make_shared<Board>();
 
-  shared_ptr<BlockGenerator> levelPlayer1 = make_shared<LevelZero>("sequence1.txt");
-  shared_ptr<BlockGenerator> levelPlayer2 = make_shared<LevelZero>("sequence2.txt");
+  shared_ptr<BlockGenerator> levelPlayer1 = make_shared<LevelZero>(file1);
+  shared_ptr<BlockGenerator> levelPlayer2 = make_shared<LevelZero>(file2);
   
   playerBoards.emplace_back(boardPlayer1);
   playerBoards.emplace_back(boardPlayer2);
@@ -17,14 +18,6 @@ Game::Game(Xwindow &wd1, Xwindow &wd2) : playerTurn {0} {
 
   playerLevels.emplace_back(levelPlayer1);
   playerLevels.emplace_back(levelPlayer2);
-}
-
-void Game::restartGame() {
-  // reset game how to reset textdisplay
-  playerBoards[0]->clearBoard();
-  playerBoards[1]->clearBoard();
-
-  playerTurn = 0;
 }
 
 void Game::startGame() {
@@ -36,16 +29,30 @@ void Game::startGame() {
 
   // cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
   // cout << "Next: " << playerBoards[0]->getNextType() << endl;
-  cout << "PLAYER 1: " << endl;
-  cout << *playerBoards[0] << endl;
+  // cout << "PLAYER 1: " << endl;
+  // cout << *playerBoards[0] << endl;
 
   // init player 2 board
   playerLevels[1]->newMove(playerBoards[1]);
   playerBoards[1]->setCurBlock(playerBoards[1]->getBlockType());
   playerBoards[1]->moveBlock("");
   playerLevels[1]->newMove(playerBoards[1]);
-  cout << "PLAYER 2: " << endl;
-  cout << *playerBoards[1] << endl;
+  // cout << "PLAYER 2: " << endl;
+  // cout << *playerBoards[1] << endl;
+}
+
+void Game::restartGame() {
+  // reset game how to reset textdisplay
+  playerBoards[0]->clearBoard();
+  playerBoards[1]->clearBoard();
+
+  playerLevels[0] = make_shared<LevelZero>(file1);
+  playerLevels[1] = make_shared<LevelZero>(file2);
+
+  startGame();
+
+  playerTurn = 0;
+  isRandom = true;
 }
 
 void Game::levelUp() {
@@ -59,7 +66,6 @@ void Game::levelUp() {
       playerLevels[playerTurn] = make_shared<LevelTwo>();
     } else if (playerLevel == 2) {
       playerLevels[playerTurn] = make_shared<LevelHard>(3);
-      playerBoards[playerTurn]->setHeavy(true);
     } else {
       playerLevels[playerTurn] = make_shared<LevelHard>(4);
       playerBoards[playerTurn]->setObstacle(true);
@@ -77,115 +83,205 @@ void Game::levelDown() {
   } else {
     if (playerLevel == 1) {
       if (playerTurn) {
-        playerLevels[playerTurn] = make_shared<LevelZero>("sequence2.txt");
+        playerLevels[playerTurn] = make_shared<LevelOne>(file2);
       } else {
-        playerLevels[playerTurn] = make_shared<LevelZero>("sequence1.txt");
-      } 
+        playerLevels[playerTurn] = make_shared<LevelOne>(file1); 
+      }
     } else if (playerLevel == 2) {
        playerLevels[playerTurn] = make_shared<LevelOne>();
     } else if (playerLevel == 3) {
       playerLevels[playerTurn] = make_shared<LevelTwo>();
-      playerBoards[playerTurn]->setHeavy(false);
-      // turn off heavy
     } else {
       playerLevels[playerTurn] = make_shared<LevelHard>(3);
       playerBoards[playerTurn]->setObstacle(false);
-      // turn off * function;
     }
   }
   playerBoards[playerTurn]->setLevel(playerLevel - 1);
 }
 
+void Game::setSpecialActions(bool setOn) { onSpecialActions = setOn; }
+
+bool Game::getSpecialActions() { return onSpecialActions; }
+
+bool Game::getTesting() { return testing; }
+
+string Game::getFilename() { return testingFilename; }
+
 void Game::noRandom(string filename) {
   int playerLevel = playerBoards[playerTurn]->getLevel();
   playerLevels[playerTurn] = make_shared<LevelHard>(playerLevel, filename);
+  isRandom = false;
 }
 
 void Game::random() {
-  // change so it checks if it's alr random plz
+  if (isRandom) {
+    return;
+  }
   int playerLevel = playerBoards[playerTurn]->getLevel();
   playerLevels[playerTurn] = make_shared<LevelHard>(playerLevel);
+  isRandom = true;
 }
 
-void Game::playerPlay(bool player) {
-  playerTurn = player;
-  string playerNumber;
-  if (player) {
-    playerNumber = "2 ";
-  } else {
-    playerNumber = "1 ";
-  }
-  cout << "Player " << playerNumber << "enter your moves: " << endl;
-  // cin.exceptions(ios::eofbit|ios::failbit);
-  shared_ptr<Board> bInPlay = playerBoards[playerTurn];
-  string cmd;
-  // Xwindow wd;
-  // try {
-    while (cin >> cmd) {  
-        // cout << "reading commands" << endl;
+BlockType Game::stringToBlock(string blockChar) {
+ if (blockChar == "O") {
+  return BlockType::OBlock;
+ } else if (blockChar == "I") {
+  return BlockType::IBlock;
+ } else if (blockChar == "J") {
+  return BlockType::JBlock;
+ } else if (blockChar == "L") {
+  return BlockType::LBlock;
+ } else if (blockChar == "S") {
+  return BlockType::SBlock;
+ } else if (blockChar == "Z") {
+  return BlockType::ZBlock;
+ } else if (blockChar == "T") {
+  return BlockType::TBlock;
+ } else {
+  return BlockType::empty;
+ }
+}
+
+void Game::playerPlay(istream& input) {
+  string cmd; 
+  cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
+  while ( input >> cmd) { 
+    int playerNumber = playerTurn + 1;
+    shared_ptr<Board> bInPlay = playerBoards[playerTurn];
         if (bInPlay->isLose()) {
             cout << playerNumber << "LOST! END GAME!" << endl;
             restartGame();
         } else if (cmd == "left") {
           bInPlay->moveBlock(cmd);
+          if (bInPlay->finishedMove()) {
+            bInPlay->moveBlock("save");
+            bInPlay->dropBlock();
+            if (bInPlay->isLose()) {
+              cout << "LOSE! END GAME!" << endl;
+              restartGame();
+              playerTurn = 0;
+              cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
+            }
+            bInPlay->updateScore();
+          }
           cout << *bInPlay;
-          cout << "Player " << playerNumber << "enter your moves: " << endl;
+          cout << "Player " << playerNumber << " enter your moves: " << endl;
         } else if (cmd == "right") {
-          // cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
-          // cout << "Next: " << playerBoards[0]->getNextType() << endl;
           bInPlay->moveBlock(cmd);
-          // cout << "after move" << endl;
-          // cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
-          // cout << "Next: " << playerBoards[0]->getNextType() << endl;
+          if (bInPlay->finishedMove()) {
+            bInPlay->moveBlock("save");
+            bInPlay->dropBlock();
+            if (bInPlay->isLose()) {
+              cout << "LOSE! END GAME!" << endl;
+              restartGame();
+              playerTurn = 0; 
+              cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
+            }
+            bInPlay->updateScore();
+          }
           cout << *bInPlay;
-          cout << "Player " << playerNumber << "enter your moves: " << endl;
+          cout << "Player " << playerNumber << " enter your moves: " << endl;
         } else if (cmd == "down") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
-          cout << "Player " << playerNumber << "enter your moves: " << endl;
+          cout << "Player " << playerNumber << " enter your moves: " << endl;
         } else if (cmd == "clockwise") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
-          cout << "Player " << playerNumber << "enter your moves: " << endl;
+          cout << "Player " << playerNumber << " enter your moves: " << endl;
         } else if (cmd == "counterclockwise") {
           bInPlay->moveBlock(cmd);
           cout << *bInPlay;
-          cout << "Player " << playerNumber << "enter your moves: " << endl;
+          cout << "Player " << playerNumber << " enter your moves: " << endl;
         } else if (cmd == "drop") {
           bInPlay->moveBlock("save");
           bInPlay->dropBlock();
           if (bInPlay->isLose()) {
             cout << "Player " << playerNumber << "LOST! END GAME!" << endl;
             restartGame();
+            playerTurn = 0;
+            cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
           }
           bInPlay->updateScore();
           playerBoards[playerTurn]->moveBlock("");
           playerLevels[playerTurn]->newMove(bInPlay);
           cout << *bInPlay;
+          if (playerBoards[playerTurn]->getSpecial() && getSpecialActions()) {
+            cout << "Special action triggered (chose from the following special actions): " << endl;
+            cout << "1. Blind 2. Heavy 3. Force" << endl;
+            cout << "Enter action name here: " << endl;
+            string action;
+            input >> action;
+            if (action == "Blind") {
+              playerBoards[!playerTurn]->setBlind(true);
+              playerBoards[!playerTurn]->blinding(true);
+            } else if (action == "Heavy") {
+              playerBoards[!playerTurn]->setHeavy(true);
+            } else if (action == "Force") {
+              string blockForced;
+              cout << "Enter block type: " << endl;
+              input >> blockForced;
+              playerBoards[!playerTurn]->clearPlaced();
+              playerBoards[!playerTurn]->setCurBlock(stringToBlock(blockForced));
+              playerBoards[!playerTurn]->moveBlock("");
+              cout << *playerBoards[!playerTurn];
+            }
+          }
           cout << "Turn ended. Next player's turn" << endl;
-          return;
+          playerTurn = !playerTurn;
+          cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
         } else if (cmd == "levelup") {
           levelUp();
-          cout << "Player " << playerNumber << "leveled up! Enter your moves: " << endl;
+          cout << *bInPlay;
+          cout << "Player " << playerNumber << " leveled up! Enter your moves: " << endl;
         } else if (cmd == "leveldown") {
           levelDown();
-          cout << "Player " << playerNumber << "leveled down! Enter your moves: " << endl;
+          cout << *bInPlay;
+          cout << "Player " << playerNumber << " leveled down! Enter your moves: " << endl;
         } else if (cmd == "norandom") {
           string filename;
-          cin >> filename;
+          input >> filename;
           noRandom(filename);
-          cout << "Player " << playerNumber << "enter your moves: " << endl;
+          cout << "Player " << playerNumber << " enter your moves: " << endl;
         } else if (cmd == "random") {
           random();
-          cout << "Player " << playerNumber << "enter your moves: " << endl;
-        } else if (cmd == "reset") {
+          cout << "Player " << playerNumber << " enter your moves: " << endl;
+        } else if (cmd == "I" || cmd == "J" || cmd == "L" || cmd == "O" || cmd == "Z" 
+                  || cmd == "S" || cmd == "T") {
+            playerBoards[playerTurn]->clearPlaced();
+            playerBoards[playerTurn]->setCurBlock(stringToBlock(cmd));
+            playerBoards[playerTurn]->moveBlock("");
+            cout << "Player " << playerNumber << " enter your moves: " << endl;
+        } else if (cmd == "sequence") {
+          string filename;
+          input >> filename;
+          testingFilename = filename;
+          testing = true;
+          cout << "Player " << playerNumber << " enter your moves: " << endl;
+          return;
+        } else if (cmd == "demo") {
+          string set;
+          input >> set;
+          if (set == "on") {
+            setSpecialActions(true);
+            cout << "You've turned on the special enhancements, please enjoy!" << endl;
+          } else {
+            cout << "You've turned off the special enhancements!" << endl;
+            setSpecialActions(false);
+          }
+        } else if (cmd == "restart") {
           restartGame();
-          cout << *bInPlay;
           cout << "Reset game! Start again!" << endl;
+          playerTurn = 0;
         } else {
           break;
         } // if
       } // while
-  // } catch (ios::failure&) {}
+  if (input.eof() && testing) {
+    cout << "Testing file done reading! End of file met!" << endl; 
+    cout << "You can chose to continue playing with another testing suit by calling the sequence command again or play normally" << endl; 
+    testing = false;
+    return;
+  }
 }
 

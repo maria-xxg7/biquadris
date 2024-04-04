@@ -1,0 +1,7 @@
+right
+drop
+levelup
+drop
+left
+left
+drop
