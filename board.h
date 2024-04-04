@@ -92,6 +92,8 @@ class Board {
     // places/moves block based on move command
     void moveBlock(string move);
 
+    void clearPlaced();
+
     // must be called after finishing moving a block, checks lose cond if exceeds height
     // before actually putting it down 
     void dropBlock();

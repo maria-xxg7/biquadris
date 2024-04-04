@@ -340,6 +340,19 @@ void Board::moveBlock(string move) {
     }
 }
 
+void Board::clearPlaced() {
+  for (int i = 0; i < BLOCK_DIM; ++i) {
+        for (int j = 0; j < BLOCK_DIM; ++j) {
+          if (lastConfig[i][j] != ' ') {
+            // clear the filled cells
+            theBoard[i + totalDown][j + totalShift].setType(BlockType::empty);
+            theBoard[i + totalDown][j + totalShift].setUnfilled();
+            theBoard[i + totalDown][j + totalShift].setLevel(level);
+          }
+        }
+  }
+}
+
 int Board::findNextHeight(int row, int col) {
   for (int i = BOARD_H + RESERVED - 1; i > row + 1; --i) {
     if (theBoard[i][col].getState()) {
