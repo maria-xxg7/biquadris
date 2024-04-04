@@ -76,7 +76,7 @@ void Board::init(Xwindow &wd) {
   }
 }
 
-bool Board::isLose() const { return lose; }
+bool Board::isLose() { return lose; }
 
 shared_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
   switch(bType) {
@@ -101,7 +101,7 @@ shared_ptr<Block> Board::BlockFactory::buildBlock(BlockType bType) {
 
 void Board::setBlockType(BlockType b) { nextBlock = b; }
 
-BlockType Board::getBlockType() const { return nextBlock; }
+BlockType Board::getBlockType() { return nextBlock; }
 
 string Board::getNextType() {
   switch(nextBlock) {
@@ -126,7 +126,7 @@ string Board::getNextType() {
 
 void Board::setCurBlock(BlockType b) { curBlock = b; }
 
-BlockType Board::getCurBlockB() const { return curBlock; }
+BlockType Board::getCurBlockB() { return curBlock; }
 
 string Board::getCurBlock() { 
   switch(curBlock) {
@@ -149,23 +149,23 @@ string Board::getCurBlock() {
   }
 }
 
-int Board::getLevel() const { return level; }
+int Board::getLevel() { return level; }
 
 void Board::setLevel(int newLevel) { level = newLevel; }
 
-bool Board::getHeavy() const { return isHeavy; }
+bool Board::getHeavy() { return isHeavy; }
 
 void Board::setHeavy(bool heavy) { isHeavy = heavy; }
 
-bool Board::getObstacle() const { return isObstacle; }
+bool Board::getObstacle() { return isObstacle; }
 
 void Board::setObstacle(bool obstacle) { isObstacle = obstacle; }
 
-bool Board::finishedMove() const { return heavyDrop; }
+bool Board::finishedMove() { return heavyDrop; }
 
 void Board::setBlind(bool isOn) { isBlind = isOn; }
 
-bool Board::getSpecial() const { return specialAction; }
+bool Board::getSpecial() { return specialAction; }
 
 void Board::setSpecial(bool isOn) { specialAction = isOn; }
 
@@ -192,7 +192,7 @@ void Board::moveBlock(string move) {
   // cout << "Cur: " << getCurBlock() << endl;
   // cout << "Next: " << getNextType() << endl;
   shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>(); // create block factory
-  shared_ptr<Block> newBlock = makeBlock->buildBlock(curBlock); // make a pointer to the current block
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock); // make a pointer to the current block
   // cout << "Cur: " << getCurBlock() << endl;
   // cout << "Next: " << getNextType() << endl;
 
@@ -284,7 +284,7 @@ void Board::moveBlock(string move) {
           if (blockBlock[i][j] != ' ') {
             if (!placing) { // check if moving (not placing)
               // set cells on in new block position
-              theBoard[i + totalDown + down][j + totalShift + shift].setType(curBlock);
+              theBoard[i + totalDown + down][j + totalShift + shift].setType(nextBlock);
 
               if (isBlind && checkBlindCell(theBoard[i + totalDown + down][j + totalShift + shift])) {
                 cout << "checking" << endl;
@@ -300,7 +300,7 @@ void Board::moveBlock(string move) {
               }
             } else { // if placing block
               // set cells on in starting block config position
-              theBoard[i][j].setType(curBlock);
+              theBoard[i][j].setType(nextBlock);
               theBoard[i][j].setFilled();
               theBoard[i][j].setLevel(level);
             }
@@ -331,7 +331,7 @@ void Board::moveBlock(string move) {
         for (int j = 0; j < BLOCK_DIM; ++j) {
           if (lastConfig[i][j] != ' ') { 
             // set the block back to where it used to be (no movement)
-            theBoard[i + totalDown][j + totalShift].setType(curBlock);
+            theBoard[i + totalDown][j + totalShift].setType(nextBlock);
             theBoard[i + totalDown][j + totalShift].setFilled();
             theBoard[i + totalDown][j + totalShift].setLevel(level);
           }
@@ -408,7 +408,7 @@ void Board::dropBlock() {
   }
   
   for (int i = 0; i < BLOCK_DIM; ++i) {
-    theBoard[coords[i][0] + maxDist][coords[i][1]].setType(curBlock);
+    theBoard[coords[i][0] + maxDist][coords[i][1]].setType(nextBlock);
     theBoard[coords[i][0] + maxDist][coords[i][1]].setFilled();
     if (i != 0) {
       theBoard[coords[0][0] + maxDist][coords[0][1]].attachBlock(&theBoard[coords[i][0] + maxDist][coords[i][1]]);
@@ -431,7 +431,7 @@ void Board::dropBlock() {
 
   // reset states:
   coords.clear();
-  curBlock = nextBlock;
+  // curBlock = nextBlock;
   if (level <= 3) { isHeavy = false; }
   if (isBlind) {
     blinding(false); // turn off blind
@@ -724,7 +724,7 @@ void Board::updateScore() {
     }
   }
 
-  numCleared >= 2 ? specialAction = true : specialAction = false;
+  // numCleared >= 2 ? specialAction = true : specialAction = false;
 
   if (numCleared != 0) {
     int sqrtScore = numCleared + level;

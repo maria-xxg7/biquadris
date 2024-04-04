@@ -64,28 +64,28 @@ class Board {
 
     void init(Xwindow &wd); // initializes board
     void clearBoard(); // reset the board
-    bool isLose() const;
+    bool isLose();
     
     // blocks
-    BlockType getBlockType() const; // get block type
+    BlockType getBlockType(); // get block type
     void setBlockType(BlockType b); // set block type
     string getNextType(); // TEMP FUNCTION FOR TESTING ONLY!!!!
     void setCurBlock(BlockType b);
-    BlockType getCurBlockB() const;
+    BlockType getCurBlockB();
     string getCurBlock(); // TEMP FUNCTION FOR TESTING ONLY!!!!
-    bool finishedMove() const;
+    bool finishedMove();
     void setBlind(bool isOn); 
 
     // levels
-    int getLevel() const;
+    int getLevel();
     void setLevel(int newLevel);
 
     // special actions:
-    bool getSpecial() const;
+    bool getSpecial();
     void setSpecial(bool isOn);
-    bool getHeavy() const;
+    bool getHeavy();
     void setHeavy(bool heavy);
-    bool getObstacle() const;
+    bool getObstacle();
     void setObstacle(bool obstacle);
 
     // places/moves block based on move command
