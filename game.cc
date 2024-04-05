@@ -251,7 +251,6 @@ void Game::dropSequence(istream& input) {
         playerTurn = !playerTurn;
         cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
       }
-
 }
 
 
@@ -301,47 +300,43 @@ void Game::playerPlay(istream& input) {
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
-      cout << *bInPlay << endl;
+      cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
     } else if (cmd == "right") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
-      cout << *bInPlay << endl;
+      cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
     } else if (cmd == "down") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
-      cout << *bInPlay << endl;
+      cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
     } else if (cmd == "clockwise") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
-      cout << *bInPlay << endl;
+      cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
     } else if (cmd == "counterclockwise") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
-      cout << *bInPlay << endl;
+      cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
     } else if (cmd == "drop") {
       dropSequence(input);
-      cout << *bInPlay << endl;
     } else if (cmd == "levelup") {
       levelUp();
       cout << *bInPlay;
-      cout << "Player " << playerNumber << " leveled up! Enter your moves: " << endl;
     } else if (cmd == "leveldown") {
       levelDown();
       cout << *bInPlay;
-      cout << "Player " << playerNumber << " leveled down! Enter your moves: " << endl;
     } else if (cmd == "norandom") {
       string filename;
       input >> filename;
       noRandom(filename);
-      cout << "Player " << playerNumber << " enter your moves: " << endl;
     } else if (cmd == "random") {
       random();
       cout << "Player " << playerNumber << " enter your moves: " << endl;
@@ -350,6 +345,7 @@ void Game::playerPlay(istream& input) {
         playerBoards[playerTurn]->clearPlaced();
         playerBoards[playerTurn]->setCurBlock(stringToBlock(cmd));
         playerBoards[playerTurn]->moveBlock("");
+        cout << *bInPlay;
         cout << "Player " << playerNumber << " enter your moves: " << endl;
     } else if (cmd == "sequence") {
       string filename;
@@ -374,7 +370,8 @@ void Game::playerPlay(istream& input) {
       playerTurn = 0;
     } else {
       break;
-    } // if
+    } 
+    // if
     }
   } // while
   
