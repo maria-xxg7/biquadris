@@ -23,6 +23,7 @@ class Board {
   int level, curScore, highScore, blockScore;
   BlockType curBlock, nextBlock;
   bool lose = false;
+  bool graphicsOn = true;
 
   // move/drop block
   vector<vector<char>> lastConfig;
@@ -69,6 +70,8 @@ class Board {
     void init(Xwindow &wd); // initializes board
     void clearBoard(); // reset the board
     bool isLose();
+    bool getWindow() const;
+    void setWindow(bool isOn);
     
     // blocks
     BlockType getBlockType(); // get block type
@@ -94,7 +97,7 @@ class Board {
 
     int getNumMultiDrop();
     void setNumMultiDrop(int n);
-    
+
     // places/moves block based on move command
     void moveBlock(string move);
 

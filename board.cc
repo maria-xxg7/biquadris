@@ -17,8 +17,10 @@ void Board::clearBoard() {
   level = 0;
   totalShift = 0;
   totalDown = 0;
-  gd->setLevel(level);
-  gd->setScore(curScore);
+  if (graphicsOn) {
+    gd->setLevel(level);
+    gd->setScore(curScore);
+  }
 
   curBlock = BlockType::empty;
   nextBlock = BlockType::empty;
@@ -47,14 +49,14 @@ void Board::clearBoard() {
       theBoard[row][col].setType(BlockType::empty);
       theBoard[row][col].setCoords(row, col);
       theBoard[row][col].attach(td);
-      theBoard[row][col].attach(gd);
+      if (graphicsOn) { theBoard[row][col].attach(gd); }
       theBoard[row][col].setUnfilled();
     }
   }
 }
 
 void Board::init(Xwindow &wd) {
-  gd = new GraphicsDisplay(wd); 
+  if (graphicsOn) { gd = new GraphicsDisplay(wd); }
   curBlock = BlockType::empty;
   nextBlock = BlockType::empty;
   lastRotation = RotateCW::Degree0;
@@ -72,7 +74,7 @@ void Board::init(Xwindow &wd) {
       theBoard[row][col].setType(BlockType::empty);
       theBoard[row][col].setCoords(row, col);
       theBoard[row][col].attach(td);
-      theBoard[row][col].attach(gd);
+      if (graphicsOn) { theBoard[row][col].attach(gd); }
     }
   }
 }
@@ -173,6 +175,10 @@ void Board::setSpecial(bool isOn) { specialAction = isOn; }
 int Board::getNumMultiDrop() { return numMultiDrop; }
 
 void Board::setNumMultiDrop(int n) { numMultiDrop = n; }
+
+bool Board::getWindow() const { return graphicsOn; }
+
+void Board::setWindow(bool isOn) { graphicsOn = isOn; }
 
 bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, bool placing) {
   bool isSafe = true; // temp indicator for if it is safe to place a block
@@ -679,7 +685,7 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
     for (int col = 0; col < BOARD_W; ++col) {
         theBoard[i][col].setCoords(i, col);
         theBoard[i][col].attach(td); // reattach the cells to the text display
-        theBoard[i][col].attach(gd); // reattach the cells to the text display
+        if (graphicsOn) { theBoard[i][col].attach(gd); } // reattach the cells to the text display
 
         if (theBoard[i][col].bType() == BlockType::empty) {
           theBoard[i][col].setUnfilled();
@@ -744,7 +750,7 @@ void Board::updateScore() {
       for (int col = 0; col < BOARD_W; ++col) {
           theBoard[i][col].setCoords(i, col);
           theBoard[i][col].attach(td); // reattach the cells to the text display
-          theBoard[i][col].attach(gd); // reattach the cells to the text display
+          if (graphicsOn) { theBoard[i][col].attach(gd); } // reattach the cells to the text display
 
           if (theBoard[i][col].bType() == BlockType::empty) {
             theBoard[i][col].setUnfilled();
@@ -760,8 +766,11 @@ void Board::updateScore() {
     if (curScore > highScore) {
       highScore = curScore;
     }
-    gd->setScore(curScore);
-    gd->setHiScore(highScore);
+    if (graphicsOn) {
+      gd->setScore(curScore);
+      gd->setHiScore(highScore);
+    }
+
     blockScore = 0;
   } else {
     if (numBlocksDropped == 5 && level == 4) {
@@ -783,7 +792,9 @@ ostream &operator<<(ostream &out, const Board &b) {
   string level = "Level: ";
   string score = "Score: ";
   string hiScore = "Hi Score: ";
-  b.gd->setLevel(b.getLevel());
+  if (b.getWindow()) {
+    b.gd->setLevel(b.getLevel());
+  }
   out << level << b.level << endl;
   out << score << b.curScore << endl;
   out << hiScore << b.highScore << endl;
@@ -793,31 +804,31 @@ ostream &operator<<(ostream &out, const Board &b) {
   switch(b.nextBlock) {
       case BlockType::IBlock:
         *newBlock = IBlock();
-        b.gd->updateNext(newBlock, b.nextBlock);
+        if (b.getWindow()) { b.gd->updateNext(newBlock, b.nextBlock); }
         break;
       case BlockType::JBlock:
         *newBlock = JBlock();
-         b.gd->updateNext(newBlock, b.nextBlock);
+        if (b.getWindow()) { b.gd->updateNext(newBlock, b.nextBlock); }
         break;
       case BlockType::LBlock:
         *newBlock = LBlock();
-        b.gd->updateNext(newBlock, b.nextBlock);
+        if (b.getWindow()) { b.gd->updateNext(newBlock, b.nextBlock); }
         break;
       case BlockType::OBlock:
         *newBlock = OBlock();
-        b.gd->updateNext(newBlock, b.nextBlock);
+        if (b.getWindow()) { b.gd->updateNext(newBlock, b.nextBlock); }
         break;
       case BlockType::SBlock:
         *newBlock = SBlock();
-        b.gd->updateNext(newBlock, b.nextBlock);
+        if (b.getWindow()) { b.gd->updateNext(newBlock, b.nextBlock); }
         break;
       case BlockType::ZBlock:
         *newBlock = ZBlock();
-        b.gd->updateNext(newBlock, b.nextBlock);
+        if (b.getWindow()) { b.gd->updateNext(newBlock, b.nextBlock); }
         break;
       case BlockType::TBlock:
         *newBlock = TBlock();
-        b.gd->updateNext(newBlock, b.nextBlock);
+        if (b.getWindow()) { b.gd->updateNext(newBlock, b.nextBlock); }
         break;
       case BlockType::empty:
         break;
