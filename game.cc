@@ -20,6 +20,26 @@ Game::Game(Xwindow &wd1, Xwindow &wd2, string file1, string file2) : playerTurn 
   playerLevels.emplace_back(levelPlayer2);
 }
 
+void Game::setUpGame(string filename1, string filename2, bool start, string levelStart, 
+                   bool seed, string seedSet, bool text) {
+  if (start) {
+    int i;
+    istringstream levelInt{levelStart};
+    levelInt >> i;
+    setLevel(i);
+  } if (seed) {
+
+  } if (text) {
+
+  }
+  if (filename1 != "") {
+    setFile(0, filename1);
+  }
+  if (filename2 != "") {
+    setFile(1, filename2);
+  }
+}
+
 void Game::startGame() {
   // init player 1 board
   playerLevels[0]->newMove(playerBoards[0]);
@@ -83,9 +103,9 @@ void Game::levelDown() {
   } else {
     if (playerLevel == 1) {
       if (playerTurn) {
-        playerLevels[playerTurn] = make_shared<LevelOne>(file2);
+        playerLevels[playerTurn] = make_shared<LevelZero>(file2);
       } else {
-        playerLevels[playerTurn] = make_shared<LevelOne>(file1); 
+        playerLevels[playerTurn] = make_shared<LevelZero>(file1); 
       }
     } else if (playerLevel == 2) {
        playerLevels[playerTurn] = make_shared<LevelOne>();
@@ -97,6 +117,28 @@ void Game::levelDown() {
     }
   }
   playerBoards[playerTurn]->setLevel(playerLevel - 1);
+}
+
+void Game::setLevel(int level) {
+  while (playerBoards[playerTurn]->getLevel() != level) {
+    levelUp();
+  }
+  playerTurn = !playerTurn;
+  while (playerBoards[playerTurn]->getLevel() != level) {
+    levelUp();
+  }
+  playerTurn = 0;
+}
+
+void Game::setFile(bool whichPlayer, string fileGiven) {
+  if (whichPlayer) {
+    file2 = fileGiven;
+  } else {
+    file1 = fileGiven;
+  }
+  if (playerBoards[whichPlayer]->getLevel() == 0) {
+   playerLevels[whichPlayer] = make_shared<LevelZero>(fileGiven);
+  }
 }
 
 void Game::setSpecialActions(bool setOn) { onSpecialActions = setOn; }

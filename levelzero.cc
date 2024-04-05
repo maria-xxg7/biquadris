@@ -29,5 +29,4 @@ void LevelZero::newMove(shared_ptr<Board> b) {
   // cout << "Next index: " << counter << endl;
 }
 
-string LevelZero::getFileSeq() { return filename; }
 

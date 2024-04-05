@@ -20,11 +20,14 @@ class Game {
  
   public:
     Game(Xwindow &wd1, Xwindow &wd2, string file1 = "sequence1.txt", string file2 = "sequence2.txt");
+    void setUpGame(string filename1, string filename2, bool start, string levelStart, 
+                   bool seed, string seedSet, bool text);
     void startGame();
     void restartGame();
     void levelUp();
     void levelDown();
-    void setLevel();
+    void setLevel(int level);
+    void setFile(bool whichPlayer, string fileGiven);
     void setSpecialActions(bool setOn);
     bool getSpecialActions();
     bool getTesting();
