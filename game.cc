@@ -194,112 +194,10 @@ BlockType Game::stringToBlock(string blockChar) {
  }
 }
 
-void Game::playerPlay(istream& input) {
-  string cmd; 
-  cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
-  while (input >> cmd) { 
-    int playerNumber = playerTurn + 1;
-    shared_ptr<Board> bInPlay = playerBoards[playerTurn];
-    if (bInPlay->isLose()) {
-        cout << playerNumber << "LOST! END GAME!" << endl;
-        restartGame();
-    } else if (cmd == "left") {
-      bInPlay->moveBlock(cmd);
-      if (bInPlay->finishedMove()) {
-        bInPlay->moveBlock("save");
-        bInPlay->dropBlock();
-        if (bInPlay->isLose()) {
-          cout << "LOSE! END GAME!" << endl;
-          restartGame();
-          playerTurn = 0;
-          cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
-        }
-        bInPlay->updateScore();
-        playerBoards[playerTurn]->moveBlock("");
-        playerLevels[playerTurn]->newMove(bInPlay);
-        cout << *bInPlay;
-        if (playerBoards[playerTurn]->getSpecial() && getSpecialActions()) {
-          cout << "Special action triggered (chose from the following special actions): " << endl;
-          cout << "1. Blind 2. Heavy 3. Force" << endl;
-          cout << "Enter action name here: " << endl;
-          string action;
-          input >> action;
-          if (action == "Blind") {
-            playerBoards[!playerTurn]->setBlind(true);
-            playerBoards[!playerTurn]->blinding(true);
-          } else if (action == "Heavy") {
-            playerBoards[!playerTurn]->setHeavy(true);
-          } else if (action == "Force") {
-            string blockForced;
-            cout << "Enter block type: " << endl;
-            input >> blockForced;
-            playerBoards[!playerTurn]->clearPlaced();
-            playerBoards[!playerTurn]->setCurBlock(stringToBlock(blockForced));
-            playerBoards[!playerTurn]->moveBlock("");
-            cout << *playerBoards[!playerTurn];
-          }
-        }
-        cout << "Turn ended. Next player's turn" << endl;
-        playerTurn = !playerTurn;
-        cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
-      }
-      // cout << *playerBoards[playerTurn];
-      // cout << "Player " << playerNumber << " enter your moves: " << endl;
-    } else if (cmd == "right") {
-      bInPlay->moveBlock(cmd);
-      if (bInPlay->finishedMove()) {
-        bInPlay->moveBlock("save");
-        bInPlay->dropBlock();
-        if (bInPlay->isLose()) {
-          cout << "LOSE! END GAME!" << endl;
-          restartGame();
-          playerTurn = 0; 
-          cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
-        }
-        bInPlay->updateScore();
-        playerBoards[playerTurn]->moveBlock("");
-        playerLevels[playerTurn]->newMove(bInPlay);
-        cout << *bInPlay;
-        if (playerBoards[playerTurn]->getSpecial() && getSpecialActions()) {
-          cout << "Special action triggered (chose from the following special actions): " << endl;
-          cout << "1. Blind 2. Heavy 3. Force" << endl;
-          cout << "Enter action name here: " << endl;
-          string action;
-          input >> action;
-          if (action == "Blind") {
-            playerBoards[!playerTurn]->setBlind(true);
-            playerBoards[!playerTurn]->blinding(true);
-          } else if (action == "Heavy") {
-            playerBoards[!playerTurn]->setHeavy(true);
-          } else if (action == "Force") {
-            string blockForced;
-            cout << "Enter block type: " << endl;
-            input >> blockForced;
-            playerBoards[!playerTurn]->clearPlaced();
-            playerBoards[!playerTurn]->setCurBlock(stringToBlock(blockForced));
-            playerBoards[!playerTurn]->moveBlock("");
-            cout << *playerBoards[!playerTurn];
-          }
-        }
-        cout << "Turn ended. Next player's turn" << endl;
-        playerTurn = !playerTurn;
-        cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
-      }
-    } else if (cmd == "down") {
-      bInPlay->moveBlock(cmd);
-      cout << *bInPlay;
-      cout << "Player " << playerNumber << " enter your moves: " << endl;
-    } else if (cmd == "clockwise") {
-      bInPlay->moveBlock(cmd);
-      cout << *bInPlay;
-      cout << "Player " << playerNumber << " enter your moves: " << endl;
-    } else if (cmd == "counterclockwise") {
-      bInPlay->moveBlock(cmd);
-      cout << *bInPlay;
-      cout << "Player " << playerNumber << " enter your moves: " << endl;
-    } else 
-    if (cmd == "drop") {
-      bInPlay->moveBlock("save");
+void Game::dropSequence(istream& input) {
+  shared_ptr<Board> bInPlay = playerBoards[playerTurn];
+  int playerNumber = playerTurn + 1;
+  bInPlay->moveBlock("save");
       bInPlay->dropBlock();
       if (bInPlay->isLose()) {
         cout << "Player " << playerNumber << "LOST! END GAME!" << endl;
@@ -335,6 +233,48 @@ void Game::playerPlay(istream& input) {
       cout << "Turn ended. Next player's turn" << endl;
       playerTurn = !playerTurn;
       cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
+}
+
+
+void Game::playerPlay(istream& input) {
+  string cmd; 
+  cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
+  while (input >> cmd) { 
+    int playerNumber = playerTurn + 1;
+    shared_ptr<Board> bInPlay = playerBoards[playerTurn];
+    if (bInPlay->isLose()) {
+        cout << playerNumber << "LOST! END GAME!" << endl;
+        restartGame();
+    } else if (cmd == "left") {
+      bInPlay->moveBlock(cmd);
+      if (bInPlay->finishedMove()) {
+        dropSequence(input);
+      }
+      // cout << *playerBoards[playerTurn];
+      // cout << "Player " << playerNumber << " enter your moves: " << endl;
+    } else if (cmd == "right") {
+      bInPlay->moveBlock(cmd);
+      if (bInPlay->finishedMove()) {
+        dropSequence(input);
+      }
+    } else if (cmd == "down") {
+      bInPlay->moveBlock(cmd);
+      if (bInPlay->finishedMove()) {
+        dropSequence(input);
+      }
+    } else if (cmd == "clockwise") {
+      bInPlay->moveBlock(cmd);
+      if (bInPlay->finishedMove()) {
+        dropSequence(input);
+      }
+    } else if (cmd == "counterclockwise") {
+      bInPlay->moveBlock(cmd);
+      if (bInPlay->finishedMove()) {
+        dropSequence(input);
+      }
+    } else 
+    if (cmd == "drop") {
+      dropSequence(input);
     } else if (cmd == "levelup") {
       levelUp();
       cout << *bInPlay;
