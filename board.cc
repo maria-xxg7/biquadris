@@ -263,7 +263,7 @@ void Board::moveBlock(string move) {
 
     isSafe = validMove(&blockBlock, shift, down, placing); // check if safe to make the move
 
-    if (level == 3 && !isHeavy && isSafe) {
+    if (level >= 3 && !isHeavy && isSafe) {
       bool oneDown = validMove(&blockBlock, shift, down + 1, placing);
       if (oneDown) { ++down; }
       else { heavyDrop = true; }
@@ -738,7 +738,7 @@ void Board::updateScore() {
     }
   }
 
-  // numCleared >= 2 ? specialAction = true : specialAction = false;
+  numCleared >= 2 ? specialAction = true : specialAction = false;
 
   if (numCleared != 0) {
     int max = colHeights[0];
@@ -775,9 +775,9 @@ void Board::updateScore() {
   } else {
     if (numBlocksDropped == 5 && level == 4) {
       if (theBoard[3][5].bType() != BlockType::empty) {
-        lose = true;
-        numBlocksDropped = 0;
-        return;
+        // lose = true;
+        // return;
+        cout << "cannot place shit anymore :(" << endl;
       } else {
         theBoard[colHeights[5] - 1][5].setType(BlockType::SHIT);
         theBoard[colHeights[5] - 1][5].setFilled();
