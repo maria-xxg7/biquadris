@@ -38,5 +38,6 @@ class Game {
     void noRandom(string filename);
     void random();
     BlockType stringToBlock(string blockChar);
+    void dropSequence(istream& input); 
     void playerPlay(istream& input);
 };
