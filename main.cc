@@ -35,18 +35,14 @@ int main( int argc, char *argv[]) {
         levelStart = argv[i + 1];
       } 
       if (s == "-seed") {
-        seed = true;
-        string seedString;
-        seedString = argv[i + 1];
-        seedSet = stoi(seedString);
       }
       if (s == "text") {
         text = true;
       }
     }
-    Game theGame = Game(wd1, wd2);
+    Game theGame = Game();
     theGame.setUpGame(filename1, filename2, start, levelStart, seed, seedSet, text);
-    theGame.startGame();
+    theGame.startGame(wd1, wd2);
 
     while (true) {
       if (theGame.getTesting()) {
