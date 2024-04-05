@@ -40,9 +40,9 @@ int main( int argc, char *argv[]) {
         text = true;
       }
     }
-    Game theGame = Game();
+    Game theGame = Game(wd1, wd2);
     theGame.setUpGame(filename1, filename2, start, levelStart, seed, seedSet, text);
-    theGame.startGame(wd1, wd2);
+    theGame.startGame();
 
     while (true) {
       if (theGame.getTesting()) {
