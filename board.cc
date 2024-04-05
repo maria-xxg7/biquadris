@@ -193,7 +193,7 @@ bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, boo
 
 void Board::moveBlock(string move) {
   shared_ptr<BlockFactory> makeBlock = make_shared<BlockFactory>(); // create block factory
-  shared_ptr<Block> newBlock = makeBlock->buildBlock(nextBlock); // make a pointer to the current block
+  shared_ptr<Block> newBlock = makeBlock->buildBlock(curBlock); // make a pointer to the current block
 
   int shift = 0; int down = 0; // block moves
   bool save = false; // save block coords

@@ -1,4 +1,5 @@
 #include <memory>
+#include <string>
 #include "board.h"
 #include "blockgenerator.h"
 #include "levelzero.h"
@@ -15,6 +16,8 @@ class Game {
   bool isRandom;
   bool testing = false;
   bool onSpecialActions = false;
+  bool displayText = true;
+  int startLevel;
   string file1;
   string file2;
  
