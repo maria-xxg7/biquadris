@@ -14,7 +14,7 @@ void LevelHard::newMove(shared_ptr<Board> b) {
       b->setBlockType(BlockType::ZBlock);
     } else {
       int randIndex;
-      srand(time(NULL));
+      srand(seed);
       randIndex = rand() % 5;
       vector<char> otherBlocks {'I', 'J', 'L', 'O', 'T'};
       b->setBlockType(stringToBlock(otherBlocks[randIndex]));

@@ -4,7 +4,7 @@ using namespace std;
 // adding textdisplay and graphics display to this
 
 Game::Game(Xwindow &wd1, Xwindow &wd2, string file1, string file2) : playerTurn {0}, isRandom{true}, testing {false}, onSpecialActions{false},
-  file1{file1}, file2{file2} {
+  file1{file1}, file2{file2}, seedValue{8} {
   shared_ptr<Board> boardPlayer1 = make_shared<Board>();
   shared_ptr<Board> boardPlayer2 = make_shared<Board>();
 
@@ -21,7 +21,7 @@ Game::Game(Xwindow &wd1, Xwindow &wd2, string file1, string file2) : playerTurn 
 }
 
 void Game::setUpGame(string filename1, string filename2, bool start, string levelStart, 
-                   bool seed, string seedSet, bool text) {
+                   bool seed, unsigned int seedSet, bool text) {
   if (start) {
     int i;
     istringstream levelInt{levelStart};
@@ -29,24 +29,28 @@ void Game::setUpGame(string filename1, string filename2, bool start, string leve
     setLevel(i);
     startLevel = i;
   } if (seed) {
-
+    seedValue = seedSet;
   } if (text) {
 
   }
   if (filename1 != "") {
     setFile(0, filename1);
+  } else {
+    setFile(0, "sequence1.txt");
   }
   if (filename2 != "") {
     setFile(1, filename2);
+  } else {
+    setFile(1, "sequence2.txt");
   }
 }
 
 void Game::startGame() {
   // init player 1 board
-  playerLevels[0]->newMove(playerBoards[0]);
+  playerLevels[0]->newMove(playerBoards[0], seedValue);
   playerBoards[0]->setCurBlock(playerBoards[0]->getBlockType());
   playerBoards[0]->moveBlock("");
-  playerLevels[0]->newMove(playerBoards[0]);
+  playerLevels[0]->newMove(playerBoards[0], seedValue);
 
   cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
   cout << "Next: " << playerBoards[0]->getNextType() << endl;
@@ -54,10 +58,10 @@ void Game::startGame() {
   cout << *playerBoards[0] << endl;
 
   // init player 2 board
-  playerLevels[1]->newMove(playerBoards[1]);
+  playerLevels[1]->newMove(playerBoards[1], seedValue);
   playerBoards[1]->setCurBlock(playerBoards[1]->getBlockType());
   playerBoards[1]->moveBlock("");
-  playerLevels[1]->newMove(playerBoards[1]);
+  playerLevels[1]->newMove(playerBoards[1], seedValue);
   cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
   cout << "Next: " << playerBoards[0]->getNextType() << endl;
   cout << "PLAYER 2: " << endl;
@@ -71,10 +75,15 @@ void Game::restartGame() {
 
   playerLevels[0] = make_shared<LevelZero>(file1);
   playerLevels[1] = make_shared<LevelZero>(file2);
-  string setLevelTo = to_string(startLevel);
-  // setUpGame(file1, file2, true, setLevelTo, false, 0, displayText);
+  if (startLevel != 0) {
+    string setLevelTo = to_string(startLevel);
+    while (playerBoards[0]->getLevel() != startLevel && playerBoards[0]->getLevel() != startLevel) {
+      levelUp();
+      playerTurn = !playerTurn;
+      levelUp();
+    }
+  }
   startGame();
-
   playerTurn = 0;
   isRandom = true;
 }
@@ -207,7 +216,7 @@ void Game::dropSequence(istream& input) {
       }
       bInPlay->updateScore();
       playerBoards[playerTurn]->moveBlock("");
-      playerLevels[playerTurn]->newMove(bInPlay);
+      playerLevels[playerTurn]->newMove(bInPlay, seedValue);
       cout << *bInPlay;
       if (playerBoards[playerTurn]->getSpecial() && getSpecialActions()) {
         cout << "Special action triggered (chose from the following special actions): " << endl;
@@ -250,8 +259,6 @@ void Game::playerPlay(istream& input) {
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
-      // cout << *playerBoards[playerTurn];
-      // cout << "Player " << playerNumber << " enter your moves: " << endl;
     } else if (cmd == "right") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {

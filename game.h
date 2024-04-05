@@ -17,14 +17,15 @@ class Game {
   bool testing = false;
   bool onSpecialActions = false;
   bool displayText = true;
-  int startLevel;
+  int startLevel = 0;
   string file1;
   string file2;
+  unsigned int seedValue;
  
   public:
     Game(Xwindow &wd1, Xwindow &wd2, string file1 = "sequence1.txt", string file2 = "sequence2.txt");
     void setUpGame(string filename1, string filename2, bool start, string levelStart, 
-                   bool seed, string seedSet, bool text);
+                   bool seed, unsigned int seedSet, bool text);
     void startGame();
     void restartGame();
     void levelUp();

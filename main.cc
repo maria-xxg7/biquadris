@@ -12,37 +12,39 @@ int main( int argc, char *argv[]) {
   Xwindow wd2;
 
   try {
-  // string filename1 = "";
-  // string filename2 = "";
-  // bool start = false;
-  // string levelStart;
-  // bool seed = false;
-  // string seedSet = "";
-  // bool text = false;
+  string filename1 = "";
+  string filename2 = "";
+  bool start = false;
+  string levelStart;
+  bool seed = false;
+  int seedSet = 0;
+  bool text = false;
 
-  // for (int i = 1; i <= argc - 1; ++i) { // since first argument is the executable 
-	// 	string s = argv[i];
-  //   if (s == "-scriptfile1") {
-  //     filename1 = argv[i + 1];
-  //   }
-  //   if (s == "-scriptfile2") {
-  //     filename2 = argv[i + 1];
-  //   }
-  //   if (s == "-startlevel") {
-  //     cout << "Started Level" << endl;
-  //     start = true;
-  //     levelStart = argv[i + 1];
-  //   } 
-  //   if (s == "-seed") {
-  //     seed = true;
-  //     seedSet = argv[i + 1];
-  //   }
-  //   if (s == "text") {
-  //     text = true;
-  //   }
-	// }
+  for (int i = 1; i <= argc - 1; ++i) { // since first argument is the executable 
+		string s = argv[i];
+    if (s == "-scriptfile1") {
+      filename1 = argv[i + 1];
+    }
+    if (s == "-scriptfile2") {
+      filename2 = argv[i + 1];
+    }
+    if (s == "-startlevel") {
+      cout << "Started Level" << endl;
+      start = true;
+      levelStart = argv[i + 1];
+    } 
+    if (s == "-seed") {
+      seed = true;
+      string seedString;
+      seedString = argv[i + 1];
+      seedSet = stoi(seedString);
+    }
+    if (s == "text") {
+      text = true;
+    }
+	}
     Game theGame = Game(wd1, wd2);
-    // theGame.setUpGame(filename1, filename2, start, levelStart, seed, seedSet, text);
+    theGame.setUpGame(filename1, filename2, start, levelStart, seed, seedSet, text);
     theGame.startGame();
 
     while (true) {
@@ -58,7 +60,6 @@ int main( int argc, char *argv[]) {
         theGame.playerPlay(cin);
         break;
       }
-      // theGame.playerPlay(cin);
     }
   } catch(ios::failure&) {}
 }
