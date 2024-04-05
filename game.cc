@@ -215,9 +215,36 @@ void Game::playerPlay(istream& input) {
           cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
         }
         bInPlay->updateScore();
+        playerBoards[playerTurn]->moveBlock("");
+        playerLevels[playerTurn]->newMove(bInPlay);
+        cout << *bInPlay;
+        if (playerBoards[playerTurn]->getSpecial() && getSpecialActions()) {
+          cout << "Special action triggered (chose from the following special actions): " << endl;
+          cout << "1. Blind 2. Heavy 3. Force" << endl;
+          cout << "Enter action name here: " << endl;
+          string action;
+          input >> action;
+          if (action == "Blind") {
+            playerBoards[!playerTurn]->setBlind(true);
+            playerBoards[!playerTurn]->blinding(true);
+          } else if (action == "Heavy") {
+            playerBoards[!playerTurn]->setHeavy(true);
+          } else if (action == "Force") {
+            string blockForced;
+            cout << "Enter block type: " << endl;
+            input >> blockForced;
+            playerBoards[!playerTurn]->clearPlaced();
+            playerBoards[!playerTurn]->setCurBlock(stringToBlock(blockForced));
+            playerBoards[!playerTurn]->moveBlock("");
+            cout << *playerBoards[!playerTurn];
+          }
+        }
+        cout << "Turn ended. Next player's turn" << endl;
+        playerTurn = !playerTurn;
+        cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
       }
-      cout << *playerBoards[playerTurn];
-      cout << "Player " << playerNumber << " enter your moves: " << endl;
+      // cout << *playerBoards[playerTurn];
+      // cout << "Player " << playerNumber << " enter your moves: " << endl;
     } else if (cmd == "right") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
@@ -230,9 +257,34 @@ void Game::playerPlay(istream& input) {
           cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
         }
         bInPlay->updateScore();
+        playerBoards[playerTurn]->moveBlock("");
+        playerLevels[playerTurn]->newMove(bInPlay);
+        cout << *bInPlay;
+        if (playerBoards[playerTurn]->getSpecial() && getSpecialActions()) {
+          cout << "Special action triggered (chose from the following special actions): " << endl;
+          cout << "1. Blind 2. Heavy 3. Force" << endl;
+          cout << "Enter action name here: " << endl;
+          string action;
+          input >> action;
+          if (action == "Blind") {
+            playerBoards[!playerTurn]->setBlind(true);
+            playerBoards[!playerTurn]->blinding(true);
+          } else if (action == "Heavy") {
+            playerBoards[!playerTurn]->setHeavy(true);
+          } else if (action == "Force") {
+            string blockForced;
+            cout << "Enter block type: " << endl;
+            input >> blockForced;
+            playerBoards[!playerTurn]->clearPlaced();
+            playerBoards[!playerTurn]->setCurBlock(stringToBlock(blockForced));
+            playerBoards[!playerTurn]->moveBlock("");
+            cout << *playerBoards[!playerTurn];
+          }
+        }
+        cout << "Turn ended. Next player's turn" << endl;
+        playerTurn = !playerTurn;
+        cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
       }
-      cout << *bInPlay;
-      cout << "Player " << playerNumber << " enter your moves: " << endl;
     } else if (cmd == "down") {
       bInPlay->moveBlock(cmd);
       cout << *bInPlay;
@@ -245,7 +297,8 @@ void Game::playerPlay(istream& input) {
       bInPlay->moveBlock(cmd);
       cout << *bInPlay;
       cout << "Player " << playerNumber << " enter your moves: " << endl;
-    } else if (cmd == "drop") {
+    } else 
+    if (cmd == "drop") {
       bInPlay->moveBlock("save");
       bInPlay->dropBlock();
       if (bInPlay->isLose()) {
