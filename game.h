@@ -6,7 +6,7 @@
 #include "levelone.h"
 #include "leveltwo.h"
 #include "levelhard.h"
-
+#include "command.h"
 
 class Game {
   vector<shared_ptr<Board>> playerBoards;
@@ -21,6 +21,11 @@ class Game {
   string file1;
   string file2;
   unsigned int seedValue;
+
+  vector<string> commands = {"left", "right", "down", "clockwise", "counterclockwise",
+    "drop", "levelup", "leveldown", "norandom", "random", "sequence", 
+    "I", "J", "L", "O", "S", "Z", "T", "restart", "heavy", "blind", "force" };
+  shared_ptr<Command> tempCmd = make_shared<Command>();
  
   public:
     Game(Xwindow &wd1, Xwindow &wd2, string file1 = "sequence1.txt", string file2 = "sequence2.txt");

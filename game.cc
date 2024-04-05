@@ -5,6 +5,12 @@ using namespace std;
 
 Game::Game(Xwindow &wd1, Xwindow &wd2, string file1, string file2) : playerTurn {0}, isRandom{true}, testing {false}, onSpecialActions{false},
   file1{file1}, file2{file2}, seedValue{8} {
+
+  int len = commands.size();
+  for (int i = 0; i < len; ++i) {
+    tempCmd->addCommand(commands[i]); // add commands
+  }
+
   shared_ptr<Board> boardPlayer1 = make_shared<Board>();
   shared_ptr<Board> boardPlayer2 = make_shared<Board>();
 
@@ -47,23 +53,22 @@ void Game::setUpGame(string filename1, string filename2, bool start, string leve
 
 void Game::startGame() {
   // init player 1 board
-  playerLevels[0]->newMove(playerBoards[0], seedValue);
+  playerLevels[0]->newMove(playerBoards[0]);
   playerBoards[0]->setCurBlock(playerBoards[0]->getBlockType());
   playerBoards[0]->moveBlock("");
-  playerLevels[0]->newMove(playerBoards[0], seedValue);
+  playerLevels[0]->newMove(playerBoards[0]);
+  playerBoards[0]->setNumMultiDrop(0);
 
-  cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
-  cout << "Next: " << playerBoards[0]->getNextType() << endl;
   cout << "PLAYER 1: " << endl;
   cout << *playerBoards[0] << endl;
 
   // init player 2 board
-  playerLevels[1]->newMove(playerBoards[1], seedValue);
+  playerLevels[1]->newMove(playerBoards[1]);
   playerBoards[1]->setCurBlock(playerBoards[1]->getBlockType());
   playerBoards[1]->moveBlock("");
-  playerLevels[1]->newMove(playerBoards[1], seedValue);
-  cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
-  cout << "Next: " << playerBoards[0]->getNextType() << endl;
+  playerLevels[1]->newMove(playerBoards[1]);
+  playerBoards[1]->setNumMultiDrop(0);
+
   cout << "PLAYER 2: " << endl;
   cout << *playerBoards[1] << endl;
 }
@@ -95,16 +100,10 @@ void Game::levelUp() {
   } else {
     if (playerLevel == 0) {
       playerLevels[playerTurn] = make_shared<LevelOne>();
-      cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
-      cout << "Next: " << playerBoards[0]->getNextType() << endl;
     } else if (playerLevel == 1) {
       playerLevels[playerTurn] = make_shared<LevelTwo>();
-      cout << "Cur: " << playerBoards[0]->getCurBlock() << endl;
-      cout << "Next: " << playerBoards[0]->getNextType() << endl;
     } else if (playerLevel == 2) {
       playerLevels[playerTurn] = make_shared<LevelHard>(3);
-      cout << "Cur Level Up: " << playerBoards[0]->getCurBlock() << endl;
-      cout << "Next Level Up: " << playerBoards[0]->getNextType() << endl;
     } else {
       playerLevels[playerTurn] = make_shared<LevelHard>(4);
       playerBoards[playerTurn]->setObstacle(true);
@@ -216,7 +215,7 @@ void Game::dropSequence(istream& input) {
       }
       bInPlay->updateScore();
       playerBoards[playerTurn]->moveBlock("");
-      playerLevels[playerTurn]->newMove(bInPlay, seedValue);
+      playerLevels[playerTurn]->newMove(bInPlay);
       cout << *bInPlay;
       if (playerBoards[playerTurn]->getSpecial() && getSpecialActions()) {
         cout << "Special action triggered (chose from the following special actions): " << endl;
@@ -246,11 +245,40 @@ void Game::dropSequence(istream& input) {
 
 
 void Game::playerPlay(istream& input) {
-  string cmd; 
+  string rawCmd; 
   cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
-  while (input >> cmd) { 
+
+  while (input >> rawCmd) { 
+    string rawCmdStr = "";
+    int repeat = 0; // how mnay times to call the command
+    if (isdigit(rawCmd[0])) {
+      istringstream iss(rawCmd);  // handle numbers in front of cmd
+      iss >> repeat;
+      for (char c : rawCmd) {
+        if (!isdigit(c)) {
+          rawCmdStr += c;
+        }
+      }
+    }
+
+    string cmd;
+    isdigit(rawCmd[0]) ? cmd = tempCmd->getCommand(rawCmdStr) : cmd = tempCmd->getCommand(rawCmd);
+
     int playerNumber = playerTurn + 1;
     shared_ptr<Board> bInPlay = playerBoards[playerTurn];
+    
+    if (!isdigit(rawCmd[0]) || cmd == "restart" || cmd == "hint" || cmd == "random" || cmd == "norandom") {
+        cout << "normal move" << endl;
+        repeat = 1;
+    }
+
+    if (cmd == "drop" && repeat > 1) {
+      playerBoards[playerTurn]->setNumMultiDrop(repeat - 1);
+      repeat = 1;
+    }
+
+    while(repeat > 0 ) {
+      --repeat;
     if (bInPlay->isLose()) {
         cout << playerNumber << "LOST! END GAME!" << endl;
         restartGame();
@@ -328,6 +356,7 @@ void Game::playerPlay(istream& input) {
     } else {
       break;
     } // if
+    }
   } // while
   
   if (input.eof() && testing) {

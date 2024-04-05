@@ -49,9 +49,6 @@ void Board::clearBoard() {
       theBoard[row][col].attach(td);
       theBoard[row][col].attach(gd);
       theBoard[row][col].setUnfilled();
-      if (theBoard[row][col].bType() == BlockType::empty) {
-        cout << "empty" << endl;
-      }
     }
   }
 }
@@ -173,6 +170,10 @@ bool Board::getSpecial() { return specialAction; }
 
 void Board::setSpecial(bool isOn) { specialAction = isOn; }
 
+int Board::getNumMultiDrop() { return numMultiDrop; }
+
+void Board::setNumMultiDrop(int n) { numMultiDrop = n; }
+
 bool Board::validMove(vector<vector<char>> *blockBlock, int shift, int down, bool placing) {
   bool isSafe = true; // temp indicator for if it is safe to place a block
   for (int i = 0; i < BLOCK_DIM; ++i) {
@@ -263,7 +264,7 @@ void Board::moveBlock(string move) {
 
     isSafe = validMove(&blockBlock, shift, down, placing); // check if safe to make the move
 
-    if (level >= 3 && !isHeavy && isSafe) {
+    if (cellLevel >= 3 && !isHeavy && isSafe) {
       bool oneDown = validMove(&blockBlock, shift, down + 1, placing);
       if (oneDown) { ++down; }
       else { heavyDrop = true; }
@@ -445,7 +446,6 @@ void Board::dropBlock() {
 
   // reset states:
   coords.clear();
-  cout << "cell level: " << cellLevel << endl;
   cellLevel = 0;
   curBlock = nextBlock;
   isHeavy = false;
@@ -622,8 +622,7 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
   } // update the remaining cells in the block (if any)
 
   // CHECK IF WHOLE BLOCK IS CLEARED
-  // cout << checkHeads(row) << endl;
-  // reassignHead(row);
+
   if (checkHeads(row)) { reassignHead(row); }
 
   vector<vector<int>> blocks; 
@@ -647,9 +646,9 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
   } // add any distinct blocks in the row
 
   int numBlocks = blocks.size(); // number of blocks in the row
+
   for (int i = 0; i < numBlocks; ++i) {
     if (theBoard[blocks[i][0]][blocks[i][1]].cellsLeft() == 0) {
-      cout << "block cleared" << endl;
       int sqrtBlock = theBoard[blocks[i][0]][blocks[i][1]].getLevel() + 1;
       blockScore += (sqrtBlock * sqrtBlock);
     }
@@ -688,14 +687,6 @@ void Board::lineClear(int row) { // add lose condition, and check block type dis
           theBoard[i][col].setFilled();
         }
     }
-  }
-
-  cout << "final" << endl;
-  for (int row = 0; row < BOARD_H + RESERVED; ++row) {
-    for (int col = 0; col < BOARD_W; ++col) {
-      cout << theBoard[row][col].cellsLeft();
-    }
-    cout << endl;
   }
 }
 
@@ -777,7 +768,6 @@ void Board::updateScore() {
       if (theBoard[3][5].bType() != BlockType::empty) {
         // lose = true;
         // return;
-        cout << "cannot place shit anymore :(" << endl;
       } else {
         theBoard[colHeights[5] - 1][5].setType(BlockType::SHIT);
         theBoard[colHeights[5] - 1][5].setFilled();

@@ -41,6 +41,8 @@ class Board {
   bool isObstacle = false;
   int numBlocksDropped = 0;
 
+  int numMultiDrop = 0;
+
   // checks if the move is valid
   bool validMove(vector<vector<char>> *blockBlock, int shift, int down, bool place);
 
@@ -90,6 +92,9 @@ class Board {
     bool getObstacle();
     void setObstacle(bool obstacle);
 
+    int getNumMultiDrop();
+    void setNumMultiDrop(int n);
+    
     // places/moves block based on move command
     void moveBlock(string move);
 
