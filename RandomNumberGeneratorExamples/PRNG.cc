@@ -13,14 +13,23 @@ int main() {
     prng2.seed( seed );
     prng3.seed( seed );
 
+    int one;
+    int two;
+    int three;
+    // setw(2);
+   
     // check 3 forms of generation are identical for 3 generators
     for ( int i = 0; i < 10; i += 1 ) {			// generate 10 random numbers between 0-1
 	cout << prng1() % 2 << prng2( 1 ) << prng3( 0, 1 ) << endl;
     }
     cout << endl;
     for ( int i = 0; i < 10; i += 1 ) {			// generate 10 random numbers between 5-21
-	cout << setw( 2 ) << prng1() % 17 + 5 << "  ";	// 0-16 + 5 = 5-21
-	cout << setw( 2 ) << prng2( 16 ) + 5 << "  ";
-	cout << setw( 2 ) << prng3( 5, 21 ) << endl;
+	one << (prng1() % 17 + 5);	// 0-16 + 5 = 5-21
+	two <<  (prng2( 16 ) + 5);
+    three << (prng3( 5, 21 ));
+
+    cout << one << " ";
+    cout << two << " ";
+    cout << three << endl;
     }
 }

@@ -238,9 +238,12 @@ void Game::dropSequence(istream& input) {
           cout << *playerBoards[!playerTurn];
         }
       }
-      cout << "Turn ended. Next player's turn" << endl;
-      playerTurn = !playerTurn;
-      cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
+      if (playerBoards[playerTurn]->getNumMultiDrop() == 0) {
+        cout << "Turn ended. Next player's turn" << endl;
+        playerTurn = !playerTurn;
+        cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
+      }
+
 }
 
 
@@ -272,13 +275,9 @@ void Game::playerPlay(istream& input) {
         repeat = 1;
     }
 
-    if (cmd == "drop" && repeat > 1) {
-      playerBoards[playerTurn]->setNumMultiDrop(repeat - 1);
-      repeat = 1;
-    }
-
     while(repeat > 0 ) {
       --repeat;
+      playerBoards[playerTurn]->setNumMultiDrop(repeat);
     if (bInPlay->isLose()) {
         cout << playerNumber << "LOST! END GAME!" << endl;
         restartGame();
@@ -310,6 +309,9 @@ void Game::playerPlay(istream& input) {
     } else 
     if (cmd == "drop") {
       dropSequence(input);
+      // if (playerBoards[playerTurn]->getNumMultiDrop() != 0) {
+      //   playerBoards[playerTurn]->setNumMultiDrop(playerBoards[playerTurn]->getNumMultiDrop() - 1);
+      // }
     } else if (cmd == "levelup") {
       levelUp();
       cout << *bInPlay;
