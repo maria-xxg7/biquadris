@@ -3,7 +3,7 @@ using namespace std;
 
 // adding textdisplay and graphics display to this
 
-Game::Game(Xwindow &wd1, Xwindow &wd2, string file1, string file2) : playerTurn {0}, isRandom{true}, testing {false}, onSpecialActions{false},
+Game::Game(Xwindow &wd1, Xwindow &wd2, bool txt, string file1, string file2) : playerTurn {0}, isRandom{true}, testing {false}, onSpecialActions{false},
   file1{file1}, file2{file2}, seedValue{8} {
 
   int len = commands.size();
@@ -19,6 +19,13 @@ Game::Game(Xwindow &wd1, Xwindow &wd2, string file1, string file2) : playerTurn 
   
   playerBoards.emplace_back(boardPlayer1);
   playerBoards.emplace_back(boardPlayer2);
+  if (txt) {
+    playerBoards[0]->setWindow(false);
+    playerBoards[1]->setWindow(false);
+  } else {
+    playerBoards[0]->setWindow(true);
+    playerBoards[1]->setWindow(true);
+  }
   playerBoards[0]->init(wd1);
   playerBoards[1]->init(wd2);
 
@@ -27,18 +34,19 @@ Game::Game(Xwindow &wd1, Xwindow &wd2, string file1, string file2) : playerTurn 
 }
 
 void Game::setUpGame(string filename1, string filename2, bool start, string levelStart, 
-                   bool seed, unsigned int seedSet, bool text) {
+                   bool seed, unsigned int seedSet) {
   if (start) {
     int i;
     istringstream levelInt{levelStart};
     levelInt >> i;
     setLevel(i);
     startLevel = i;
-  } if (seed) {
+  } 
+  
+  if (seed) {
     seedValue = seedSet;
-  } if (text) {
-
   }
+
   if (filename1 != "") {
     setFile(0, filename1);
   } else {
@@ -250,7 +258,8 @@ void Game::dropSequence(istream& input) {
 void Game::playerPlay(istream& input) {
   string rawCmd; 
   cout << "Player " << playerTurn + 1 << " enter your moves: " << endl;
-
+  shared_ptr<Board> bInPlay = make_shared<Board>();
+  bool notFound = false;
   while (input >> rawCmd) { 
     string rawCmdStr = "";
     int repeat = 0; // how mnay times to call the command
@@ -267,15 +276,21 @@ void Game::playerPlay(istream& input) {
     string cmd;
     isdigit(rawCmd[0]) ? cmd = tempCmd->getCommand(rawCmdStr) : cmd = tempCmd->getCommand(rawCmd);
 
-    int playerNumber = playerTurn + 1;
-    shared_ptr<Board> bInPlay = playerBoards[playerTurn];
-    
-    if (!isdigit(rawCmd[0]) || cmd == "restart" || cmd == "hint" || cmd == "random" || cmd == "norandom") {
-        cout << "normal move" << endl;
-        repeat = 1;
+    if (cmd == "") {
+      cout << "Invalid command. Please enter a valid command" << endl;
+      notFound = true;
+    } else {
+      notFound = false;
     }
 
-    while(repeat > 0 ) {
+    if (!isdigit(rawCmd[0]) || cmd == "restart" || cmd == "hint" || cmd == "random" || cmd == "norandom") {
+      repeat = 1;
+    }
+
+    int playerNumber = playerTurn + 1;
+    bInPlay = playerBoards[playerTurn];
+
+    while(repeat > 0 && !notFound) {
       --repeat;
       playerBoards[playerTurn]->setNumMultiDrop(repeat);
     if (bInPlay->isLose()) {
@@ -286,32 +301,34 @@ void Game::playerPlay(istream& input) {
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
+      cout << *bInPlay << endl;
     } else if (cmd == "right") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
+      cout << *bInPlay << endl;
     } else if (cmd == "down") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
+      cout << *bInPlay << endl;
     } else if (cmd == "clockwise") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
+      cout << *bInPlay << endl;
     } else if (cmd == "counterclockwise") {
       bInPlay->moveBlock(cmd);
       if (bInPlay->finishedMove()) {
         dropSequence(input);
       }
-    } else 
-    if (cmd == "drop") {
+      cout << *bInPlay << endl;
+    } else if (cmd == "drop") {
       dropSequence(input);
-      // if (playerBoards[playerTurn]->getNumMultiDrop() != 0) {
-      //   playerBoards[playerTurn]->setNumMultiDrop(playerBoards[playerTurn]->getNumMultiDrop() - 1);
-      // }
+      cout << *bInPlay << endl;
     } else if (cmd == "levelup") {
       levelUp();
       cout << *bInPlay;

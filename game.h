@@ -28,9 +28,9 @@ class Game {
   shared_ptr<Command> tempCmd = make_shared<Command>();
  
   public:
-    Game(Xwindow &wd1, Xwindow &wd2, string file1 = "sequence1.txt", string file2 = "sequence2.txt");
+    Game(Xwindow &wd1, Xwindow &wd2, bool txt, string file1 = "sequence1.txt", string file2 = "sequence2.txt");
     void setUpGame(string filename1, string filename2, bool start, string levelStart, 
-                   bool seed, unsigned int seedSet, bool text);
+                   bool seed, unsigned int seedSet);
     void startGame();
     void restartGame();
     void levelUp();

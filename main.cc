@@ -36,12 +36,12 @@ int main( int argc, char *argv[]) {
       } 
       if (s == "-seed") {
       }
-      if (s == "text") {
+      if (s == "-text") {
         text = true;
       }
     }
-    Game theGame = Game(wd1, wd2);
-    theGame.setUpGame(filename1, filename2, start, levelStart, seed, seedSet, text);
+    Game theGame = Game(wd1, wd2, text);
+    theGame.setUpGame(filename1, filename2, start, levelStart, seed, seedSet);
     theGame.startGame();
 
     while (true) {
